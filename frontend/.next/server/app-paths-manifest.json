@@ -1,6 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/dj/page": "app/dj/page.js",
-  "/sequencer/page": "app/sequencer/page.js",
-  "/drum-machine/page": "app/drum-machine/page.js"
-}
