@@ -15,7 +15,7 @@ export const ListItem: React.FC<ListItemProps> = ({ config }) => {
   return (
     <Link
       href={config.pathname}
-      className={`flex gap-2 p-2 pl-4 text-sm rounded whitespace-nowrap  ${pathname === config.pathname ? 'bg-fuchsia-900' : 'hover:bg-fuchsia-950'}`}
+      className={`flex gap-2 p-2 pl-3 text-sm rounded whitespace-nowrap  ${pathname === config.pathname ? 'bg-fuchsia-900' : 'hover:bg-fuchsia-950'}`}
     >
       <Image
         src={`./assets/icons/navbar/${config.image}`}
@@ -24,7 +24,7 @@ export const ListItem: React.FC<ListItemProps> = ({ config }) => {
         alt={config.name}
       />
       <p
-        className={`transition-all duration-500 ease-in-out origin-left ${isSidebarOpen ? '' : 'scale-x-0 scale-y-50'}`}
+        className={`transition-all duration-500 ease-in-out origin-left ${isSidebarOpen ? '' : 'scale-0 opacity-0'}`}
       >
         {config.name}
       </p>

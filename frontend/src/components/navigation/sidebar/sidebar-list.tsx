@@ -13,7 +13,7 @@ export const SidebarList: React.FC<SidebarListProps> = ({ config }) => {
   return (
     <div className='p-2'>
       <h4
-        className={`transition-all duration-500 ease-in-out origin-left ${isSideBarOpen ? '' : 'scale-x-0 scale-y-50'}`}
+        className={`transition-all duration-500 ease-in-out origin-left ${isSideBarOpen ? '' : 'scale-0 opacity-0'}`}
       >
         {config.name}
       </h4>
