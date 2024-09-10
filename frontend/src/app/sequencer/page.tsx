@@ -1,7 +1,3 @@
 export default function SequencerPage() {
-  return (
-    <main className='flex min-h-screen flex-col items-center justify-between p-24'>
-      SequencerPage
-    </main>
-  );
+  return <main className='flex  flex-col items-center justify-between p-24'>SequencerPage</main>;
 }
