@@ -13,25 +13,27 @@ type State = {
     sample: string;
   }[];
   drumPadPlayers: any;
+  drumMachineVolume: number;
 };
 type Actions = {
   initTone: () => void;
   initDevices: () => void;
   initDrumPadPlayers: () => void;
   handleDrumPad: (player: string) => void;
+  setDrumMachineVolume: (volume: number) => void;
 };
 
 const initialState: State = {
   tone: null,
   dest: null,
   drumPadConfig: defaultDrumPadConfig,
-  drumPadPlayers: null
+  drumPadPlayers: null,
+  drumMachineVolume: 0
 };
 
 export const useToneStore = create<State & Actions>()((set, get) => ({
   ...initialState,
   initTone: () => {
-    console.log('init tone');
     const tone = Tone.getContext();
     // @ts-ignore
     tone._latencyHint = 'balanced';
@@ -45,31 +47,33 @@ export const useToneStore = create<State & Actions>()((set, get) => ({
     get().initDevices();
   },
   initDevices: () => {
-    console.log('init devices');
     get().initDrumPadPlayers();
   },
   initDrumPadPlayers: () => {
     const drumPadConfig = get().drumPadConfig;
-    const drumPadPlayersVolume = 5;
+    const drumMachineVolume = get().drumMachineVolume;
     const drumPadPlayers = new Tone.Players(
       drumPadConfig.reduce<Record<string, string>>((acc, pad, index) => {
         acc[`Player${index}`] = pad.sample;
         return acc;
       }, {}),
       {
-        volume: drumPadPlayersVolume - 5
+        volume: drumMachineVolume
       }
     ).toDestination();
     const dest = get().dest;
     drumPadPlayers.connect(dest);
-    console.log(drumPadPlayers);
     set({ drumPadPlayers });
   },
   handleDrumPad: (playerNumber) => {
     const drumPadPlayers = get().drumPadPlayers;
-    console.log(drumPadPlayers);
     Tone.loaded().then(() => {
       drumPadPlayers.player(`Player${playerNumber}`).start();
     });
+  },
+  setDrumMachineVolume: (newVolume) => {
+    const drumPadPlayers = get().drumPadPlayers;
+    drumPadPlayers.volume.value = newVolume === -18 ? -1000 : newVolume;
+    set({ drumMachineVolume: newVolume });
   }
 }));
