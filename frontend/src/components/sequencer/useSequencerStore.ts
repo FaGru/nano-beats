@@ -71,8 +71,6 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     }, '16n');
   },
   updateStepLength: (newStepLength: any) => {
-    const sequencer = get().sequencer;
-    if (sequencer) sequencer.events = newStepLength; // Neue Dauer setzen
     set({ steps: newStepLength });
   },
 
@@ -108,11 +106,11 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
           name: `Track ${trackId + 1}`,
           player: null,
           volume: 0,
-          effects: {
-            reverb: new Tone.Reverb().toDestination(),
-            delay: new Tone.FeedbackDelay().toDestination(),
-            pitchShift: new Tone.PitchShift().toDestination()
-          },
+          // effects: {
+          //   // reverb: new Tone.Reverb().toDestination(),
+          //   // delay: new Tone.FeedbackDelay().toDestination(),
+          //   // pitchShift: new Tone.PitchShift().toDestination()
+          // },
           activeSteps: []
         }
       ]
@@ -179,12 +177,12 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
 
   updateTrackEffect: (trackId, effectType, effectSettings) => {
     const track = get().tracks.find((track) => track.id === trackId);
-    if (track) {
-      const effect = track.effects[effectType];
-      if (effect) {
-        Object.assign(effect, effectSettings);
-      }
-    }
+    // if (track) {
+    //   const effect = track.effects[effectType];
+    //   if (effect) {
+    //     Object.assign(effect, effectSettings);
+    //   }
+    // }
   },
 
   playTrack: (trackId) => {

@@ -5,7 +5,7 @@ export type TTrack = {
   name: string;
   player: Tone.Player | null;
   volume: number;
-  effects: {
+  effects?: {
     reverb: Tone.Reverb;
     delay: Tone.FeedbackDelay;
     pitchShift: Tone.PitchShift;
