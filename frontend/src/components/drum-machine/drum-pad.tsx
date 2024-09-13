@@ -2,7 +2,7 @@
 
 import { colorClassMap, shadowClassMap } from './drum-machine.config';
 import { TPadColor } from './drum-machine.types';
-import { useToneStore } from '@/lib/state-managment/useToneStore';
+import { useDrumMachineStore } from './useDrumMachineStore';
 
 interface DrumPadProps {
   padConfig: {
@@ -16,7 +16,7 @@ export const DrumPad: React.FC<DrumPadProps> = ({ padConfig }) => {
   const colorClasses = colorClassMap[padConfig.color];
   const shadowClasses = shadowClassMap[padConfig.color];
 
-  const handleDrumPad = useToneStore((state) => state.handleDrumPad);
+  const handleDrumPad = useDrumMachineStore((state) => state.handleDrumPad);
 
   return (
     <button

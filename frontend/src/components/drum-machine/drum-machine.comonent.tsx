@@ -4,17 +4,21 @@ import { DrumPad } from './drum-pad';
 import { useToneStore } from '../../lib/state-managment/useToneStore';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
+import { useDrumMachineStore } from './useDrumMachineStore';
 
 interface DrumMachineProps {}
 
 export const DrumMachine: React.FC<DrumMachineProps> = () => {
   const tone = useToneStore((state) => state.tone);
   const initTone = useToneStore((state) => state.initTone);
-  if (!tone) initTone();
+  const initDrumPadPlayers = useDrumMachineStore((state) => state.initDrumPadPlayers);
+  const drumPadPlayers = useDrumMachineStore((state) => state.drumPadPlayers);
+  // if (!tone) initTone();
+  if (!drumPadPlayers) initDrumPadPlayers();
 
-  const drumPadConfig = useToneStore((state) => state.drumPadConfig);
-  const setDrumMachineVolume = useToneStore((state) => state.setDrumMachineVolume);
-  const drumMachineVolume = useToneStore((state) => state.drumMachineVolume);
+  const drumPadConfig = useDrumMachineStore((state) => state.drumPadConfig);
+  const setDrumMachineVolume = useDrumMachineStore((state) => state.setDrumMachineVolume);
+  const drumMachineVolume = useDrumMachineStore((state) => state.drumMachineVolume);
   const [isVolumeTooltipOpen, setIsVolumeTooltipOpen] = useState<boolean>(false);
 
   return (
