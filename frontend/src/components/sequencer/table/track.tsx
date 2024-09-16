@@ -33,14 +33,14 @@ export const Track: React.FC<TrackProps> = ({ track, steps, currentStep, trackIn
       >
         {track.name}
       </td>
-      {steps.map((step, index) => (
-        <td key={index}>
+      {steps.map((step) => (
+        <td key={step}>
           <button
             key={step}
-            className={`w-12 h-12 rounded hover:bg-blue-400 focus:outline-none align-middle ${index % 4 === 3 ? 'mr-1' : ''}
-            ${getColors(index)}
+            className={`w-12 h-12 rounded hover:bg-blue-400 focus:outline-none align-middle ${step % 4 === 3 ? 'mr-1' : ''}
+            ${getColors(step)}
         `}
-            onClick={() => updateTrackStep(track.id, index)}
+            onClick={() => updateTrackStep(track.id, step)}
           />
         </td>
       ))}

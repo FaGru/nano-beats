@@ -9,7 +9,6 @@ type SequencerState = {
   steps: number[];
   currentStep: number;
   isPlaying: boolean;
-  startStep: number;
   selectedTrackId: number | null;
   sequencerBpm: number;
 };
@@ -17,7 +16,7 @@ type SequencerState = {
 type SequencerActions = {
   initSequencer: () => void;
   startStopSequencer: () => void;
-  updateStartStep: (step: number) => void;
+
   addTrack: ({
     trackId,
     name,
@@ -45,10 +44,9 @@ type SequencerActions = {
 export const useSequencerStore = create<SequencerState & SequencerActions>()((set, get) => ({
   sequencer: null,
   tracks: [],
-  steps: Array.from({ length: 16 }, (_, i) => i + 1),
+  steps: Array.from({ length: 16 }, (_, i) => i),
   currentStep: 0,
   isPlaying: false,
-  startStep: 0,
   selectedTrackId: null,
   sequencerBpm: 120,
 
@@ -66,31 +64,34 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     //     }
     //   });
     // }, '16n');
+    const { steps } = get();
 
     const sequencer = new Tone.Sequence(
       (_, step) => {
-        const { currentStep, tracks } = get();
+        const { tracks } = get();
         set({ currentStep: step });
         tracks.forEach((track) => {
-          if (track.activeSteps.includes(currentStep)) {
+          if (track.activeSteps.includes(step)) {
             get().playTrack(track.id);
           }
         });
       },
-      Array.from({ length: 16 }, (_, i) => i + 1), // Steps
-      '16n' // Step Duration
+      steps,
+      '16n'
     );
 
     Tone.getTransport().start();
     set({ sequencer });
   },
   updateStepLength: (newStepLength: any) => {
+    const sequencer = get().sequencer;
+    if (sequencer) sequencer.events = newStepLength;
     set({ steps: newStepLength });
   },
 
   startStopSequencer: () => {
     const { isPlaying } = get();
-    const { startStep } = get();
+
     const { sequencer } = get();
 
     if (!isPlaying) {
@@ -101,12 +102,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       sequencer?.stop();
       // Tone.getTransport().stop();
 
-      set({ isPlaying: false, currentStep: startStep });
+      set({ isPlaying: false, currentStep: 0 });
     }
-  },
-
-  updateStartStep: (step) => {
-    set({ currentStep: step, startStep: step });
   },
 
   setSequencerBpm: (newBpm) => {
@@ -123,11 +120,11 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
           name: `Track ${trackId + 1}`,
           player: null,
           volume: 0,
-          // effects: {
-          //   // reverb: new Tone.Reverb().toDestination(),
-          //   // delay: new Tone.FeedbackDelay().toDestination(),
-          //   // pitchShift: new Tone.PitchShift().toDestination()
-          // },
+          effects: {
+            reverb: new Tone.Reverb().toDestination(),
+            delay: new Tone.FeedbackDelay().toDestination(),
+            pitchShift: new Tone.PitchShift().toDestination()
+          },
           activeSteps: []
         }
       ]

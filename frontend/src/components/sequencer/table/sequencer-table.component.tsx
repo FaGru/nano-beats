@@ -1,21 +1,32 @@
+import { useToneStore } from '@/lib/state-managment/useToneStore';
 import { TTrack } from '../sequencer.types';
 import { useSequencerStore } from '../useSequencerStore';
 import { Timeline } from './timeline';
 import { Track } from './track';
+import { LoadingSpinner } from '@/components/shared/loading-spinner';
 
 interface SequencerTableProps {}
 
 export const SequencerTable: React.FC<SequencerTableProps> = () => {
+  const tone = useToneStore((state) => state.tone);
   const tracks = useSequencerStore((state) => state.tracks);
   const currentStep = useSequencerStore((state) => state.currentStep);
-  const updateStartStep = useSequencerStore((state) => state.updateStartStep);
   const steps = useSequencerStore((state) => state.steps);
   const addTrack = useSequencerStore((state) => state.addTrack);
+
+  if (!tone) {
+    return (
+      <div className='w-full bg-gray-950  rounded  flex items-center justify-center'>
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className='w-full  overflow-auto bg-gray-950  rounded pr-2 '>
       <table className='max-w-full table-fixed border-collapse '>
         <thead>
-          <Timeline steps={steps} currentStep={currentStep} updateStartStep={updateStartStep} />
+          <Timeline steps={steps} currentStep={currentStep} />
         </thead>
 
         <tbody>
