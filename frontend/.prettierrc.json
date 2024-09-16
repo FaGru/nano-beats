@@ -6,15 +6,6 @@
   "semi": true,
   "trailingComma": "none",
   "tabWidth": 2,
-  "importOrder": [
-    "^react(.*)",
-    "<THIRD_PARTY_MODULES>",
-    "^@/lib/(.*)$",
-    "^@/redux/(.*)$",
-    "^@/pages/(.*)$",
-    "^@/components/(.*)$",
-    "^[./]"
-  ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
 }
