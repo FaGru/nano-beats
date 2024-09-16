@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import { DrumPad } from './drum-pad';
-import { useToneStore } from '../../lib/state-managment/useToneStore';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { useDrumMachineStore } from './useDrumMachineStore';
@@ -9,13 +8,6 @@ import { useDrumMachineStore } from './useDrumMachineStore';
 interface DrumMachineProps {}
 
 export const DrumMachine: React.FC<DrumMachineProps> = () => {
-  const tone = useToneStore((state) => state.tone);
-  const initTone = useToneStore((state) => state.initTone);
-  const initDrumPadPlayers = useDrumMachineStore((state) => state.initDrumPadPlayers);
-  const drumPadPlayers = useDrumMachineStore((state) => state.drumPadPlayers);
-  // if (!tone) initTone();
-  if (!drumPadPlayers) initDrumPadPlayers();
-
   const drumPadConfig = useDrumMachineStore((state) => state.drumPadConfig);
   const setDrumMachineVolume = useDrumMachineStore((state) => state.setDrumMachineVolume);
   const drumMachineVolume = useDrumMachineStore((state) => state.drumMachineVolume);

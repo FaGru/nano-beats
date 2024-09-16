@@ -9,7 +9,6 @@ type SequencerState = {
   steps: number[];
   currentStep: number;
   isPlaying: boolean;
-  startStep: number;
   selectedTrackId: number | null;
   sequencerBpm: number;
 };
@@ -17,7 +16,7 @@ type SequencerState = {
 type SequencerActions = {
   initSequencer: () => void;
   startStopSequencer: () => void;
-  updateStartStep: (step: number) => void;
+
   addTrack: ({
     trackId,
     name,
@@ -45,53 +44,66 @@ type SequencerActions = {
 export const useSequencerStore = create<SequencerState & SequencerActions>()((set, get) => ({
   sequencer: null,
   tracks: [],
-  steps: Array.from({ length: 16 }, (_, i) => i + 1),
+  steps: Array.from({ length: 16 }, (_, i) => i),
   currentStep: 0,
   isPlaying: false,
-  startStep: 0,
   selectedTrackId: null,
   sequencerBpm: 120,
 
   initSequencer: () => {
-    const { tone } = useToneStore.getState();
-    const { initTone } = useToneStore.getState();
-    if (!tone) initTone();
-    const { dest } = useToneStore.getState();
     const { addTrack } = get();
     for (let i = 0; i < 4; i++) addTrack({ trackId: i, name: `Track ${i}` });
-    Tone.getTransport().scheduleRepeat(() => {
-      const { currentStep, tracks } = get();
-      set({ currentStep: (currentStep + 1) % get().steps.length });
 
-      tracks.forEach((track) => {
-        if (track.activeSteps.includes(currentStep)) {
-          get().playTrack(track.id);
-        }
-      });
-    }, '16n');
+    // Tone.getTransport().scheduleRepeat(() => {
+    //   const { currentStep, tracks } = get();
+    //   set({ currentStep: (currentStep + 1) % get().steps.length });
+
+    //   tracks.forEach((track) => {
+    //     if (track.activeSteps.includes(currentStep)) {
+    //       get().playTrack(track.id);
+    //     }
+    //   });
+    // }, '16n');
+    const { steps } = get();
+
+    const sequencer = new Tone.Sequence(
+      (_, step) => {
+        const { tracks } = get();
+        set({ currentStep: step });
+        tracks.forEach((track) => {
+          if (track.activeSteps.includes(step)) {
+            get().playTrack(track.id);
+          }
+        });
+      },
+      steps,
+      '16n'
+    );
+
+    Tone.getTransport().start();
+    set({ sequencer });
   },
   updateStepLength: (newStepLength: any) => {
     const sequencer = get().sequencer;
-    if (sequencer) sequencer.events = newStepLength; // Neue Dauer setzen
+    if (sequencer) sequencer.events = newStepLength;
     set({ steps: newStepLength });
   },
 
   startStopSequencer: () => {
     const { isPlaying } = get();
-    const { startStep } = get();
+
+    const { sequencer } = get();
 
     if (!isPlaying) {
-      Tone.getTransport().start();
+      // Tone.getTransport().start();
+      sequencer?.start();
       set({ isPlaying: true });
     } else {
-      Tone.getTransport().stop();
+      sequencer?.stop();
+      // Tone.getTransport().stop();
 
-      set({ isPlaying: false, currentStep: startStep });
+      set({ isPlaying: false, currentStep: 0 });
     }
-  },
-
-  updateStartStep: (step) => {
-    set({ currentStep: step, startStep: step });
   },
 
   setSequencerBpm: (newBpm) => {
@@ -179,12 +191,12 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
 
   updateTrackEffect: (trackId, effectType, effectSettings) => {
     const track = get().tracks.find((track) => track.id === trackId);
-    if (track) {
-      const effect = track.effects[effectType];
-      if (effect) {
-        Object.assign(effect, effectSettings);
-      }
-    }
+    // if (track) {
+    //   const effect = track.effects[effectType];
+    //   if (effect) {
+    //     Object.assign(effect, effectSettings);
+    //   }
+    // }
   },
 
   playTrack: (trackId) => {

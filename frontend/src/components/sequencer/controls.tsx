@@ -10,7 +10,6 @@ export const Controls: React.FC<ControlProps> = () => {
   const updateStepLength = useSequencerStore((state) => state.updateStepLength);
 
   const steps = useSequencerStore((state) => state.steps);
-  console.log('steps', steps);
 
   return (
     <div className='flex bg-gray-950 p-1 rounded w-full h-10 gap-4 items-center px-2'>
@@ -39,7 +38,7 @@ export const Controls: React.FC<ControlProps> = () => {
           defaultValue={steps.length}
           className='bg-gray-600 w-16 rounded text-center'
           onChange={(e) =>
-            updateStepLength(Array.from({ length: Number(e.target.value) }, (_, i) => i + 1))
+            updateStepLength(Array.from({ length: Number(e.target.value) }, (_, i) => i))
           }
         />
       </label>

@@ -26,9 +26,6 @@ export const useDrumMachineStore = create<DrumMachineState & DrumMachineActions>
   drumMachineVolume: 0,
 
   initDrumPadPlayers: () => {
-    const { tone } = useToneStore.getState();
-    const { initTone } = useToneStore.getState();
-    if (!tone) initTone();
     const { dest } = useToneStore.getState();
     const drumPadConfig = get().drumPadConfig;
     const drumMachineVolume = get().drumMachineVolume;

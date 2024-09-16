@@ -17,6 +17,7 @@ export const DrumPad: React.FC<DrumPadProps> = ({ padConfig }) => {
   const shadowClasses = shadowClassMap[padConfig.color];
 
   const handleDrumPad = useDrumMachineStore((state) => state.handleDrumPad);
+  const drumpadPlayers = useDrumMachineStore((state) => state.drumPadPlayers);
 
   return (
     <button
@@ -24,6 +25,7 @@ export const DrumPad: React.FC<DrumPadProps> = ({ padConfig }) => {
         relative overflow-hidden focus:outline-none ${shadowClasses} cursor-grab active:cursor-grabbing
         `}
       onClick={() => handleDrumPad(padConfig.id)}
+      disabled={!drumpadPlayers}
     />
   );
 };
