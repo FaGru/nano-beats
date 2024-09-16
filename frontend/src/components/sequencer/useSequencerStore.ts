@@ -53,24 +53,36 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   sequencerBpm: 120,
 
   initSequencer: () => {
-    // const { tone } = useToneStore.getState();
-    // const { initTone } = useToneStore.getState();
-    // if (!tone) initTone();
-
-    const { dest } = useToneStore.getState();
     const { addTrack } = get();
     for (let i = 0; i < 4; i++) addTrack({ trackId: i, name: `Track ${i}` });
 
-    Tone.getTransport().scheduleRepeat(() => {
-      const { currentStep, tracks } = get();
-      set({ currentStep: (currentStep + 1) % get().steps.length });
+    // Tone.getTransport().scheduleRepeat(() => {
+    //   const { currentStep, tracks } = get();
+    //   set({ currentStep: (currentStep + 1) % get().steps.length });
 
-      tracks.forEach((track) => {
-        if (track.activeSteps.includes(currentStep)) {
-          get().playTrack(track.id);
-        }
-      });
-    }, '16n');
+    //   tracks.forEach((track) => {
+    //     if (track.activeSteps.includes(currentStep)) {
+    //       get().playTrack(track.id);
+    //     }
+    //   });
+    // }, '16n');
+
+    const sequencer = new Tone.Sequence(
+      (_, step) => {
+        const { currentStep, tracks } = get();
+        set({ currentStep: step });
+        tracks.forEach((track) => {
+          if (track.activeSteps.includes(currentStep)) {
+            get().playTrack(track.id);
+          }
+        });
+      },
+      Array.from({ length: 16 }, (_, i) => i + 1), // Steps
+      '16n' // Step Duration
+    );
+
+    Tone.getTransport().start();
+    set({ sequencer });
   },
   updateStepLength: (newStepLength: any) => {
     set({ steps: newStepLength });
@@ -79,12 +91,15 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   startStopSequencer: () => {
     const { isPlaying } = get();
     const { startStep } = get();
+    const { sequencer } = get();
 
     if (!isPlaying) {
-      Tone.getTransport().start();
+      // Tone.getTransport().start();
+      sequencer?.start();
       set({ isPlaying: true });
     } else {
-      Tone.getTransport().stop();
+      sequencer?.stop();
+      // Tone.getTransport().stop();
 
       set({ isPlaying: false, currentStep: startStep });
     }
