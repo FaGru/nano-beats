@@ -12,9 +12,9 @@ interface SequencerProps {
 }
 
 export const Sequencer: React.FC<SequencerProps> = ({ audioFiles }) => {
-  const tone = useToneStore((state) => state.tone);
-  const initSequencer = useSequencerStore((state) => state.initSequencer);
-  if (!tone) initSequencer();
+  // const tone = useToneStore((state) => state.tone);
+  // const initSequencer = useSequencerStore((state) => state.initSequencer);
+  // if (!tone) initSequencer();
 
   const tracks = useSequencerStore((state) => state.tracks);
 

@@ -53,12 +53,14 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   sequencerBpm: 120,
 
   initSequencer: () => {
-    const { tone } = useToneStore.getState();
-    const { initTone } = useToneStore.getState();
-    if (!tone) initTone();
+    // const { tone } = useToneStore.getState();
+    // const { initTone } = useToneStore.getState();
+    // if (!tone) initTone();
+
     const { dest } = useToneStore.getState();
     const { addTrack } = get();
     for (let i = 0; i < 4; i++) addTrack({ trackId: i, name: `Track ${i}` });
+
     Tone.getTransport().scheduleRepeat(() => {
       const { currentStep, tracks } = get();
       set({ currentStep: (currentStep + 1) % get().steps.length });

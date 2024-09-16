@@ -10,7 +10,6 @@ export const Controls: React.FC<ControlProps> = () => {
   const updateStepLength = useSequencerStore((state) => state.updateStepLength);
 
   const steps = useSequencerStore((state) => state.steps);
-  console.log('steps', steps);
 
   return (
     <div className='flex bg-gray-950 p-1 rounded w-full h-10 gap-4 items-center px-2'>

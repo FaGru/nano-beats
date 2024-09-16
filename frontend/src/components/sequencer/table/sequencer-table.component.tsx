@@ -35,7 +35,7 @@ export const SequencerTable: React.FC<SequencerTableProps> = () => {
             <td className='sticky left-0 z-10 p-2'>
               <button
                 onClick={() => addTrack({ trackId: tracks.length })}
-                className={`mt-4   text-gray-700 font-bold cursor-pointer `}
+                className={`my-4   text-gray-700 font-bold cursor-pointer `}
               >
                 add track
               </button>
