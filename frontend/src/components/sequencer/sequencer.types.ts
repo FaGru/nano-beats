@@ -9,6 +9,7 @@ export type TTrack = {
     reverb: Tone.Reverb;
     delay: Tone.FeedbackDelay;
     pitchShift: Tone.PitchShift;
+    eqThree: Tone.EQ3;
   };
   activeSteps: number[];
 };
