@@ -39,6 +39,7 @@ type SequencerActions = {
   selectTrack: (trackId: number | null) => void;
   setSequencerBpm: (newBpm: number) => void;
   updateStepLength: (newStepLength: number[]) => void;
+  updateTrackEQ: (trackId: number, eqType: 'high' | 'mid' | 'low', newValue: number) => void;
 };
 
 export const useSequencerStore = create<SequencerState & SequencerActions>()((set, get) => ({
@@ -123,7 +124,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
           effects: {
             reverb: new Tone.Reverb().toDestination(),
             delay: new Tone.FeedbackDelay().toDestination(),
-            pitchShift: new Tone.PitchShift().toDestination()
+            pitchShift: new Tone.PitchShift().toDestination(),
+            eqThree: new Tone.EQ3(-5, -5, -5)
           },
           activeSteps: []
         }
@@ -138,6 +140,9 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       if (!track.player) {
         const player = new Tone.Player().toDestination();
         player.load(sampleUrl);
+        player.chain(track.effects.eqThree, Tone.getDestination());
+        Tone.getTransport().start();
+
         set((state) => ({
           tracks: state.tracks.map((track) =>
             track.id === trackId ? { ...track, player, name: trackName } : track
@@ -207,5 +212,14 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   },
   selectTrack: (trackId) => {
     set({ selectedTrackId: trackId });
+  },
+  updateTrackEQ: (trackId, eqType, newValue) => {
+    const tracks = get().tracks;
+    for (const track of tracks) {
+      if (track.id === trackId) {
+        track.effects.eqThree.set({ [eqType]: newValue });
+      }
+    }
+    set({ tracks });
   }
 }));

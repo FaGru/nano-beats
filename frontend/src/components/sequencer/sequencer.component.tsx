@@ -4,7 +4,7 @@ import { useSequencerStore } from './useSequencerStore';
 import { Controls } from './controls';
 import { SequencerTable } from './table/sequencer-table.component';
 import { Explorer } from './explorer';
-import { TrackZone } from './track-zone';
+import { TrackZone } from './track-controls';
 
 interface SequencerProps {
   audioFiles: string[];
