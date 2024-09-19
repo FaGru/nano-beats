@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import * as Tone from 'tone';
 import { useToneStore } from '@/lib/state-managment/useToneStore';
 import { TTrack } from './sequencer.types';
+import { eqThreeDefaultVolume } from './sequencer.constants';
 
 type SequencerState = {
   sequencer: Tone.Sequence | null;
@@ -9,7 +10,7 @@ type SequencerState = {
   steps: number[];
   currentStep: number;
   isPlaying: boolean;
-  selectedTrackId: number | null;
+  selectedTrack: TTrack | null;
   sequencerBpm: number;
 };
 
@@ -36,7 +37,7 @@ type SequencerActions = {
     effectSettings: any
   ) => void;
   playTrack: (trackId: number) => void;
-  selectTrack: (trackId: number | null) => void;
+  selectTrack: (track: TTrack | null) => void;
   setSequencerBpm: (newBpm: number) => void;
   updateStepLength: (newStepLength: number[]) => void;
 };
@@ -47,7 +48,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   steps: Array.from({ length: 16 }, (_, i) => i),
   currentStep: 0,
   isPlaying: false,
-  selectedTrackId: null,
+  selectedTrack: null,
   sequencerBpm: 120,
 
   initSequencer: () => {
@@ -123,7 +124,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
           effects: {
             reverb: new Tone.Reverb().toDestination(),
             delay: new Tone.FeedbackDelay().toDestination(),
-            pitchShift: new Tone.PitchShift().toDestination()
+            pitchShift: new Tone.PitchShift().toDestination(),
+            eqThree: new Tone.EQ3(eqThreeDefaultVolume, eqThreeDefaultVolume, eqThreeDefaultVolume)
           },
           activeSteps: []
         }
@@ -138,10 +140,14 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       if (!track.player) {
         const player = new Tone.Player().toDestination();
         player.load(sampleUrl);
+        player.chain(track.effects.eqThree, Tone.getDestination());
+        Tone.getTransport().start();
+
         set((state) => ({
           tracks: state.tracks.map((track) =>
             track.id === trackId ? { ...track, player, name: trackName } : track
-          )
+          ),
+          selectedTrack: { ...track, player, name: trackName }
         }));
       }
       if (track.player) {
@@ -149,7 +155,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         set((state) => ({
           tracks: state.tracks.map((track) =>
             track.id === trackId ? { ...track, name: trackName } : track
-          )
+          ),
+          selectedTrack: { ...track, name: trackName }
         }));
       }
     }
@@ -205,7 +212,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       track.player.start();
     }
   },
-  selectTrack: (trackId) => {
-    set({ selectedTrackId: trackId });
+  selectTrack: (track) => {
+    set({ selectedTrack: track });
   }
 }));
