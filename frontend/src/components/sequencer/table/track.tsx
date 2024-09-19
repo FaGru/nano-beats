@@ -40,7 +40,7 @@ export const Track: React.FC<TrackProps> = ({ track, steps, currentStep, trackIn
         <td key={step}>
           <button
             key={step}
-            className={`w-12 h-12 rounded hover:bg-blue-400 focus:outline-none align-middle ${step % 4 === 3 ? 'mr-1' : ''}
+            className={`w-12 h-12 rounded hover:bg-blue-400 focus:outline-none align-middle ${(step - 1) % 4 === 3 ? 'mr-1' : ''}
             ${getColors(step)}
         `}
             onClick={() => updateTrackStep(track.id, step)}

@@ -45,7 +45,7 @@ type SequencerActions = {
 export const useSequencerStore = create<SequencerState & SequencerActions>()((set, get) => ({
   sequencer: null,
   tracks: [],
-  steps: Array.from({ length: 16 }, (_, i) => i),
+  steps: Array.from({ length: 16 }, (_, i) => i + 1),
   currentStep: 0,
   isPlaying: false,
   selectedTrack: null,
@@ -80,6 +80,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       steps,
       '16n'
     );
+    console.log(steps);
 
     Tone.getTransport().start();
     set({ sequencer });

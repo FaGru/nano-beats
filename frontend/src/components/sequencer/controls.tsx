@@ -39,7 +39,7 @@ export const Controls: React.FC<ControlProps> = () => {
           defaultValue={steps.length}
           className='bg-gray-800 w-14 rounded text-end pl-2 align-bottom border'
           onChange={(e) =>
-            updateStepLength(Array.from({ length: Number(e.target.value) }, (_, i) => i))
+            updateStepLength(Array.from({ length: Number(e.target.value) }, (_, i) => i + 1))
           }
         />
       </label>
