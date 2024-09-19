@@ -3,7 +3,7 @@ import { TTrack } from '../sequencer.types';
 import { useSequencerStore } from '../useSequencerStore';
 import { Timeline } from './timeline';
 import { Track } from './track';
-import { LoadingSpinner } from '@/components/shared/loading-spinner';
+import { Puff } from 'react-loader-spinner';
 
 interface SequencerTableProps {}
 
@@ -17,7 +17,7 @@ export const SequencerTable: React.FC<SequencerTableProps> = () => {
   if (!tone) {
     return (
       <div className='w-full bg-gray-950  rounded  flex items-center justify-center'>
-        <LoadingSpinner />
+        <Puff />
       </div>
     );
   }
