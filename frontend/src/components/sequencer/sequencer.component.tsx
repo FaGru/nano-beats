@@ -11,10 +11,7 @@ interface SequencerProps {
 }
 
 export const Sequencer: React.FC<SequencerProps> = ({ audioFiles }) => {
-  const tracks = useSequencerStore((state) => state.tracks);
-
-  const selectedTrackId = useSequencerStore((state) => state.selectedTrackId);
-  const selectedTrack = tracks.find((track) => track.id === selectedTrackId);
+  const selectedTrack = useSequencerStore((state) => state.selectedTrack);
 
   return (
     <div className='flex flex-col w-full  gap-1 '>
@@ -24,7 +21,7 @@ export const Sequencer: React.FC<SequencerProps> = ({ audioFiles }) => {
         <Explorer audioFiles={audioFiles} selectedTrack={selectedTrack} />
         <SequencerTable />
       </div>
-      <div className='bg-gray-950 py-2 px-4 rounded-md min-h-24'>
+      <div className='bg-gray-950 px-4 rounded-md min-h-28 flex items-center'>
         {selectedTrack ? <TrackZone selectedTrack={selectedTrack} /> : null}
       </div>
     </div>

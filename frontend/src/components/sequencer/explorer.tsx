@@ -4,7 +4,7 @@ import { useSequencerStore } from './useSequencerStore';
 
 interface ExplorerProps {
   audioFiles: string[];
-  selectedTrack: TTrack | undefined;
+  selectedTrack: TTrack | null;
 }
 
 export const Explorer: React.FC<ExplorerProps> = ({ audioFiles, selectedTrack }) => {
@@ -14,12 +14,11 @@ export const Explorer: React.FC<ExplorerProps> = ({ audioFiles, selectedTrack })
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
-    // Scroll the active item into view
     if (itemRefs.current[activeItemIndex]) {
       itemRefs.current[activeItemIndex]?.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
-        inline: 'center' // Optional: Adjust based on how you want the item to be centered
+        inline: 'center'
       });
     }
   }, [activeItemIndex]);
@@ -34,7 +33,7 @@ export const Explorer: React.FC<ExplorerProps> = ({ audioFiles, selectedTrack })
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (listRef.current && document.activeElement === listRef.current) {
-        event.preventDefault(); // Prevent default scrolling
+        event.preventDefault();
         switch (event.key) {
           case 'ArrowUp':
             setActiveItemIndex((prevIndex) => Math.max(prevIndex - 1, 0));
