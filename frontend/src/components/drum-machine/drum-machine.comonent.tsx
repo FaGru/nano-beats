@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DrumPad } from './drum-pad';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
@@ -11,7 +11,31 @@ export const DrumMachine: React.FC<DrumMachineProps> = () => {
   const drumPadConfig = useDrumMachineStore((state) => state.drumPadConfig);
   const setDrumMachineVolume = useDrumMachineStore((state) => state.setDrumMachineVolume);
   const drumMachineVolume = useDrumMachineStore((state) => state.drumMachineVolume);
+  const handleDrumPad = useDrumMachineStore((state) => state.handleDrumPad);
   const [isVolumeTooltipOpen, setIsVolumeTooltipOpen] = useState<boolean>(false);
+  const [activeKeyDown, setActiveKeyDown] = useState('');
+
+  const handleKeyDown = (e: any) => {
+    const matchingDrumPad = drumPadConfig.find((config) => config.keyDown === e.key);
+    if (matchingDrumPad) {
+      setActiveKeyDown(e.key);
+      handleDrumPad(matchingDrumPad.id);
+    }
+  };
+
+  const handleKeyUp = () => {
+    setActiveKeyDown('');
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
 
   return (
     <div className='flex flex-col items-center justify-center rounded-xl bg-gray-900 text-white p-2 shadow-[inset_0_0_8px_2px] shadow-gray-950'>
@@ -19,7 +43,7 @@ export const DrumMachine: React.FC<DrumMachineProps> = () => {
       <div className='grid grid-cols-4 gap-1.5 mb-8'>
         {drumPadConfig.map((padConfig, index) => (
           <React.Fragment key={index}>
-            <DrumPad padConfig={padConfig} />
+            <DrumPad padConfig={padConfig} isKeyDownActive={activeKeyDown === padConfig.keyDown} />
           </React.Fragment>
         ))}
       </div>

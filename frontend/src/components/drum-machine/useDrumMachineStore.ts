@@ -1,15 +1,11 @@
 import { create } from 'zustand';
 import * as Tone from 'tone';
 import { defaultDrumPadConfig } from '../../components/drum-machine/drum-machine.config';
-import { TPadColor } from '../../components/drum-machine/drum-machine.types';
+import { TPadConfig } from '../../components/drum-machine/drum-machine.types';
 import { useToneStore } from '@/lib/state-managment/useToneStore';
 
 type DrumMachineState = {
-  drumPadConfig: {
-    id: string;
-    color: TPadColor;
-    sample: string;
-  }[];
+  drumPadConfig: TPadConfig[];
   drumPadPlayers: any;
   drumMachineVolume: number;
 };
