@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Sidebar } from '../navigation/sidebar/sidebar.component';
 import { Topbar } from '../navigation/topbar/topbar.component';
 import { useToneStore } from '@/lib/state-managment/useToneStore';
-import { LoadingSpinner } from '../shared/loading-spinner';
+import { Puff } from 'react-loader-spinner';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -14,15 +14,6 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   useEffect(() => {
     handleUserInteraction();
   });
-
-  // if (!tone) {
-  //   return (s
-  //     <div>
-  //       <p>Click Or Touch to activate the Devices</p>
-  //       <LoadingSpinner />
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className='flex h-screen overflow-hidden'>
@@ -35,7 +26,15 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
           ) : (
             <div className='flex h-full items-center justify-center flex-col content-around gap-4 bg-gray-950 rounded'>
               <p>Click Or Touch to activate the Devices</p>
-              <LoadingSpinner />
+              <Puff
+                visible={true}
+                height='40'
+                width='40'
+                color='#38bdf8'
+                ariaLabel='puff-loading'
+                wrapperStyle={{}}
+                wrapperClass='decoration-fuchsia-900'
+              />
             </div>
           )}
         </main>
