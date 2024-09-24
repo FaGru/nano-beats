@@ -12,7 +12,7 @@ export const Track: React.FC<TrackProps> = ({ track, steps, currentStep, trackIn
   const updateTrackStep = useSequencerStore((state) => state.updateTrackStep);
   const isPlaying = useSequencerStore((state) => state.isPlaying);
   const selectTrack = useSequencerStore((state) => state.selectTrack);
-  const selectedTrack = useSequencerStore((state) => state.selectedTrack);
+  const selectedTrackId = useSequencerStore((state) => state.selectedTrackId);
 
   const getColors = (index: number) => {
     let colors = 'bg-gray-300';
@@ -31,7 +31,7 @@ export const Track: React.FC<TrackProps> = ({ track, steps, currentStep, trackIn
     <tr key={trackIndex} onClick={() => selectTrack(track.id)} className={` `}>
       <td
         className={`sticky left-0 z-10 p-1 text-xs  text-gray-700 font-bold cursor-pointer rounded
-          ${selectedTrack?.id === trackIndex ? 'bg-fuchsia-900 text-white' : 'bg-gray-950'}
+          ${selectedTrackId === trackIndex ? 'bg-fuchsia-900 text-white' : 'bg-gray-950'}
           `}
       >
         <span title={isTrackNameTruncated ? track.name : ''}>{truncatedText}</span>

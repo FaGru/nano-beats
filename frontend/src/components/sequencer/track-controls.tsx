@@ -8,7 +8,6 @@ import {
   sequencerDefaultVolume,
   sequencerVolumeLimits
 } from './sequencer.constants';
-import { useState } from 'react';
 import { useMouseMove } from '@/hooks/useMouseMove';
 
 interface TrackControlsProps {
@@ -16,13 +15,13 @@ interface TrackControlsProps {
 }
 
 export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) => {
-  const [playerVolume, setPlayerVolume] = useState(selectedTrack?.player?.volume.value || 0);
-  const [eqThreeValues, setEqThreeValues] = useState({
+  const eqThreeValues = {
     high: selectedTrack?.effects?.eqThree.high.value,
     mid: selectedTrack?.effects?.eqThree.mid.value,
     low: selectedTrack?.effects?.eqThree.low.value
-  });
+  };
   const updateTrackSample = useSequencerStore((state) => state.updateTrackSample);
+  const updateTrack = useSequencerStore((state) => state.updateTrack);
 
   const { handleMouseDown, handleMouseUp } = useMouseMove('y');
 
@@ -41,26 +40,25 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
   };
 
   const handleTrackGain = (updateValue: number) => {
-    if (selectedTrack && selectedTrack.player) {
+    if (selectedTrack.player) {
       let newVolume = selectedTrack.player.volume.value + updateValue / 10;
       if (newVolume < sequencerVolumeLimits.min) {
         newVolume = sequencerVolumeLimits.min;
       } else if (newVolume > sequencerVolumeLimits.max) {
         newVolume = sequencerVolumeLimits.max;
       }
-
       selectedTrack.player.volume.value = newVolume;
-      setPlayerVolume(newVolume);
+      updateTrack(selectedTrack.id, selectedTrack);
     }
   };
   const resetTrackGain = () => {
-    if (selectedTrack && selectedTrack.player) {
+    if (selectedTrack.player) {
       selectedTrack.player.volume.value = sequencerDefaultVolume;
-      setPlayerVolume(sequencerDefaultVolume);
+      updateTrack(selectedTrack.id, selectedTrack);
     }
   };
   const handleTrackEQ = (updateValue: number, type: string | undefined) => {
-    if (selectedTrack && type && (type === 'high' || type === 'mid' || type === 'low')) {
+    if (type && (type === 'high' || type === 'mid' || type === 'low')) {
       let newVolume = selectedTrack.effects.eqThree[type].value + updateValue / 10;
       if (newVolume < eqThreeVolumeLimits.min) {
         newVolume = eqThreeVolumeLimits.min;
@@ -68,15 +66,13 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
         newVolume = eqThreeVolumeLimits.max;
       }
       selectedTrack.effects.eqThree[type].value = newVolume;
-      setEqThreeValues({ ...eqThreeValues, [type]: newVolume });
+      updateTrack(selectedTrack.id, selectedTrack);
     }
   };
 
   const resetTrackEQ = (type: 'high' | 'mid' | 'low') => {
-    if (selectedTrack) {
-      selectedTrack.effects.eqThree[type].value = eqThreeDefaultVolume;
-      setEqThreeValues({ ...eqThreeValues, [type]: eqThreeDefaultVolume });
-    }
+    selectedTrack.effects.eqThree[type].value = eqThreeDefaultVolume;
+    updateTrack(selectedTrack.id, selectedTrack);
   };
 
   return (
@@ -102,7 +98,7 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
               onDoubleClick={resetTrackGain}
             >
               <FillableBox
-                value={(Math.round(playerVolume * 10) / 10).toFixed(1)}
+                value={(Math.round(selectedTrack.player.volume.value * 10) / 10).toFixed(1)}
                 orientation='horizontal'
                 height={'16px'}
                 width='128px'

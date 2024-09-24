@@ -10,7 +10,7 @@ type SequencerState = {
   steps: number[];
   currentStep: number;
   isPlaying: boolean;
-  selectedTrack: TTrack | null;
+  selectedTrackId: number | null;
   sequencerBpm: number;
   mode: 'pattern' | 'song';
 };
@@ -31,14 +31,9 @@ type SequencerActions = {
   removeTrack: (trackId: number) => void;
   updateTrackSample: (sampleUrl: string, trackId: number, trackName: string) => void;
   updateTrackStep: (trackId: number, currentStep: number) => void;
-  updateTrackVolume: (trackId: number, volume: number) => void;
-  updateTrackEffect: (
-    trackId: number,
-    effectType: 'reverb' | 'delay' | 'pitchShift',
-    effectSettings: any
-  ) => void;
+  updateTrack: (trackId: number, updatedTrack: TTrack) => void;
   playTrack: (trackId: number) => void;
-  selectTrack: (track: TTrack | null) => void;
+  selectTrack: (trackId: number) => void;
   setSequencerBpm: (updateValue: number) => void;
   updateStepLength: (newStepLength: number[]) => void;
   setMode: (mode: 'pattern' | 'song') => void;
@@ -50,7 +45,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   steps: Array.from({ length: 16 }, (_, i) => i + 1),
   currentStep: 0,
   isPlaying: false,
-  selectedTrack: null,
+  selectedTrackId: null,
   sequencerBpm: 120,
   mode: 'pattern',
 
@@ -130,7 +125,6 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
           id: trackId,
           name: `Track ${trackId + 1}`,
           player: null,
-          volume: 0,
           effects: {
             reverb: new Tone.Reverb().toDestination(),
             delay: new Tone.FeedbackDelay().toDestination(),
@@ -156,8 +150,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         set((state) => ({
           tracks: state.tracks.map((track) =>
             track.id === trackId ? { ...track, player, name: trackName } : track
-          ),
-          selectedTrack: { ...track, player, name: trackName }
+          )
         }));
       }
       if (track.player) {
@@ -165,8 +158,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         set((state) => ({
           tracks: state.tracks.map((track) =>
             track.id === trackId ? { ...track, name: trackName } : track
-          ),
-          selectedTrack: { ...track, name: trackName }
+          )
         }));
       }
     }
@@ -196,24 +188,13 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     }));
   },
 
-  updateTrackVolume: (trackId, volume) => {
+  updateTrack: (trackId, updatedTrack) => {
     const track = get().tracks.find((track) => track.id === trackId);
-    if (track && track.player) {
-      track.player.volume.value = volume;
+    if (track) {
       set((state) => ({
-        tracks: state.tracks.map((track) => (track.id === trackId ? { ...track, volume } : track))
+        tracks: state.tracks.map((track) => (track.id === trackId ? updatedTrack : track))
       }));
     }
-  },
-
-  updateTrackEffect: (trackId, effectType, effectSettings) => {
-    const track = get().tracks.find((track) => track.id === trackId);
-    // if (track) {
-    //   const effect = track.effects[effectType];
-    //   if (effect) {
-    //     Object.assign(effect, effectSettings);
-    //   }
-    // }
   },
 
   playTrack: (trackId) => {
@@ -222,8 +203,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       track.player.start();
     }
   },
-  selectTrack: (track) => {
-    set({ selectedTrack: track });
+  selectTrack: (trackId) => {
+    set({ selectedTrackId: trackId });
   },
   setMode: (newMode) => {
     set({ mode: newMode });
