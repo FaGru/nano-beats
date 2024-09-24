@@ -13,6 +13,7 @@ type SequencerState = {
   selectedTrackId: number | null;
   sequencerBpm: number;
   mode: 'pattern' | 'song';
+  song: { patternName: string; patternTracks: TTrack[] }[] | [];
 };
 
 type SequencerActions = {
@@ -48,6 +49,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   selectedTrackId: null,
   sequencerBpm: 120,
   mode: 'pattern',
+  song: [],
 
   initSequencer: () => {
     const { addTrack } = get();
