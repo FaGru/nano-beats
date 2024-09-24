@@ -85,7 +85,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   updateStepLength: (newStepLength: any) => {
     const sequencer = get().sequencer;
     if (sequencer) sequencer.events = newStepLength;
-    set({ steps: newStepLength });
+    set({ steps: newStepLength, sequencer });
   },
 
   startStopSequencer: () => {
