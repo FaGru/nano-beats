@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import * as Tone from 'tone';
 import { useToneStore } from '@/lib/state-managment/useToneStore';
 import { TTrack } from './sequencer.types';
-import { eqThreeDefaultVolume } from './sequencer.constants';
+import { eqThreeDefaultVolume, sequencerBpmLimits } from './sequencer.constants';
 
 type SequencerState = {
   sequencer: Tone.Sequence | null;
@@ -12,6 +12,7 @@ type SequencerState = {
   isPlaying: boolean;
   selectedTrack: TTrack | null;
   sequencerBpm: number;
+  mode: 'pattern' | 'song';
 };
 
 type SequencerActions = {
@@ -38,8 +39,9 @@ type SequencerActions = {
   ) => void;
   playTrack: (trackId: number) => void;
   selectTrack: (track: TTrack | null) => void;
-  setSequencerBpm: (newBpm: number) => void;
+  setSequencerBpm: (updateValue: number) => void;
   updateStepLength: (newStepLength: number[]) => void;
+  setMode: (mode: 'pattern' | 'song') => void;
 };
 
 export const useSequencerStore = create<SequencerState & SequencerActions>()((set, get) => ({
@@ -50,6 +52,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   isPlaying: false,
   selectedTrack: null,
   sequencerBpm: 120,
+  mode: 'pattern',
 
   initSequencer: () => {
     const { addTrack } = get();
@@ -80,7 +83,6 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       steps,
       '16n'
     );
-    console.log(steps);
 
     Tone.getTransport().start();
     set({ sequencer });
@@ -108,9 +110,16 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     }
   },
 
-  setSequencerBpm: (newBpm) => {
-    Tone.getTransport().bpm.value = newBpm;
-    set({ sequencerBpm: newBpm });
+  setSequencerBpm: (updateValue) => {
+    const sequencerBpm = get().sequencerBpm;
+    let newValue = sequencerBpm + updateValue / 10;
+    if (newValue < sequencerBpmLimits.min) {
+      newValue = sequencerBpmLimits.min;
+    } else if (newValue > sequencerBpmLimits.max) {
+      newValue = sequencerBpmLimits.max;
+    }
+    Tone.getTransport().bpm.value = newValue;
+    set({ sequencerBpm: newValue });
   },
 
   addTrack: ({ trackId }) => {
@@ -215,5 +224,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   },
   selectTrack: (track) => {
     set({ selectedTrack: track });
+  },
+  setMode: (newMode) => {
+    set({ mode: newMode });
   }
 }));

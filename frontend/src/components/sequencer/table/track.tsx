@@ -28,7 +28,7 @@ export const Track: React.FC<TrackProps> = ({ track, steps, currentStep, trackIn
   const truncatedText = isTrackNameTruncated ? track.name.substring(0, 9) + '...' : track.name;
 
   return (
-    <tr key={trackIndex} onClick={() => selectTrack(track)} className={` `}>
+    <tr key={trackIndex} onClick={() => selectTrack(track.id)} className={` `}>
       <td
         className={`sticky left-0 z-10 p-1 text-xs  text-gray-700 font-bold cursor-pointer rounded
           ${selectedTrack?.id === trackIndex ? 'bg-fuchsia-900 text-white' : 'bg-gray-950'}

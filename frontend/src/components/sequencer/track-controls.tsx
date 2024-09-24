@@ -11,11 +11,11 @@ import {
 import { useState } from 'react';
 import { useMouseMove } from '@/hooks/useMouseMove';
 
-interface TrackZoneProps {
+interface TrackControlsProps {
   selectedTrack: TTrack;
 }
 
-export const TrackZone: React.FC<TrackZoneProps> = ({ selectedTrack }) => {
+export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) => {
   const [playerVolume, setPlayerVolume] = useState(selectedTrack?.player?.volume.value || 0);
   const [eqThreeValues, setEqThreeValues] = useState({
     high: selectedTrack?.effects?.eqThree.high.value,
@@ -23,40 +23,44 @@ export const TrackZone: React.FC<TrackZoneProps> = ({ selectedTrack }) => {
     low: selectedTrack?.effects?.eqThree.low.value
   });
   const updateTrackSample = useSequencerStore((state) => state.updateTrackSample);
+
   const { handleMouseDown, handleMouseUp } = useMouseMove('y');
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>, item: string) => {
     event.preventDefault();
-    updateTrackSample(
-      `./assets/audio/Samples/${item}`,
-      selectedTrack.id,
-      item.replace(/\.[^/.]+$/, '')
-    );
+    if (selectedTrack) {
+      updateTrackSample(
+        `./assets/audio/Samples/${item}`,
+        selectedTrack.id,
+        item.replace(/\.[^/.]+$/, '')
+      );
+    }
   };
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
   };
 
   const handleTrackGain = (updateValue: number) => {
-    if (selectedTrack.player) {
+    if (selectedTrack && selectedTrack.player) {
       let newVolume = selectedTrack.player.volume.value + updateValue / 10;
       if (newVolume < sequencerVolumeLimits.min) {
         newVolume = sequencerVolumeLimits.min;
       } else if (newVolume > sequencerVolumeLimits.max) {
         newVolume = sequencerVolumeLimits.max;
       }
+
       selectedTrack.player.volume.value = newVolume;
       setPlayerVolume(newVolume);
     }
   };
   const resetTrackGain = () => {
-    if (selectedTrack.player) {
+    if (selectedTrack && selectedTrack.player) {
       selectedTrack.player.volume.value = sequencerDefaultVolume;
       setPlayerVolume(sequencerDefaultVolume);
     }
   };
   const handleTrackEQ = (updateValue: number, type: string | undefined) => {
-    if ((type && type === 'high') || type === 'mid' || type === 'low') {
+    if (selectedTrack && type && (type === 'high' || type === 'mid' || type === 'low')) {
       let newVolume = selectedTrack.effects.eqThree[type].value + updateValue / 10;
       if (newVolume < eqThreeVolumeLimits.min) {
         newVolume = eqThreeVolumeLimits.min;
@@ -69,13 +73,15 @@ export const TrackZone: React.FC<TrackZoneProps> = ({ selectedTrack }) => {
   };
 
   const resetTrackEQ = (type: 'high' | 'mid' | 'low') => {
-    selectedTrack.effects.eqThree[type].value = eqThreeDefaultVolume;
-    setEqThreeValues({ ...eqThreeValues, [type]: eqThreeDefaultVolume });
+    if (selectedTrack) {
+      selectedTrack.effects.eqThree[type].value = eqThreeDefaultVolume;
+      setEqThreeValues({ ...eqThreeValues, [type]: eqThreeDefaultVolume });
+    }
   };
 
   return (
     <div className='flex  items-center h-24'>
-      {!selectedTrack.player ? (
+      {!selectedTrack?.player ? (
         <div
           className=' p-4 bg-gray-700 w-64 rounded-lg text-md'
           onDrop={(event) => handleDrop(event, event.dataTransfer.getData('text'))}
@@ -88,7 +94,7 @@ export const TrackZone: React.FC<TrackZoneProps> = ({ selectedTrack }) => {
           <div className=' bg-gray-700 h-full p-1  flex flex-col gap-2 rounded '>
             <h4>{selectedTrack.name}</h4>
             <div
-              className='flex flex-col items-center justify-center h-screen'
+              className='flex flex-col items-center justify-center'
               onMouseDown={(e) => handleMouseDown(e, handleTrackGain)}
               onTouchStart={(e) => handleMouseDown(e, handleTrackGain)}
               onMouseUp={handleMouseUp}
