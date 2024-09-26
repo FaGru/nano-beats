@@ -1,7 +1,7 @@
 import * as Tone from 'tone';
 
 export type TTrack = {
-  id: number;
+  id: string;
   name: string;
   player: Tone.Player | null;
   effects: {
@@ -10,5 +10,11 @@ export type TTrack = {
     pitchShift: Tone.PitchShift;
     eqThree: Tone.EQ3;
   };
-  activeSteps: number[];
+};
+
+export type TPattern = {
+  trackTriggers: { trackId: string; activeSteps: number[] }[];
+  name: string;
+  id: string;
+  sequence: Tone.Sequence | null;
 };

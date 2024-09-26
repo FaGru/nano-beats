@@ -16,7 +16,7 @@ export const Timeline: React.FC<TimelineProps> = ({ steps, currentStep }) => {
             step === currentStep ? 'text-blue-500' : 'text-gray-700'
           }`}
         >
-          {step}
+          {step + 1}
         </th>
       ))}
     </tr>

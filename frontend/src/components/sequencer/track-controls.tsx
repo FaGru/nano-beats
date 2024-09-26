@@ -48,13 +48,13 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
         newVolume = sequencerVolumeLimits.max;
       }
       selectedTrack.player.volume.value = newVolume;
-      updateTrack(selectedTrack.id, selectedTrack);
+      updateTrack(selectedTrack);
     }
   };
   const resetTrackGain = () => {
     if (selectedTrack.player) {
       selectedTrack.player.volume.value = sequencerDefaultVolume;
-      updateTrack(selectedTrack.id, selectedTrack);
+      updateTrack(selectedTrack);
     }
   };
   const handleTrackEQ = (updateValue: number, type: string | undefined) => {
@@ -66,17 +66,17 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
         newVolume = eqThreeVolumeLimits.max;
       }
       selectedTrack.effects.eqThree[type].value = newVolume;
-      updateTrack(selectedTrack.id, selectedTrack);
+      updateTrack(selectedTrack);
     }
   };
 
   const resetTrackEQ = (type: 'high' | 'mid' | 'low') => {
     selectedTrack.effects.eqThree[type].value = eqThreeDefaultVolume;
-    updateTrack(selectedTrack.id, selectedTrack);
+    updateTrack(selectedTrack);
   };
 
   return (
-    <div className='flex  items-center h-24'>
+    <div className='flex gap-2  bg-gray-950 px-4 rounded-md h-[15vh]  p-1.5'>
       {!selectedTrack?.player ? (
         <div
           className=' p-4 bg-gray-700 w-64 rounded-lg text-md'
@@ -108,11 +108,11 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
               />
             </div>
           </div>
-          <div className='ml-2 bg-gray-700 h-full p-1 pt-0 flex gap-4 rounded'>
+          <div className=' bg-gray-700 h-full  p-1 pt-0 flex gap-4 rounded'>
             {Object.keys(eqThreeValues).map((type: string) => (
               <div
                 key={type}
-                className='flex flex-col text-xs relative items-center gap-1'
+                className='flex flex-col text-xs  items-center gap-0.5'
                 onMouseDown={(e) => handleMouseDown(e, handleTrackEQ, type)}
                 onTouchStart={(e) => handleMouseDown(e, handleTrackEQ)}
                 onMouseUp={handleMouseUp}
@@ -125,7 +125,7 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
                     Math.round(eqThreeValues[type as 'high' | 'mid' | 'low'] * 10) / 10
                   ).toFixed(1)}
                   orientation='vertical'
-                  height={'72px'}
+                  height='100%'
                   width='16px'
                   max={eqThreeVolumeLimits.max}
                   min={eqThreeVolumeLimits.min}

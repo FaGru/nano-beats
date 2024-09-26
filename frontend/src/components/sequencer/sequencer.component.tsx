@@ -1,10 +1,11 @@
 'use client';
 
 import { useSequencerStore } from './useSequencerStore';
-import { Controls } from './controls';
+import { Controls } from './controls/controls.component';
 import { SequencerTable } from './table/sequencer-table.component';
 import { Explorer } from './explorer';
 import { TrackControls } from './track-controls';
+import { SongTimeline } from './song-timeline';
 
 interface SequencerProps {
   audioFiles: string[];
@@ -12,19 +13,23 @@ interface SequencerProps {
 
 export const Sequencer: React.FC<SequencerProps> = ({ audioFiles }) => {
   const selectedTrackId = useSequencerStore((state) => state.selectedTrackId);
+  const selectedPatternId = useSequencerStore((state) => state.selectedPatternId);
+  const patterns = useSequencerStore((state) => state.patterns);
   const tracks = useSequencerStore((state) => state.tracks);
+
+  const selectedPattern = patterns.find((pattern) => pattern.id === selectedPatternId);
   const selectedTrack = tracks.find((track) => track.id === selectedTrackId);
 
   return (
     <div className='flex flex-col w-full  gap-1 '>
-      <Controls />
-      <div className='flex w-full gap-2 h-[65vh]'>
+      <Controls selectedPattern={selectedPattern} />
+      <SongTimeline />
+      <div className='flex w-full gap-2 h-[60vh]'>
         <Explorer audioFiles={audioFiles} selectedTrack={selectedTrack || null} />
-        <SequencerTable />
+        <SequencerTable selectedPattern={selectedPattern} />
       </div>
-      <div className='bg-gray-950 px-4 rounded-md min-h-28 flex items-center'>
-        {selectedTrack ? <TrackControls selectedTrack={selectedTrack} /> : null}
-      </div>
+
+      {selectedTrack ? <TrackControls selectedTrack={selectedTrack} /> : null}
     </div>
   );
 };

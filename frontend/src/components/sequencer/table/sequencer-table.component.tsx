@@ -1,17 +1,20 @@
 import { useToneStore } from '@/lib/state-managment/useToneStore';
-import { TTrack } from '../sequencer.types';
+
 import { useSequencerStore } from '../useSequencerStore';
 import { Timeline } from './timeline';
 import { Track } from './track';
 import { Puff } from 'react-loader-spinner';
+import { TPattern } from '../sequencer.types';
 
-interface SequencerTableProps {}
+interface SequencerTableProps {
+  selectedPattern: TPattern | undefined;
+}
 
-export const SequencerTable: React.FC<SequencerTableProps> = () => {
+export const SequencerTable: React.FC<SequencerTableProps> = ({ selectedPattern }) => {
   const tone = useToneStore((state) => state.tone);
-  const tracks = useSequencerStore((state) => state.tracks);
+
   const currentStep = useSequencerStore((state) => state.currentStep);
-  const steps = useSequencerStore((state) => state.steps);
+  const tracks = useSequencerStore((state) => state.tracks);
   const addTrack = useSequencerStore((state) => state.addTrack);
 
   if (!tone) {
@@ -26,27 +29,35 @@ export const SequencerTable: React.FC<SequencerTableProps> = () => {
     <div className='w-full  overflow-auto bg-gray-950  rounded pr-2 '>
       <table className='max-w-full table-fixed border-collapse '>
         <thead>
-          <Timeline steps={steps} currentStep={currentStep} />
+          {selectedPattern?.sequence ? (
+            <Timeline steps={selectedPattern.sequence.events} currentStep={currentStep} />
+          ) : null}
         </thead>
 
         <tbody>
           <tr>
             <td className='pt-2'></td>
           </tr>
-          {tracks.map((track, trackIndex) => (
-            <Track
-              key={trackIndex}
-              track={track}
-              steps={steps}
-              currentStep={currentStep}
-              trackIndex={trackIndex}
-            />
-          ))}
+          {tracks.map((track, trackIndex) =>
+            selectedPattern?.sequence ? (
+              <Track
+                key={trackIndex}
+                track={track}
+                steps={selectedPattern.sequence.events}
+                currentStep={currentStep}
+                trackIndex={trackIndex}
+                activeSteps={
+                  selectedPattern.trackTriggers.find((trigger) => trigger.trackId === track.id)
+                    ?.activeSteps || []
+                }
+              />
+            ) : null
+          )}
           <tr>
             <td className='sticky left-0 z-10 p-2'>
               <button
-                onClick={() => addTrack({ trackId: tracks.length })}
-                className={`my-4   text-gray-700 font-bold cursor-pointer `}
+                onClick={() => addTrack()}
+                className={`my-4   text-gray-600 font-bold cursor-pointer `}
               >
                 add track
               </button>
