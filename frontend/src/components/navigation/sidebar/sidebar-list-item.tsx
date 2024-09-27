@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/button';
 import { useGlobalStore } from '@/lib/state-managment/useGlobalStore';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,21 +14,24 @@ export const ListItem: React.FC<ListItemProps> = ({ config }) => {
   const isSidebarOpen = useGlobalStore((state) => state.isSidebarOpen);
 
   return (
-    <Link
-      href={config.pathname}
-      className={`flex gap-2 p-2 pl-3 text-sm rounded whitespace-nowrap  ${pathname === config.pathname ? 'bg-fuchsia-900' : 'hover:bg-fuchsia-950'}`}
+    <Button
+      asChild
+      className={'flex  gap-1 whitespace-nowrap justify-start py-1 px-3  '}
+      variant={pathname === config.pathname ? 'default' : 'ghost'}
     >
-      <Image
-        src={`./assets/icons/navbar/${config.image}`}
-        width={20}
-        height={20}
-        alt={config.name}
-      />
-      <p
-        className={`transition-all duration-500 ease-in-out origin-left ${isSidebarOpen ? '' : 'scale-0 opacity-0'}`}
-      >
-        {config.name}
-      </p>
-    </Link>
+      <Link href={config.pathname}>
+        <Image
+          src={`./assets/icons/navbar/${config.image}`}
+          width={20}
+          height={20}
+          alt={config.name}
+        />
+        <span
+          className={`transition-all duration-500 ease-in-out origin-left ${isSidebarOpen ? '' : 'scale-0 opacity-0'}`}
+        >
+          {config.name}
+        </span>
+      </Link>
+    </Button>
   );
 };
