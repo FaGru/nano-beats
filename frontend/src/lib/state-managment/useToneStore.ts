@@ -22,7 +22,6 @@ export const useToneStore = create<ToneState & ToneActions>()((set, get) => ({
       const { initSequencer } = useSequencerStore.getState();
       const { initDrumPadPlayers } = useDrumMachineStore.getState();
       if (!tone) {
-        console.log('init devices');
         get().initTone();
         initSequencer();
         initDrumPadPlayers();

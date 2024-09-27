@@ -1,3 +1,4 @@
+import { useSequencerStore } from '@/components/sequencer/useSequencerStore';
 import { useEffect, useRef } from 'react';
 
 export const useMouseMove = (permittedAxes?: 'x' | 'y') => {
@@ -31,7 +32,6 @@ export const useMouseMove = (permittedAxes?: 'x' | 'y') => {
     window.removeEventListener('touchmove', handleTouchMove);
     window.removeEventListener('mouseup', handleMouseUp);
     window.removeEventListener('touchend', handleMouseUp);
-    console.log('break');
   };
 
   const handleTouchMove = (e: TouchEvent) => {
@@ -75,17 +75,9 @@ export const useMouseMove = (permittedAxes?: 'x' | 'y') => {
     let adjustedValue = Math.sign(updateValue) * Math.pow(Math.abs(updateValue), 2);
     if (updateValue > 6) adjustedValue = 36;
     if (updateValue < -6) adjustedValue = -36;
+
     callbackFuncRef.current(adjustedValue, callbackType);
   };
-
-  useEffect(() => {
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchend', handleMouseUp);
-    };
-  }, []);
 
   return { handleMouseDown, handleMouseUp };
 };
