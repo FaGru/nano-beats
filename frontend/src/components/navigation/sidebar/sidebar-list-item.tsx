@@ -11,7 +11,7 @@ interface ListItemProps {
 }
 
 const NavIcon: React.FC<{ icon: string }> = ({ icon }) => {
-  const sharedStyle = 'mr-0';
+  const sharedStyle = 'mr-2 h-6 w-6 text-center';
   switch (icon) {
     case 'drum-machine':
       return <Drum className={sharedStyle} />;
@@ -34,7 +34,7 @@ export const ListItem: React.FC<ListItemProps> = ({ config }) => {
   return (
     <Button
       asChild
-      className={'flex  gap-1 whitespace-nowrap justify-start py-1 px-3  '}
+      className={'flex  gap-1 whitespace-nowrap justify-start py-1 px-2.5  '}
       variant={pathname === config.pathname ? 'default' : 'ghost'}
     >
       <Link href={config.pathname}>
