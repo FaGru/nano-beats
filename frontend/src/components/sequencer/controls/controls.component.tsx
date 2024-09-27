@@ -20,6 +20,7 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
   const patterns = useSequencerStore((state) => state.patterns);
   const addPattern = useSequencerStore((state) => state.addPattern);
   const setSelectedPatternId = useSequencerStore((state) => state.setSelectedPatternId);
+  const playSong = useSequencerStore((state) => state.playSong);
 
   const { handleMouseDown, handleMouseUp } = useMouseMove('y');
 
@@ -40,7 +41,7 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
     <div className='flex bg-gray-950 p-1 rounded w-full h-[6vh] gap-4 items-center px-2'>
       <button
         type='button'
-        onClick={startStopSequencer}
+        onClick={() => (mode === 'pattern' ? startStopSequencer() : playSong())}
         className={` w-12 rounded ${!isPlaying ? 'bg-green-500 hover:bg-green-600' : 'bg-red-900 hover:bg-red-950'} `}
       >
         {isPlaying ? 'Stop' : 'Play'}

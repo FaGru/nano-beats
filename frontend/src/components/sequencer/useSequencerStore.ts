@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import * as Tone from 'tone';
-import { TPattern, TTrack } from './sequencer.types';
+import { TPattern, TSong, TTrack } from './sequencer.types';
 import { eqThreeDefaultVolume, sequencerBpmLimits } from './sequencer.constants';
 import { nanoid } from 'nanoid';
 
@@ -15,7 +15,8 @@ type SequencerState = {
   sequencerBpm: number;
   mode: 'pattern' | 'song';
   patterns: TPattern[] | [];
-  song: string[] | [];
+  song: TSong;
+  playedSongPatterns: number;
 };
 
 type SequencerActions = {
@@ -36,6 +37,10 @@ type SequencerActions = {
   getSelectedPattern: () => TPattern | undefined;
   getSelectedTrack: () => TTrack | undefined;
   addSequence: (sequenceLength: number) => Tone.Sequence;
+  addPatternToSong: () => void;
+  removePatternFromSong: (patternId: string) => void;
+  playSong: () => void;
+  updateSongOrder: (newOrder: TSong) => void;
 };
 
 export const useSequencerStore = create<SequencerState & SequencerActions>()((set, get) => ({
@@ -55,6 +60,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     }
   ],
   song: [],
+  playedSongPatterns: 0,
 
   initSequencer: () => {
     const { addTrack } = get();
@@ -195,6 +201,17 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     set({ selectedTrackId: trackId });
   },
   setMode: (newMode) => {
+    const isPlaying = get().isPlaying;
+    if (isPlaying) get().startStopSequencer();
+    // const allPatterns = get().patterns;
+    // allPatterns.forEach((pattern) => {
+    //   if (newMode === 'song' && pattern.sequence) {
+    //     pattern.sequence.loop = false;
+    //   }
+    //   if (newMode === 'pattern' && pattern.sequence) {
+    //     pattern.sequence.loop = true;
+    //   }
+    // });
     set({ mode: newMode });
   },
   addPattern: () => {
@@ -232,6 +249,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   addSequence: (sequenceLength) => {
     return new Tone.Sequence(
       (_, step) => {
+        const mode = get().mode;
+
         const pattern = get().getSelectedPattern();
         if (pattern) {
           set({ currentStep: step });
@@ -241,9 +260,70 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
             }
           });
         }
+
+        if (mode === 'song') {
+          set({ currentStep: step });
+          const pattern = get().getSelectedPattern();
+          const song = get().song;
+          const playedSongPatterns = get().playedSongPatterns;
+
+          if (pattern && pattern.sequence) {
+            // stop song after last pattern
+            if (playedSongPatterns === song.length) {
+              pattern.sequence.stop();
+            }
+
+            if (step + 1 === pattern.sequence.events.length) {
+              set({ playedSongPatterns: playedSongPatterns + 1 });
+              pattern.sequence.stop();
+              if (playedSongPatterns + 1 >= song.length) {
+                set({ isPlaying: false, currentStep: 0, playedSongPatterns: 0 });
+              } else {
+                const patterns = get().patterns;
+                const newPattern = patterns.find(
+                  (pattern) => pattern.id === song[playedSongPatterns + 1].patternId
+                );
+                if (newPattern) {
+                  pattern.sequence.stop();
+                  set({ selectedPatternId: newPattern.id });
+                  const newSelectedPattern = get().getSelectedPattern();
+                  if (newSelectedPattern && newSelectedPattern.sequence) {
+                    newSelectedPattern.sequence.start();
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       Array.from({ length: sequenceLength }, (_, i) => i),
       '16n'
     );
+  },
+  addPatternToSong: () => {
+    const selectedPattern = get().getSelectedPattern();
+    if (selectedPattern) {
+      set((state) => ({
+        song: [
+          ...state.song,
+          { patternId: selectedPattern?.id, patternName: selectedPattern.name, id: nanoid() }
+        ]
+      }));
+    }
+  },
+  removePatternFromSong: (id) => {
+    console.log('remove');
+    set((state) => ({
+      song: state.song.filter((pattern) => pattern.id !== id)
+    }));
+    console.log('song after remove ', get().song);
+  },
+  updateSongOrder: (newOrder) => set({ song: newOrder }),
+  playSong: () => {
+    const song = get().song;
+    if (song.length) {
+      set({ selectedPatternId: song[0].patternId });
+      get().startStopSequencer();
+    }
   }
 }));

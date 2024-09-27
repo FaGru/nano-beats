@@ -18,3 +18,5 @@ export type TPattern = {
   id: string;
   sequence: Tone.Sequence | null;
 };
+
+export type TSong = { id: string; patternName: string; patternId: string }[];
