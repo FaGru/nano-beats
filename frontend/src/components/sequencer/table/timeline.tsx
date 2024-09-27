@@ -13,7 +13,7 @@ export const Timeline: React.FC<TimelineProps> = ({ steps, currentStep }) => {
         <th
           key={index}
           className={`sticky top-0  z-10 p-1   shadow-[inset_0px_-1px_0px_0px] shadow-neutral-700 ${
-            step === currentStep ? 'text-primary' : 'text-primary-foreground'
+            step === currentStep ? 'text-primary' : ''
           }`}
         >
           {step + 1}
