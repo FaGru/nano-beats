@@ -39,7 +39,7 @@ export const DrumMachine: React.FC<DrumMachineProps> = () => {
   }, []);
 
   return (
-    <div className='flex flex-col items-center justify-center rounded-xl bg-background  p-2 shadow-[inset_0_0_8px_2px] shadow-gray-950'>
+    <div className='flex flex-col items-center justify-center rounded-xl bg-background  p-2 shadow-[inset_0_0_8px_2px] shadow-muted border'>
       <div className='flex  space-x-4 my-4 h-16'></div>
       <div className='grid grid-cols-4 gap-1.5 mb-8'>
         {drumPadConfig.map((padConfig, index) => (

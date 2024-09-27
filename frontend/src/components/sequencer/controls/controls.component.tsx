@@ -5,6 +5,15 @@ import { stepsLimits } from '../sequencer.constants';
 import { TPattern } from '../sequencer.types';
 import { Button } from '@/components/ui/button';
 import { Pause, Play } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectValue,
+  SelectItem,
+  SelectTrigger
+} from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Separator } from '@/components/ui/separator';
 
 interface ControlProps {
   selectedPattern: TPattern | undefined;
@@ -41,27 +50,32 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
 
   return (
     <div className='flex bg-background border-neutral-600 border p-1 rounded-t-md w-full h-[6vh] gap-4 items-center px-2'>
-      <Button onClick={() => (mode === 'pattern' ? startStopSequencer() : playSong())} size='xs'>
+      <Button
+        onClick={() => (mode === 'pattern' ? startStopSequencer() : playSong())}
+        size='xs'
+        className='w-16'
+      >
         {isPlaying ? <Pause className='h-4 w-4 mr-1' /> : <Play className='h-4 w-4 mr-1' />}
         {isPlaying ? 'Stop' : 'Play'}
       </Button>
       <div
-        className='text-md relative  bg-secondary w-16 rounded text-center cursor-pointer border'
+        className=''
         onMouseDown={(e) => handleMouseDown(e, setSequencerBpm)}
         onTouchStart={(e) => handleMouseDown(e, setSequencerBpm)}
         onMouseUp={handleMouseUp}
         onTouchEnd={handleMouseUp}
       >
-        <p className='absolute text-[0.50rem] -top-[0.11rem] left-1.5 z-20 align-top bg-secondary leading-[0.15rem] px-1'>
-          bpm
+        <p className='relative  bg-secondary h-6 w-16 rounded-md text-center cursor-pointer border'>
+          <span className='absolute text-[0.50rem] -top-[0.425rem] left-1.5 z-20 '>bpm</span>
+          {(Math.round(sequencerBpm * 10) / 10).toFixed(1)}
         </p>
-        <p>{(Math.round(sequencerBpm * 10) / 10).toFixed(1)}</p>
       </div>
 
-      <div className='rounded border bg-secondary flex'>
-        <button
-          type='button'
-          className='w-4'
+      <div className='rounded-md h-6 border bg-secondary flex items-center'>
+        <Button
+          variant='ghost'
+          size='xs'
+          className='w-4 '
           onClick={() =>
             handleStepLength(
               selectedPattern?.sequence ? selectedPattern.sequence.events.length - 4 : 0
@@ -69,17 +83,14 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
           }
         >
           -
-        </button>
-
-        <p className='w-12 text-center  border-x relative'>
-          <span className='absolute text-[0.50rem] -top-[0.11rem] -left-0 z-20 align-top bg-secondary leading-[0.15rem] px-0.5'>
-            steps
-          </span>
+        </Button>
+        <p className='w-8 h-6 text-center relative'>
+          <span className='absolute text-[0.50rem] -top-1.5 -left-2.5 z-20 '>steps</span>
           {selectedPattern?.sequence?.events.length}
         </p>
-
-        <button
-          type='button'
+        <Button
+          variant='ghost'
+          size='xs'
           className='w-4'
           onClick={() =>
             handleStepLength(
@@ -88,33 +99,39 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
           }
         >
           +
-        </button>
+        </Button>
       </div>
 
-      <div className='relative  bg-secondary w-20 rounded text-center  cursor-pointer border'>
-        <p className='absolute text-[0.50rem] -top-[0.11rem] left-1.5 z-20 align-top bg-secondary leading-[0.15rem] px-1'>
-          mode
-        </p>
-        <button onClick={() => setMode(mode === 'pattern' ? 'song' : 'pattern')}>{mode}</button>
+      <div>
+        <Button
+          variant='secondary'
+          size='xs'
+          className='relative w-20'
+          onClick={() => setMode(mode === 'pattern' ? 'song' : 'pattern')}
+        >
+          <span className='absolute text-[0.50rem] -top-2.5 left-2 z-20'>mode</span>
+          {mode}
+        </Button>
       </div>
-      <div className='relative  bg-secondary  rounded text-center  cursor-pointer border'>
-        <p className='absolute text-[0.50rem] -top-[0.11rem] left-1.5 z-20 align-top bg-secondary leading-[0.15rem] px-1'>
-          pattern
-        </p>
-        <label>
-          <select
-            className='bg-secondary '
-            value={selectedPattern?.id}
-            onChange={(e) => handlePatternChange(e.target.value)}
-          >
+
+      <div>
+        <Select value={selectedPattern?.id} onValueChange={(value) => handlePatternChange(value)}>
+          <SelectTrigger className='w-32 h-6 relative pl-4 pr-1'>
+            <span className='absolute text-[0.50rem] -top-[0.7rem] left-2 z-20'>pattern</span>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {/* <SelectLabel>PATTERNS</SelectLabel> */}
             {patterns.map((pattern) => (
-              <option value={pattern.id} key={pattern.name}>
+              <SelectItem value={pattern.id} key={pattern.name}>
                 {pattern.name}
-              </option>
+              </SelectItem>
             ))}
-            <option value='new'>+ NEW</option>
-          </select>
-        </label>
+            <SelectItem className='' value='new'>
+              ADD NEW
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
