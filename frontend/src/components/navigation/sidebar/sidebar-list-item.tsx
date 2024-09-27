@@ -1,13 +1,31 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { useGlobalStore } from '@/lib/state-managment/useGlobalStore';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { NavigationItem } from './navigation.types';
+import { AudioLines, Circle, Disc3, Drum } from 'lucide-react';
 
 interface ListItemProps {
-  config: any;
+  config: NavigationItem;
 }
+
+const NavIcon: React.FC<{ icon: string }> = ({ icon }) => {
+  const sharedStyle = 'mr-0';
+  switch (icon) {
+    case 'drum-machine':
+      return <Drum className={sharedStyle} />;
+
+    case 'sequencer':
+      return <AudioLines className={sharedStyle} />;
+
+    case 'dj':
+      return <Disc3 className={sharedStyle} />;
+
+    default:
+      return <Circle className={sharedStyle} />;
+  }
+};
 
 export const ListItem: React.FC<ListItemProps> = ({ config }) => {
   const pathname = usePathname();
@@ -20,12 +38,9 @@ export const ListItem: React.FC<ListItemProps> = ({ config }) => {
       variant={pathname === config.pathname ? 'default' : 'ghost'}
     >
       <Link href={config.pathname}>
-        <Image
-          src={`./assets/icons/navbar/${config.image}`}
-          width={20}
-          height={20}
-          alt={config.name}
-        />
+        <div>
+          <NavIcon icon={config.icon} />
+        </div>
         <span
           className={`transition-all duration-500 ease-in-out origin-left ${isSidebarOpen ? '' : 'scale-0 opacity-0'}`}
         >

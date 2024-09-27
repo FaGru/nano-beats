@@ -5,6 +5,7 @@ import { navigationConfig } from './sidebar.config';
 import Link from 'next/link';
 import { SidebarOpenClose } from './sidebar-open-close';
 import { useGlobalStore } from '@/lib/state-managment/useGlobalStore';
+import { NavigationHeader } from './navigation.types';
 
 interface SidebarProps {}
 
@@ -21,7 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
       </div>
       {navigationConfig.map((config) => (
         <div key={config.name}>
-          {config.type === 'header' ? <SidebarList config={config} /> : null}
+          {config.type === 'header' ? <SidebarList config={config as NavigationHeader} /> : null}
         </div>
       ))}
       <SidebarOpenClose />

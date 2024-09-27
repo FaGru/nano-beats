@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { navigationConfig } from './sidebar/sidebar.config';
 import { SidebarList } from './sidebar/sidebar-list';
 import Image from 'next/image';
+import { NavigationHeader } from './sidebar/navigation.types';
 
 interface MobileNavProps {}
 
@@ -25,7 +26,9 @@ export const MobileNav: React.FC<MobileNavProps> = () => {
         <nav className='grid gap-2'>
           {navigationConfig.map((config) => (
             <div key={config.name}>
-              {config.type === 'header' ? <SidebarList config={config} /> : null}
+              {config.type === 'header' ? (
+                <SidebarList config={config as NavigationHeader} />
+              ) : null}
             </div>
           ))}
         </nav>
