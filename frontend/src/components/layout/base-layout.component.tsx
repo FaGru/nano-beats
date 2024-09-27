@@ -17,14 +17,14 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   });
 
   return (
-    <div className='flex h-screen overflow-hidden  relative'>
+    <div className='flex h-screen overflow-hidden '>
       <Sidebar />
       <div className='p-2  bg-gray-800 md:hidden '>
         <MobileNav />
       </div>
       <div className='flex-1 flex flex-col overflow-hidden'>
         <Topbar />
-        <main className='flex-1 overflow-auto p-1 bg-gray-800'>
+        <main className='flex-1 overflow-auto p-1 bg-neutral-800'>
           {tone ? (
             children
           ) : (

@@ -12,7 +12,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
   const isSidebarOpen = useGlobalStore((state) => state.isSidebarOpen);
   return (
     <aside
-      className={`relative  flex gap-16 flex-col ${isSidebarOpen ? 'w-48' : 'w-16'} transition-all duration-500 ease-in-out hidden  md:flex border-gray-700 border-r-2`}
+      className={`relative  flex gap-16 flex-col ${isSidebarOpen ? 'w-48' : 'w-16'} transition-all duration-500 ease-in-out hidden  md:flex border-neutral-700 border-r `}
     >
       <div className='p-2 justify-self-center self-center h-12'>
         <Link href='/'>
