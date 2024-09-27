@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { TTrack } from './sequencer.types';
 import { useSequencerStore } from './useSequencerStore';
+import { Button } from '../ui/button';
 
 interface ExplorerProps {
   audioFiles: string[];
@@ -30,40 +31,33 @@ export const Explorer: React.FC<ExplorerProps> = ({ audioFiles, selectedTrack })
     }
   }, [selectedTrack, audioFiles]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (listRef.current && document.activeElement === listRef.current) {
-        event.preventDefault();
-        switch (event.key) {
-          case 'ArrowUp':
-            setActiveItemIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-            break;
-          case 'ArrowDown':
-            setActiveItemIndex((prevIndex) => Math.min(prevIndex + 1, audioFiles.length - 1));
-            break;
-          case 'Enter':
-            if (selectedTrack) {
-              updateTrackSample(
-                `./assets/audio/Samples/${audioFiles[activeItemIndex]}`,
-                selectedTrack.id,
-                audioFiles[activeItemIndex].replace(/\.[^/.]+$/, '')
-              );
-            }
-            break;
+  const handleKeyDown = (event: any) => {
+    event.preventDefault();
+    switch (event.key) {
+      case 'ArrowUp':
+        setActiveItemIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+        break;
+      case 'ArrowDown':
+        setActiveItemIndex((prevIndex) => Math.min(prevIndex + 1, audioFiles.length - 1));
+        break;
+      case 'Enter':
+        if (selectedTrack) {
+          updateTrackSample(
+            `./assets/audio/Samples/${audioFiles[activeItemIndex]}`,
+            selectedTrack.id,
+            audioFiles[activeItemIndex].replace(/\.[^/.]+$/, '')
+          );
         }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [activeItemIndex, audioFiles, selectedTrack, updateTrackSample]);
+        break;
+    }
+  };
 
   return (
     <div className='p-2  overflow-auto w-[15vw] bg-neutral-950 border-neutral-600 border border-r-0'>
-      <ul ref={listRef} tabIndex={0} className='focus:outline-none'>
+      <ul ref={listRef} tabIndex={0} className='focus:outline-none' onKeyDown={handleKeyDown}>
         {audioFiles.map((file, index) => (
           <li
-            className={`text-xs p-1 cursor-pointer rounded ${index === activeItemIndex ? 'bg-fuchsia-900' : ''}`}
+            className={`text-xs cursor-pointer rounded focus:outline-none`}
             key={file}
             // @ts-ignore
             ref={(el) => (itemRefs.current[index] = el)}
@@ -80,7 +74,13 @@ export const Explorer: React.FC<ExplorerProps> = ({ audioFiles, selectedTrack })
             }}
             onClick={() => setActiveItemIndex(index)}
           >
-            {file}
+            <Button
+              variant={index === activeItemIndex ? 'default' : 'ghost'}
+              className='flex justify-start w-full focus-visible:ring-0'
+              size='xs'
+            >
+              {file.replace(/\.[^/.]+$/, '')}
+            </Button>
           </li>
         ))}
       </ul>
