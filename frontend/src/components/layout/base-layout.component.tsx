@@ -4,6 +4,7 @@ import { Sidebar } from '../navigation/sidebar/sidebar.component';
 import { Topbar } from '../navigation/topbar/topbar.component';
 import { useToneStore } from '@/lib/state-managment/useToneStore';
 import { Puff } from 'react-loader-spinner';
+import { MobileNav } from '../navigation/mobile-nav.component';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -16,8 +17,11 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   });
 
   return (
-    <div className='flex h-screen overflow-hidden'>
+    <div className='flex h-screen overflow-hidden  relative'>
       <Sidebar />
+      <div className='p-2  bg-gray-800 md:hidden '>
+        <MobileNav />
+      </div>
       <div className='flex-1 flex flex-col overflow-hidden'>
         <Topbar />
         <main className='flex-1 overflow-auto p-1 bg-gray-800'>

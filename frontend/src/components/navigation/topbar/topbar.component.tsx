@@ -2,7 +2,7 @@ interface TopbarProps {}
 
 export const Topbar: React.FC<TopbarProps> = ({}) => {
   return (
-    <header className='bg-gray-900 h-[8vh] '>
+    <header className=' h-[8vh] hidden md:flex'>
       <div>Topbar</div>
     </header>
   );
