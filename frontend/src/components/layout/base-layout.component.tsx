@@ -34,9 +34,8 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
                 visible={true}
                 height='40'
                 width='40'
-                color='#38bdf8'
+                color={'hsl(var(--primary))'}
                 ariaLabel='puff-loading'
-                wrapperStyle={{}}
               />
             </div>
           )}
