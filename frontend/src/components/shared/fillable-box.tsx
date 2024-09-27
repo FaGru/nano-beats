@@ -24,14 +24,14 @@ export const FillableBox: React.FC<FillableBoxProps> = ({
       style={{ height, width }}
     >
       <div
-        className='bg-blue-500 absolute bottom-0 left-0'
+        className='bg-primary absolute bottom-0 left-0'
         style={
           orientation === 'vertical'
             ? { height: `${percentage}%`, width: '100%' }
             : { height: '100%', width: `${percentage}%` }
         }
       />
-      <div className='absolute inset-0 flex items-center justify-center text-white font-bold text-xs'>
+      <div className='absolute inset-0 flex items-center justify-center  font-bold text-xs'>
         {value} {valueType}
       </div>
     </div>

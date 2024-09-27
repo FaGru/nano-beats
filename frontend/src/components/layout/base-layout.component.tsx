@@ -19,16 +19,16 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   return (
     <div className='flex h-screen overflow-hidden '>
       <Sidebar />
-      <div className='p-2  bg-neutral-800 md:hidden '>
+      <div className='p-2  bg-secondary md:hidden '>
         <MobileNav />
       </div>
       <div className='flex-1 flex flex-col overflow-hidden'>
         <Topbar />
-        <main className='flex-1 overflow-auto p-1 bg-neutral-800'>
+        <main className='flex-1 overflow-auto p-1 bg-secondary'>
           {tone ? (
             children
           ) : (
-            <div className='flex h-full items-center justify-center flex-col content-around gap-4 bg-neutral-950 rounded'>
+            <div className='flex h-full items-center justify-center flex-col content-around gap-4 bg-background rounded'>
               <p>Click Or Touch to activate the Devices</p>
               <Puff
                 visible={true}
@@ -37,7 +37,6 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
                 color='#38bdf8'
                 ariaLabel='puff-loading'
                 wrapperStyle={{}}
-                wrapperClass='decoration-fuchsia-900'
               />
             </div>
           )}

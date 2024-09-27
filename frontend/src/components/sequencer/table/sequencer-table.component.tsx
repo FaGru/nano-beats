@@ -5,6 +5,7 @@ import { Timeline } from './timeline';
 import { Track } from './track';
 import { Puff } from 'react-loader-spinner';
 import { TPattern } from '../sequencer.types';
+import { Separator } from '@/components/ui/separator';
 
 interface SequencerTableProps {
   selectedPattern: TPattern | undefined;
@@ -19,14 +20,14 @@ export const SequencerTable: React.FC<SequencerTableProps> = ({ selectedPattern 
 
   if (!tone) {
     return (
-      <div className='w-full bg-neutral-950  rounded  flex items-center justify-center'>
+      <div className='w-full bg-background  rounded  flex items-center justify-center'>
         <Puff />
       </div>
     );
   }
 
   return (
-    <div className='w-full  overflow-auto bg-neutral-950 border-neutral-600 border pr-2 '>
+    <div className='w-full  overflow-auto bg-background border-neutral-600 border pr-2 '>
       <table className='max-w-full table-fixed border-collapse '>
         <thead>
           {selectedPattern?.sequence ? (

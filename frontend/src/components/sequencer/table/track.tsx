@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { TTrack } from '../sequencer.types';
 import { useSequencerStore } from '../useSequencerStore';
 
@@ -21,10 +22,20 @@ export const Track: React.FC<TrackProps> = ({
   const selectTrack = useSequencerStore((state) => state.selectTrack);
   const selectedTrackId = useSequencerStore((state) => state.selectedTrackId);
 
+  const getVariant = (index: number) => {
+    let variant = 'basic';
+    if (index === currentStep && isPlaying) {
+      variant = 'default';
+    } else if (activeSteps.includes(index)) {
+      variant = 'secondary';
+    }
+    return variant as 'basic' | 'default' | 'secondary';
+  };
+
   const getColors = (index: number) => {
     let colors = 'bg-neutral-300';
     if (index === currentStep && isPlaying) {
-      colors = 'bg-blue-500';
+      colors = 'bg-primary';
     } else if (activeSteps.includes(index)) {
       colors = 'bg-neutral-500';
     }
@@ -37,18 +48,24 @@ export const Track: React.FC<TrackProps> = ({
   return (
     <tr key={trackIndex} onClick={() => selectTrack(track.id)} className={` `}>
       <td
-        className={`sticky left-0 z-10 p-1 text-xs  text-gray-700 font-bold cursor-pointer rounded
-          ${selectedTrackId === track.id ? 'bg-fuchsia-900 text-white' : ''}
+        className={`sticky left-0 z-10 text-xs   font-bold cursor-pointer rounded
+      
           `}
       >
-        <span title={isTrackNameTruncated ? track.name : ''}>{truncatedText}</span>
+        <Button
+          variant={selectedTrackId === track.id ? 'default' : 'ghost'}
+          title={isTrackNameTruncated ? track.name : ''}
+          className='w-full flex justify-start'
+        >
+          {truncatedText}
+        </Button>
       </td>
       {steps.map((step) => (
         <td key={step}>
-          <button
+          <Button
             key={step}
-            className={`w-12 h-12 rounded hover:bg-blue-400 focus:outline-none align-middle ${step % 4 === 3 ? 'mr-1' : ''}
-            ${getColors(step)}
+            className={`w-12 h-12 rounded focus-visible:ring-0 align-middle ${step % 4 === 3 ? 'mr-1' : ''}
+            hover:bg-primary ${getColors(step)}
         `}
             onClick={() => updateStepTrigger(track.id, step)}
           />

@@ -53,7 +53,7 @@ export const Explorer: React.FC<ExplorerProps> = ({ audioFiles, selectedTrack })
   };
 
   return (
-    <div className='p-2  overflow-auto w-[15vw] bg-neutral-950 border-neutral-600 border border-r-0'>
+    <div className='p-2  overflow-auto w-[15vw] bg-background border-neutral-600 border border-r-0'>
       <ul ref={listRef} tabIndex={0} className='focus:outline-none' onKeyDown={handleKeyDown}>
         {audioFiles.map((file, index) => (
           <li
