@@ -76,10 +76,10 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
   };
 
   return (
-    <div className='flex gap-2  bg-gray-950 px-4 rounded-md h-[15vh]  p-1.5'>
+    <div className='flex gap-2 bg-neutral-950 border-neutral-600 border border-t-0 px-4 rounded-b-md h-[15vh]  p-1.5'>
       {!selectedTrack?.player ? (
         <div
-          className=' p-4 bg-gray-700 w-64 rounded-lg text-md'
+          className=' p-4 bg-neutral-700 w-64 rounded-lg text-md'
           onDrop={(event) => handleDrop(event, event.dataTransfer.getData('text'))}
           onDragOver={handleDragOver}
         >
@@ -87,7 +87,7 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
         </div>
       ) : (
         <>
-          <div className=' bg-gray-700 h-full p-1  flex flex-col gap-2 rounded '>
+          <div className=' bg-neutral-700 h-full p-1  flex flex-col gap-2 rounded '>
             <h4>{selectedTrack.name}</h4>
             <div
               className='flex flex-col items-center justify-center'
@@ -108,7 +108,7 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
               />
             </div>
           </div>
-          <div className=' bg-gray-700 h-full  p-1 pt-0 flex gap-4 rounded'>
+          <div className=' bg-neutral-700 h-full  p-1 pt-0 flex gap-4 rounded'>
             {Object.keys(eqThreeValues).map((type: string) => (
               <div
                 key={type}

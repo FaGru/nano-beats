@@ -59,7 +59,7 @@ export const Explorer: React.FC<ExplorerProps> = ({ audioFiles, selectedTrack })
   }, [activeItemIndex, audioFiles, selectedTrack, updateTrackSample]);
 
   return (
-    <div className='p-2 bg-gray-950 overflow-auto w-[15vw] rounded'>
+    <div className='p-2  overflow-auto w-[15vw] bg-neutral-950 border-neutral-600 border border-r-0'>
       <ul ref={listRef} tabIndex={0} className='focus:outline-none'>
         {audioFiles.map((file, index) => (
           <li

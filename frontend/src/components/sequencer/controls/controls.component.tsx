@@ -38,7 +38,7 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
   };
 
   return (
-    <div className='flex bg-gray-950 p-1 rounded w-full h-[6vh] gap-4 items-center px-2'>
+    <div className='flex bg-neutral-950 border-neutral-600 border p-1 rounded-t-md w-full h-[6vh] gap-4 items-center px-2'>
       <button
         type='button'
         onClick={() => (mode === 'pattern' ? startStopSequencer() : playSong())}
@@ -47,19 +47,19 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
         {isPlaying ? 'Stop' : 'Play'}
       </button>
       <div
-        className='text-md relative  bg-gray-700 w-16 rounded text-center cursor-pointer border'
+        className='text-md relative  bg-neutral-700 w-16 rounded text-center cursor-pointer border'
         onMouseDown={(e) => handleMouseDown(e, setSequencerBpm)}
         onTouchStart={(e) => handleMouseDown(e, setSequencerBpm)}
         onMouseUp={handleMouseUp}
         onTouchEnd={handleMouseUp}
       >
-        <p className='absolute text-[0.50rem] -top-[0.11rem] left-1.5 z-20 align-top bg-gray-700 leading-[0.15rem] px-1'>
+        <p className='absolute text-[0.50rem] -top-[0.11rem] left-1.5 z-20 align-top bg-neutral-700 leading-[0.15rem] px-1'>
           bpm
         </p>
         <p>{(Math.round(sequencerBpm * 10) / 10).toFixed(1)}</p>
       </div>
 
-      <div className='rounded border bg-gray-700 flex'>
+      <div className='rounded border bg-neutral-700 flex'>
         <button
           type='button'
           className='w-4'
@@ -73,7 +73,7 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
         </button>
 
         <p className='w-12 text-center  border-x relative'>
-          <span className='absolute text-[0.50rem] -top-[0.11rem] -left-0 z-20 align-top bg-gray-700 leading-[0.15rem] px-0.5'>
+          <span className='absolute text-[0.50rem] -top-[0.11rem] -left-0 z-20 align-top bg-neutral-700 leading-[0.15rem] px-0.5'>
             steps
           </span>
           {selectedPattern?.sequence?.events.length}
@@ -92,19 +92,19 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
         </button>
       </div>
 
-      <div className='relative  bg-gray-700 w-20 rounded text-center  cursor-pointer border'>
-        <p className='absolute text-[0.50rem] -top-[0.11rem] left-1.5 z-20 align-top bg-gray-700 leading-[0.15rem] px-1'>
+      <div className='relative  bg-neutral-700 w-20 rounded text-center  cursor-pointer border'>
+        <p className='absolute text-[0.50rem] -top-[0.11rem] left-1.5 z-20 align-top bg-neutral-700 leading-[0.15rem] px-1'>
           mode
         </p>
         <button onClick={() => setMode(mode === 'pattern' ? 'song' : 'pattern')}>{mode}</button>
       </div>
-      <div className='relative  bg-gray-700  rounded text-center  cursor-pointer border'>
-        <p className='absolute text-[0.50rem] -top-[0.11rem] left-1.5 z-20 align-top bg-gray-700 leading-[0.15rem] px-1'>
+      <div className='relative  bg-neutral-700  rounded text-center  cursor-pointer border'>
+        <p className='absolute text-[0.50rem] -top-[0.11rem] left-1.5 z-20 align-top bg-neutral-700 leading-[0.15rem] px-1'>
           pattern
         </p>
         <label>
           <select
-            className='bg-gray-700 '
+            className='bg-neutral-700 '
             value={selectedPattern?.id}
             onChange={(e) => handlePatternChange(e.target.value)}
           >

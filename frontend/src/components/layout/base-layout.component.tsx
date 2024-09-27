@@ -19,7 +19,7 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   return (
     <div className='flex h-screen overflow-hidden '>
       <Sidebar />
-      <div className='p-2  bg-gray-800 md:hidden '>
+      <div className='p-2  bg-neutral-800 md:hidden '>
         <MobileNav />
       </div>
       <div className='flex-1 flex flex-col overflow-hidden'>
@@ -28,7 +28,7 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
           {tone ? (
             children
           ) : (
-            <div className='flex h-full items-center justify-center flex-col content-around gap-4 bg-gray-950 rounded'>
+            <div className='flex h-full items-center justify-center flex-col content-around gap-4 bg-neutral-950 rounded'>
               <p>Click Or Touch to activate the Devices</p>
               <Puff
                 visible={true}

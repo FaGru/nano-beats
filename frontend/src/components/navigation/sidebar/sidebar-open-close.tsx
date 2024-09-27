@@ -7,7 +7,7 @@ export const SidebarOpenClose = () => {
   const setIsSidebarOpen = useGlobalStore((state) => state.setIsSidebarOpen);
   return (
     <button
-      className='absolute top-24 -right-2.5 rounded-full border border-slate-50 bg-gray-900 '
+      className='absolute top-24 -right-2.5 rounded-full border border-slate-50 bg-neutral-900 '
       onClick={() => setIsSidebarOpen(!isSidebarOpen)}
     >
       <Image
