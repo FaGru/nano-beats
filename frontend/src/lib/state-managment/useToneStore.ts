@@ -17,14 +17,16 @@ export const useToneStore = create<ToneState & ToneActions>()((set, get) => ({
   tone: null,
   dest: null,
   handleUserInteraction: () => {
-    const handleUserInteraction = () => {
+    const handleUserInteraction = async () => {
       const tone = get().tone;
       const { initSequencer } = useSequencerStore.getState();
       const { initDrumPadPlayers } = useDrumMachineStore.getState();
+
       if (!tone) {
         get().initTone();
         initSequencer();
         initDrumPadPlayers();
+        await Tone.start();
       }
     };
     window.addEventListener('click', handleUserInteraction);
