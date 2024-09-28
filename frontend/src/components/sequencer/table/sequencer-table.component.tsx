@@ -5,7 +5,7 @@ import { Timeline } from './timeline';
 import { Track } from './track';
 import { Puff } from 'react-loader-spinner';
 import { TPattern } from '../sequencer.types';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 
 interface SequencerTableProps {
   selectedPattern: TPattern | undefined;
@@ -55,12 +55,14 @@ export const SequencerTable: React.FC<SequencerTableProps> = ({ selectedPattern 
           )}
           <tr>
             <td className='sticky left-0 z-10 p-2'>
-              <button
+              <Button
+                size='sm'
+                variant='outline'
                 onClick={() => addTrack()}
-                className={`my-4   text-gray-600 font-bold cursor-pointer `}
+                className={`my-4   font-bold cursor-pointer `}
               >
                 add track
-              </button>
+              </Button>
             </td>
           </tr>
         </tbody>
