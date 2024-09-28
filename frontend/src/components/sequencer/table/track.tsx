@@ -5,38 +5,19 @@ import { useSequencerStore } from '../useSequencerStore';
 interface TrackProps {
   track: TTrack;
   steps: number[];
-  currentStep: number;
+
   trackIndex: number;
   activeSteps: number[];
 }
 
-export const Track: React.FC<TrackProps> = ({
-  track,
-  steps,
-  currentStep,
-  trackIndex,
-  activeSteps
-}) => {
+export const Track: React.FC<TrackProps> = ({ track, steps, trackIndex, activeSteps }) => {
   const updateStepTrigger = useSequencerStore((state) => state.updateStepTrigger);
-  const isPlaying = useSequencerStore((state) => state.isPlaying);
   const selectTrack = useSequencerStore((state) => state.selectTrack);
   const selectedTrackId = useSequencerStore((state) => state.selectedTrackId);
 
-  const getVariant = (index: number) => {
-    let variant = 'basic';
-    if (index === currentStep && isPlaying) {
-      variant = 'default';
-    } else if (activeSteps.includes(index)) {
-      variant = 'secondary';
-    }
-    return variant as 'basic' | 'default' | 'secondary';
-  };
-
   const getColors = (index: number) => {
     let colors = 'bg-neutral-300';
-    if (index === currentStep && isPlaying) {
-      colors = 'bg-primary';
-    } else if (activeSteps.includes(index)) {
+    if (activeSteps.includes(index)) {
       colors = 'bg-neutral-500';
     }
     return colors;
@@ -47,11 +28,7 @@ export const Track: React.FC<TrackProps> = ({
 
   return (
     <tr key={trackIndex} onClick={() => selectTrack(track.id)} className={` `}>
-      <td
-        className={`sticky left-0 z-10 text-xs   font-bold cursor-pointer rounded
-      
-          `}
-      >
+      <td className={`sticky left-0 z-10 text-xs   font-bold cursor-pointer rounded bg-background`}>
         <Button
           variant={selectedTrackId === track.id ? 'default' : 'ghost'}
           title={isTrackNameTruncated ? track.name : ''}

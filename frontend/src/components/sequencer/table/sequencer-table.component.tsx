@@ -45,7 +45,6 @@ export const SequencerTable: React.FC<SequencerTableProps> = ({ selectedPattern 
                 key={trackIndex}
                 track={track}
                 steps={selectedPattern.sequence.events}
-                currentStep={currentStep}
                 trackIndex={trackIndex}
                 activeSteps={
                   selectedPattern.trackTriggers.find((trigger) => trigger.trackId === track.id)
