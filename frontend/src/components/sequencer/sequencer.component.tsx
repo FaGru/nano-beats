@@ -4,7 +4,7 @@ import { useSequencerStore } from './useSequencerStore';
 import { Controls } from './controls/controls.component';
 import { SequencerTable } from './table/sequencer-table.component';
 import { Explorer } from './explorer';
-import { TrackControls } from './track-controls';
+import { TrackControls } from './track-controls/track-controls.component';
 import { SongTimeline } from './song-timeline';
 
 interface SequencerProps {
