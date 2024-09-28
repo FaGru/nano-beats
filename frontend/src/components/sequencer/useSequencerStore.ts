@@ -312,11 +312,9 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     }
   },
   removePatternFromSong: (id) => {
-    console.log('remove');
     set((state) => ({
       song: state.song.filter((pattern) => pattern.id !== id)
     }));
-    console.log('song after remove ', get().song);
   },
   updateSongOrder: (newOrder) => set({ song: newOrder }),
   playSong: () => {
