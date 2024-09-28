@@ -195,6 +195,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   playTrack: (trackId) => {
     const tracks = get().tracks;
     const track = tracks.find((track) => track.id === trackId);
+
     if (track && track.player && track.player.loaded) {
       track.player.start();
     }
@@ -243,8 +244,11 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     return new Tone.Sequence(
       (_, step) => {
         const mode = get().mode;
-
         const pattern = get().getSelectedPattern();
+
+        console.log('####### START OF STEP #######');
+        console.log('--- step: ', step, ' ---');
+
         if (pattern && mode === 'pattern') {
           set({ currentStep: step });
           pattern.trackTriggers.forEach((trigger) => {
@@ -255,8 +259,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         }
 
         if (mode === 'song') {
-          set({ currentStep: step });
-          const pattern = get().getSelectedPattern();
+          // set({ currentStep: step });
           const song = get().song;
           const playedSongPatterns = get().playedSongPatterns;
           const currentSongPattern = get().currentSongPattern;
@@ -264,17 +267,20 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
           if (pattern && pattern.sequence) {
             // stop song after last pattern
             if (playedSongPatterns === song.length) {
+              console.log('--- SONG END -> stop song and reset values ---');
               pattern.sequence.stop();
               set({ isPlaying: false, currentStep: 0, playedSongPatterns: 0 });
             }
 
             // update played patterns after last pattern step
             if (step + 1 === pattern.sequence.events.length) {
+              console.log('--- PATTERN END -> set played songs +1 ---');
               set({ playedSongPatterns: playedSongPatterns + 1 });
             }
 
             // select next pattern and play active tracks of the new pattern (not of the previous pattern)
             if (currentSongPattern < playedSongPatterns && playedSongPatterns < song.length) {
+              console.log(`--- song pattern is played -> select new and start  ---`);
               const patterns = get().patterns;
               const newPattern = patterns.find(
                 (pattern) => pattern.id === song[playedSongPatterns].patternId
@@ -286,16 +292,17 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
                 if (newSelectedPattern && newSelectedPattern.sequence) {
                   newSelectedPattern.sequence.start();
                   set({ currentSongPattern: currentSongPattern + 1 });
-                  set({ currentStep: step });
-                  newPattern.trackTriggers.forEach((trigger) => {
-                    if (trigger.activeSteps.includes(step)) {
-                      get().playTrack(trigger.trackId);
-                    }
-                  });
+                  // set({ currentStep: step });
+                  // newPattern.trackTriggers.forEach((trigger) => {
+                  //   if (trigger.activeSteps.includes(step)) {
+                  //     get().playTrack(trigger.trackId);
+                  //   }
+                  // });
                 }
               }
             } else {
               // play active tracks of the current pattern if no new pattern needs to be set
+              console.log(`--- play tracks of step ${step}  ---`);
               set({ currentStep: step });
               pattern.trackTriggers.forEach((trigger) => {
                 if (trigger.activeSteps.includes(step)) {
@@ -303,6 +310,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
                 }
               });
             }
+            // console.log('--- END OF STEP ---');
+            // console.log('##################################');
           }
         }
       },
