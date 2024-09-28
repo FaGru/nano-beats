@@ -6,7 +6,7 @@ interface TimelineProps {
 export const Timeline: React.FC<TimelineProps> = ({ steps, currentStep }) => {
   return (
     <tr>
-      <th className='sticky top-0 left-0  z-20 pl-2 pr-12 py-3 bg-background text-neutral-700 shadow-[inset_0px_-1px_0px_0px] shadow-grey-700'>
+      <th className='sticky top-0 left-0  z-20 pl-4 pr-12 py-3 bg-background  shadow-[inset_0px_-1px_0px_0px] shadow-neutral-700 '>
         Steps
       </th>
       {steps.map((step, index) => (
