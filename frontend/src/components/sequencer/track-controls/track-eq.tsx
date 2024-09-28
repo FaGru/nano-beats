@@ -4,6 +4,7 @@ import { useSequencerStore } from '../useSequencerStore';
 import { useMouseMove } from '@/hooks/useMouseMove';
 import { eqThreeDefaultVolume, eqThreeVolumeLimits } from '../sequencer.constants';
 import { FillableBox } from '@/components/shared/fillable-box';
+import { Card } from '@/components/ui/card';
 
 interface TrackEQProps {
   selectedTrack: TTrack;
@@ -38,8 +39,8 @@ export const TrackEQ: React.FC<TrackEQProps> = ({ selectedTrack }) => {
     updateTrack(selectedTrack);
   };
   return (
-    <div
-      className={`bg-secondary h-full p-1 pt-0 px-6 flex gap-2 rounded relative ${!selectedTrack.connectedEffects.includes('eqThree') ? 'opacity-50' : ''}`}
+    <Card
+      className={`py-1 px-6 flex gap-2 relative ${!selectedTrack.connectedEffects.includes('eqThree') ? 'opacity-50' : ''}`}
     >
       <Power
         className={`absolute left-0 top-0 w-4 h-4 ${selectedTrack.connectedEffects.includes('eqThree') ? 'bg-primary' : ''} border rounded p-0.5 cursor-pointer`}
@@ -49,7 +50,7 @@ export const TrackEQ: React.FC<TrackEQProps> = ({ selectedTrack }) => {
       {Object.keys(eqThreeValues).map((type: string) => (
         <div
           key={type}
-          className='flex flex-col text-xs  items-center gap-0.5 pt-2 '
+          className='flex flex-col text-xs  items-center gap-0.5 '
           onMouseDown={(e) => handleMouseDown(e, handleTrackEQ, type)}
           onTouchStart={(e) => handleMouseDown(e, handleTrackEQ)}
           onMouseUp={handleMouseUp}
@@ -67,6 +68,6 @@ export const TrackEQ: React.FC<TrackEQProps> = ({ selectedTrack }) => {
           />
         </div>
       ))}
-    </div>
+    </Card>
   );
 };

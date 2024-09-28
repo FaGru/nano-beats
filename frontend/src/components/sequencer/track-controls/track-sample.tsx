@@ -6,6 +6,7 @@ import { FillableBox } from '@/components/shared/fillable-box';
 import { Check, Pencil } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 
 interface TrackSampleProps {
   selectedTrack: TTrack;
@@ -41,7 +42,7 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
   }, [selectedTrack]);
 
   return (
-    <div className=' bg-secondary h-full p-1  flex flex-col gap-2 rounded '>
+    <Card className='p-1 flex flex-col gap-2'>
       <div className='flex items-center  justify-between pr-2'>
         <Input
           disabled={!isNameChangeActive}
@@ -87,6 +88,6 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
           valueType={'dB'}
         />
       </div>
-    </div>
+    </Card>
   );
 };
