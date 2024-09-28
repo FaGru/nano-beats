@@ -135,8 +135,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       Tone.getTransport().start();
       set({ isPlaying: true });
     } else {
-      Tone.getTransport().position = 0;
       Tone.getTransport().pause();
+      Tone.getTransport().position = 0;
       set({ isPlaying: false, currentStep: 0 });
     }
   },
@@ -185,11 +185,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       if (!track.player) {
         const player = new Tone.Player().toDestination();
         player.load(sampleUrl);
-        // player.chain(track.effects.eqThree, Tone.getDestination());
-
-        // player.connect(track.effects.eqThree).toDestination();
         const updatedTrack = { ...track, player, name: trackName };
-        // console.log(updatedTrack);
         get().updateTrack(updatedTrack);
       }
       if (track.player) {
