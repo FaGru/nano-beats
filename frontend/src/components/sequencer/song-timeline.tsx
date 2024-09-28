@@ -9,6 +9,46 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useSequencerStore } from './useSequencerStore';
+import { Button } from '../ui/button';
+import { Plus, Trash2 } from 'lucide-react';
+import { SetStateAction, useState } from 'react';
+import { Separator } from '../ui/separator';
+
+interface SortableItemProps {
+  item: { patternName?: string; id: string };
+  isOver?: boolean;
+}
+const SortableItem: React.FC<SortableItemProps> = ({ item, isOver }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: item.id
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      {item.id === 'TRASH' ? (
+        <Button
+          className='rounded-md p-2 mt-0.5'
+          variant={isOver ? 'destructive' : 'secondary'}
+          size='xs'
+        >
+          <Trash2 className='w-4 h-4' />
+        </Button>
+      ) : (
+        <Button
+          className='cursor-grab active:cursor-grabbing text-xs p-2'
+          variant='secondary'
+          size='xs'
+        >
+          {item.patternName}
+        </Button>
+      )}
+    </div>
+  );
+};
 
 interface SongTimelineProps {}
 
@@ -18,65 +58,68 @@ export const SongTimeline: React.FC<SongTimelineProps> = () => {
   const removePatternFromSong = useSequencerStore((state) => state.removePatternFromSong);
   const updateSongOrder = useSequencerStore((state) => state.updateSongOrder);
 
-  const SortableItem = ({ pattern }: { pattern: { patternName: string; id: string } }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
-      id: pattern.id
-    });
-    const style = {
-      transform: CSS.Transform.toString(transform),
-      transition
-    };
-
-    return (
-      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-        <button
-          type='button'
-          className='border rounded p-1 text-xs bg-background cursor-grab active:cursor-grabbing'
-        >
-          {pattern.patternName}
-        </button>
-      </div>
-    );
-  };
+  const [isDragActive, setIsDragActive] = useState(false);
+  const [dragItems, setDragItems] = useState<{ active: string | null; over: string | null }>({
+    active: null,
+    over: null
+  });
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
+    setIsDragActive(false);
+    setDragItems({ active: null, over: null });
 
-    if (active.id !== over.id) {
+    if (over.id === 'TRASH') {
+      removePatternFromSong(active.id);
+    }
+  };
+  const handleDragOver = (event: any) => {
+    const { active, over } = event;
+    setDragItems({ active: active.id, over: over.id });
+    if (active.id !== over.id && over.id !== 'TRASH') {
       const oldIndex = song.findIndex((pattern) => pattern.id === active.id);
       const newIndex = song.findIndex((pattern) => pattern.id === over.id);
       const newOrder = arrayMove(song, oldIndex, newIndex);
       updateSongOrder(newOrder);
     }
+    if (over.id === 'TRASH') {
+    }
   };
-
   return (
-    <div className='flex p-2 w-full h-[6vh] gap-4 items-center px-2 bg-background border-neutral-600 border-x'>
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <div className='flex p-2 w-full h-[6vh] gap-2 items-center px-2 bg-background border-neutral-600 border-x'>
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+        onDragOver={handleDragOver}
+        onDragStart={() => setIsDragActive(true)}
+      >
         <SortableContext
-          items={song.map((pattern) => pattern.id)}
+          items={[...song.map((pattern) => pattern.id), { id: 'TRASH' }]}
           strategy={verticalListSortingStrategy}
         >
-          <div className='flex gap-2'>
+          <div className='flex gap-2 '>
             {song.map((pattern) => (
-              <div className='relative' key={pattern.id}>
-                <button
-                  type='button'
-                  className='border rounded-full absolute -right-1 -top-1 text-[0.55rem] h-3 w-3 flex items-center justify-center bg-background'
-                  onClick={() => removePatternFromSong(pattern.id)}
-                >
-                  x
-                </button>
-                <SortableItem pattern={pattern} />
-              </div>
+              <SortableItem key={pattern.id} item={pattern} />
             ))}
           </div>
+          {song.length ? (
+            <Separator orientation='vertical' className=' h-7 bg-neutral-600 mx-2' />
+          ) : null}
+          {isDragActive && (
+            <SortableItem key='TRASH' item={{ id: 'TRASH' }} isOver={dragItems.over === 'TRASH'} />
+          )}
         </SortableContext>
       </DndContext>
-
-      <button type='button' className='w-12 rounded' onClick={() => addPatternToSong()}>
-        +
-      </button>
+      {!isDragActive && (
+        <Button
+          variant='secondary'
+          className='rounded-md  p-2 '
+          size='xs'
+          onClick={() => addPatternToSong()}
+        >
+          <Plus className='w-4 h-4' />
+        </Button>
+      )}
     </div>
   );
 };
