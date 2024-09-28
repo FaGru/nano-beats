@@ -3,6 +3,9 @@ import { TTrack } from '../sequencer.types';
 import { sequencerDefaultVolume, sequencerVolumeLimits } from '../sequencer.constants';
 import { useSequencerStore } from '../useSequencerStore';
 import { FillableBox } from '@/components/shared/fillable-box';
+import { Check, Pencil } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
 
 interface TrackSampleProps {
   selectedTrack: TTrack;
@@ -30,11 +33,40 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
       updateTrack(selectedTrack);
     }
   };
+
+  const [isNameChangeActive, setIsNameChangeActive] = useState(false);
+  const [trackName, setTrackName] = useState(selectedTrack.name);
+  useEffect(() => {
+    setTrackName(selectedTrack.name);
+  }, [selectedTrack]);
+
   return (
     <div className=' bg-secondary h-full p-1  flex flex-col gap-2 rounded '>
-      <h4>{selectedTrack.name}</h4>
+      <div className='flex items-center  justify-between pr-2'>
+        <Input
+          disabled={!isNameChangeActive}
+          className={`h-6 w-32 mr-2 bg-transparent rounded-none disabled:cursor-default  ${isNameChangeActive ? 'border-b-primary-foreground' : ''}`}
+          value={trackName}
+          onChange={(e) => setTrackName(e.target.value)}
+        />
+        {isNameChangeActive ? (
+          <Check
+            className='w-4 h-4  cursor-pointer'
+            onClick={() => {
+              setIsNameChangeActive(false);
+              selectedTrack.name = trackName;
+              updateTrack(selectedTrack);
+            }}
+          />
+        ) : (
+          <Pencil
+            className='w-4 h-4 p-0.5 cursor-pointer'
+            onClick={() => setIsNameChangeActive(true)}
+          />
+        )}
+      </div>
       <div
-        className='flex flex-col items-center justify-center'
+        className='flex flex-col items-center justify-center mt-1'
         onMouseDown={(e) => handleMouseDown(e, handleTrackGain)}
         onTouchStart={(e) => handleMouseDown(e, handleTrackGain)}
         onMouseUp={handleMouseUp}
@@ -49,7 +81,7 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
           }
           orientation='horizontal'
           height={'16px'}
-          width='128px'
+          width='144px'
           max={sequencerVolumeLimits.max}
           min={sequencerVolumeLimits.min}
           valueType={'dB'}
