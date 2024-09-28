@@ -4,10 +4,12 @@ import { Power } from 'lucide-react';
 import { useSequencerStore } from '../useSequencerStore';
 import { KnobControl } from '@/components/shared/knob-control';
 import {
-  delayTimeDefault,
-  delayTimeLimits,
-  dryWetDefault,
-  dryWetLimits
+  delayDelayTimeDefault,
+  delayDelayTimeLimits,
+  delayDryWetDefault,
+  delayDryWetLimits,
+  delayFeedbackDefault,
+  delayFeedbackLimits
 } from '../sequencer.constants';
 import * as Tone from 'tone';
 
@@ -22,38 +24,52 @@ export const TrackDelay: React.FC<TrackDelayProps> = ({ selectedTrack }) => {
   const handleDelayTimeKnob = (valueChange: any) => {
     let newDelayTime =
       Tone.Time(selectedTrack.effects.delay.delayTime.value).toSeconds() + valueChange / 100;
-    if (newDelayTime < delayTimeLimits.min) {
-      newDelayTime = delayTimeLimits.min;
-    } else if (newDelayTime > delayTimeLimits.max) {
-      newDelayTime = delayTimeLimits.max;
+    if (newDelayTime < delayDelayTimeLimits.min) {
+      newDelayTime = delayDelayTimeLimits.min;
+    } else if (newDelayTime > delayDelayTimeLimits.max) {
+      newDelayTime = delayDelayTimeLimits.max;
     }
     selectedTrack.effects.delay.delayTime.value = ((newDelayTime * 100) / 100).toFixed(2);
-    console.log(valueChange);
     updateTrack(selectedTrack);
   };
   const resetDelayTime = () => {
-    selectedTrack.effects.delay.delayTime.value = delayTimeDefault;
+    selectedTrack.effects.delay.delayTime.value = delayDelayTimeDefault;
     updateTrack(selectedTrack);
   };
 
   const handleDryWetKnob = (valueChange: any) => {
-    let newDelayTime = selectedTrack.effects.delay.wet.value + valueChange / 100;
-    if (newDelayTime < dryWetLimits.min) {
-      newDelayTime = dryWetLimits.min;
-    } else if (newDelayTime > dryWetLimits.max) {
-      newDelayTime = dryWetLimits.max;
+    let newDryWet = selectedTrack.effects.delay.wet.value + valueChange / 100;
+    if (newDryWet < delayDryWetLimits.min) {
+      newDryWet = delayDryWetLimits.min;
+    } else if (newDryWet > delayDryWetLimits.max) {
+      newDryWet = delayDryWetLimits.max;
     }
-    selectedTrack.effects.delay.wet.value = Number(((newDelayTime * 100) / 100).toFixed(2));
+    selectedTrack.effects.delay.wet.value = Number(((newDryWet * 100) / 100).toFixed(2));
     updateTrack(selectedTrack);
   };
   const resetDryWet = () => {
-    selectedTrack.effects.delay.wet.value = dryWetDefault;
+    selectedTrack.effects.delay.wet.value = delayDryWetDefault;
+    updateTrack(selectedTrack);
+  };
+
+  const handleFeedbackKnob = (valueChange: any) => {
+    let newFeedback = selectedTrack.effects.delay.feedback.value + valueChange / 100;
+    if (newFeedback < delayFeedbackLimits.min) {
+      newFeedback = delayFeedbackLimits.min;
+    } else if (newFeedback > delayFeedbackLimits.max) {
+      newFeedback = delayFeedbackLimits.max;
+    }
+    selectedTrack.effects.delay.feedback.value = Number(((newFeedback * 100) / 100).toFixed(2));
+    updateTrack(selectedTrack);
+  };
+  const resetFeedback = () => {
+    selectedTrack.effects.delay.feedback.value = delayFeedbackDefault;
     updateTrack(selectedTrack);
   };
 
   return (
     <Card
-      className={`py-1 pt-2 px-6 flex gap-2 relative ${!selectedTrack.connectedEffects.includes('delay') ? 'opacity-50' : ''}`}
+      className={`py-1 pt-2 px-6 flex gap-4 relative ${!selectedTrack.connectedEffects.includes('delay') ? 'opacity-50' : ''}`}
     >
       <Power
         className={`absolute left-0 top-0 w-4 h-4 ${selectedTrack.connectedEffects.includes('delay') ? 'bg-primary' : ''} border rounded p-0.5 cursor-pointer`}
@@ -70,6 +86,16 @@ export const TrackDelay: React.FC<TrackDelayProps> = ({ selectedTrack }) => {
         text={`${Number(selectedTrack.effects.delay.delayTime.value)} ms`}
       />
       <KnobControl
+        handleKnobChange={handleFeedbackKnob}
+        handleDoupleClick={resetFeedback}
+        minValue={0}
+        maxValue={1}
+        value={selectedTrack.effects.delay.feedback.value}
+        size='md'
+        title='Feedback'
+        text={`${(selectedTrack.effects.delay.feedback.value * 100).toFixed(0)} %`}
+      />
+      <KnobControl
         handleKnobChange={handleDryWetKnob}
         handleDoupleClick={resetDryWet}
         minValue={0}
@@ -77,7 +103,7 @@ export const TrackDelay: React.FC<TrackDelayProps> = ({ selectedTrack }) => {
         value={selectedTrack.effects.delay.wet.value}
         size='md'
         title='Dry / Wet'
-        text={`${Math.ceil(selectedTrack.effects.delay.wet.value * 100).toFixed(0)} %`}
+        text={`${(selectedTrack.effects.delay.wet.value * 100).toFixed(0)} %`}
       />
     </Card>
   );

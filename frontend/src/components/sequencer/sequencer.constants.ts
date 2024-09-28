@@ -9,7 +9,10 @@ export const sequencerBpmDefault = 120;
 
 export const stepsLimits = { max: 64, min: 4 };
 
-export const delayTimeLimits = { max: 1, min: 0 };
-export const delayTimeDefault = 0.25;
-export const dryWetLimits = { max: 1, min: 0 };
-export const dryWetDefault = 1;
+// delay constants
+export const delayDelayTimeLimits = { max: 1, min: 0 };
+export const delayDelayTimeDefault = 0.25;
+export const delayDryWetLimits = { max: 1, min: 0 };
+export const delayDryWetDefault = 1;
+export const delayFeedbackLimits = { max: 1, min: 0 };
+export const delayFeedbackDefault = 0.125;
