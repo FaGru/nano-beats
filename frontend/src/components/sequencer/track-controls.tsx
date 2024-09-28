@@ -9,6 +9,7 @@ import {
   sequencerVolumeLimits
 } from './sequencer.constants';
 import { useMouseMove } from '@/hooks/useMouseMove';
+import { Power } from 'lucide-react';
 
 interface TrackControlsProps {
   selectedTrack: TTrack;
@@ -22,6 +23,7 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
   };
   const updateTrackSample = useSequencerStore((state) => state.updateTrackSample);
   const updateTrack = useSequencerStore((state) => state.updateTrack);
+  const toggleEffectPower = useSequencerStore((state) => state.toggleEffectPower);
 
   const { handleMouseDown, handleMouseUp } = useMouseMove('y');
 
@@ -108,11 +110,18 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
               />
             </div>
           </div>
-          <div className=' bg-secondary h-full  p-1 pt-0 flex gap-4 rounded'>
+          <div
+            className={`bg-secondary h-full  p-1 pt-0 px-6 flex gap-2 rounded relative ${!selectedTrack.connectedEffects.includes('eqThree') ? 'opacity-50' : ''}`}
+          >
+            <Power
+              className={`absolute left-0 top-0 w-4 h-4 ${selectedTrack.connectedEffects.includes('eqThree') ? 'bg-primary' : ''} border rounded p-0.5 cursor-pointer`}
+              onClick={() => toggleEffectPower(selectedTrack.id, 'eqThree')}
+            />
+
             {Object.keys(eqThreeValues).map((type: string) => (
               <div
                 key={type}
-                className='flex flex-col text-xs  items-center gap-0.5'
+                className='flex flex-col text-xs  items-center gap-0.5 pt-2 '
                 onMouseDown={(e) => handleMouseDown(e, handleTrackEQ, type)}
                 onTouchStart={(e) => handleMouseDown(e, handleTrackEQ)}
                 onMouseUp={handleMouseUp}
