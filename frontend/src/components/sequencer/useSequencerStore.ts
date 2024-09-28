@@ -17,6 +17,7 @@ type SequencerState = {
   patterns: TPattern[] | [];
   song: TSong;
   playedSongPatterns: number;
+  currentSongPattern: number;
 };
 
 type SequencerActions = {
@@ -61,6 +62,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   ],
   song: [],
   playedSongPatterns: 0,
+  currentSongPattern: 0,
 
   initSequencer: () => {
     const { addTrack } = get();
@@ -203,15 +205,6 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   setMode: (newMode) => {
     const isPlaying = get().isPlaying;
     if (isPlaying) get().startStopSequencer();
-    // const allPatterns = get().patterns;
-    // allPatterns.forEach((pattern) => {
-    //   if (newMode === 'song' && pattern.sequence) {
-    //     pattern.sequence.loop = false;
-    //   }
-    //   if (newMode === 'pattern' && pattern.sequence) {
-    //     pattern.sequence.loop = true;
-    //   }
-    // });
     set({ mode: newMode });
   },
   addPattern: () => {
@@ -252,7 +245,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         const mode = get().mode;
 
         const pattern = get().getSelectedPattern();
-        if (pattern) {
+        if (pattern && mode === 'pattern') {
           set({ currentStep: step });
           pattern.trackTriggers.forEach((trigger) => {
             if (trigger.activeSteps.includes(step)) {
@@ -266,32 +259,49 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
           const pattern = get().getSelectedPattern();
           const song = get().song;
           const playedSongPatterns = get().playedSongPatterns;
+          const currentSongPattern = get().currentSongPattern;
 
           if (pattern && pattern.sequence) {
             // stop song after last pattern
             if (playedSongPatterns === song.length) {
               pattern.sequence.stop();
+              set({ isPlaying: false, currentStep: 0, playedSongPatterns: 0 });
             }
 
+            // update played patterns after last pattern step
             if (step + 1 === pattern.sequence.events.length) {
               set({ playedSongPatterns: playedSongPatterns + 1 });
-              pattern.sequence.stop();
-              if (playedSongPatterns + 1 >= song.length) {
-                set({ isPlaying: false, currentStep: 0, playedSongPatterns: 0 });
-              } else {
-                const patterns = get().patterns;
-                const newPattern = patterns.find(
-                  (pattern) => pattern.id === song[playedSongPatterns + 1].patternId
-                );
-                if (newPattern) {
-                  pattern.sequence.stop();
-                  set({ selectedPatternId: newPattern.id });
-                  const newSelectedPattern = get().getSelectedPattern();
-                  if (newSelectedPattern && newSelectedPattern.sequence) {
-                    newSelectedPattern.sequence.start();
-                  }
+            }
+
+            // select next pattern and play active tracks of the new pattern (not of the previous pattern)
+            if (currentSongPattern < playedSongPatterns && playedSongPatterns < song.length) {
+              const patterns = get().patterns;
+              const newPattern = patterns.find(
+                (pattern) => pattern.id === song[playedSongPatterns].patternId
+              );
+              if (newPattern) {
+                pattern.sequence.stop();
+                set({ selectedPatternId: newPattern.id });
+                const newSelectedPattern = get().getSelectedPattern();
+                if (newSelectedPattern && newSelectedPattern.sequence) {
+                  newSelectedPattern.sequence.start();
+                  set({ currentSongPattern: currentSongPattern + 1 });
+                  set({ currentStep: step });
+                  newPattern.trackTriggers.forEach((trigger) => {
+                    if (trigger.activeSteps.includes(step)) {
+                      get().playTrack(trigger.trackId);
+                    }
+                  });
                 }
               }
+            } else {
+              // play active tracks of the current pattern if no new pattern needs to be set
+              set({ currentStep: step });
+              pattern.trackTriggers.forEach((trigger) => {
+                if (trigger.activeSteps.includes(step)) {
+                  get().playTrack(trigger.trackId);
+                }
+              });
             }
           }
         }
@@ -320,7 +330,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   playSong: () => {
     const song = get().song;
     if (song.length) {
-      set({ selectedPatternId: song[0].patternId });
+      set({ selectedPatternId: song[0].patternId, currentSongPattern: 0 });
       get().startStopSequencer();
     }
   }
