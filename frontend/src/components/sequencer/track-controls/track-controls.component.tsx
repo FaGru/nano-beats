@@ -2,6 +2,7 @@ import { TTrack } from '../sequencer.types';
 import { TrackSample } from './track-sample';
 import { TrackEQ } from './track-eq';
 import { TrackDropZone } from './track-dropzone';
+import { TrackDelay } from './track-delay';
 
 interface TrackControlsProps {
   selectedTrack: TTrack;
@@ -14,6 +15,7 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
         <>
           <TrackSample selectedTrack={selectedTrack} />
           <TrackEQ selectedTrack={selectedTrack} />
+          <TrackDelay selectedTrack={selectedTrack} />
         </>
       ) : (
         <>
