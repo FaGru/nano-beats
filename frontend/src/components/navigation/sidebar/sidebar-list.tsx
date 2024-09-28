@@ -3,9 +3,10 @@
 import React from 'react';
 import { ListItem } from './sidebar-list-item';
 import { useGlobalStore } from '@/lib/state-managment/useGlobalStore';
+import { NavigationHeader, NavigationItem } from './navigation.types';
 
 interface SidebarListProps {
-  config: any;
+  config: NavigationHeader;
 }
 
 export const SidebarList: React.FC<SidebarListProps> = ({ config }) => {
@@ -19,7 +20,7 @@ export const SidebarList: React.FC<SidebarListProps> = ({ config }) => {
       </h4>
 
       <ul className='flex flex-col '>
-        {config.childs.map((child: any) => (
+        {config.childs.map((child: NavigationItem) => (
           <React.Fragment key={child.name}>
             <ListItem config={child} />
           </React.Fragment>

@@ -4,6 +4,7 @@ import { DrumPad } from './drum-pad';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { useDrumMachineStore } from './useDrumMachineStore';
+import { Slider } from '../ui/slider';
 
 interface DrumMachineProps {}
 
@@ -38,7 +39,7 @@ export const DrumMachine: React.FC<DrumMachineProps> = () => {
   }, []);
 
   return (
-    <div className='flex flex-col items-center justify-center rounded-xl bg-gray-900 text-white p-2 shadow-[inset_0_0_8px_2px] shadow-gray-950'>
+    <div className='flex flex-col items-center justify-center rounded-xl bg-background  p-2 shadow-[inset_0_0_8px_2px] shadow-muted border'>
       <div className='flex  space-x-4 my-4 h-16'></div>
       <div className='grid grid-cols-4 gap-1.5 mb-8'>
         {drumPadConfig.map((padConfig, index) => (
@@ -48,7 +49,7 @@ export const DrumMachine: React.FC<DrumMachineProps> = () => {
         ))}
       </div>
       <div className='flex h-16 space-x-4 '>
-        <label htmlFor='volume fader one' className='flex flex-col items-center'>
+        <label htmlFor='volume fader one' className='flex flex-col items-center gap-1'>
           Volume
           <Tippy
             content={
@@ -60,15 +61,15 @@ export const DrumMachine: React.FC<DrumMachineProps> = () => {
             placement='right'
             arrow={false}
           >
-            <input
-              type='range'
+            <Slider
+              className='w-32'
               min={-18}
               max={2}
               step={0.1}
-              value={drumMachineVolume}
+              value={[drumMachineVolume]}
               id='volume fader one'
               name='volume fader one'
-              onChange={(event) => setDrumMachineVolume(Number(event.target.value))}
+              onValueChange={(value) => setDrumMachineVolume(value[0])}
               onMouseDown={() => setIsVolumeTooltipOpen(true)}
               onMouseUp={() => setIsVolumeTooltipOpen(false)}
             />

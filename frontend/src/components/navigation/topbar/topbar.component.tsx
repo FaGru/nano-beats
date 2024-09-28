@@ -1,9 +1,14 @@
+import { ThemeSelect } from '@/components/ui/theme-select';
+
 interface TopbarProps {}
 
 export const Topbar: React.FC<TopbarProps> = ({}) => {
   return (
-    <header className='bg-gray-900 h-[8vh] '>
-      <div>Topbar</div>
+    <header className='h-[8vh] hidden md:flex justify-between items-center px-4'>
+      <div></div>
+      <div className='ml-auto'>
+        <ThemeSelect />
+      </div>
     </header>
   );
 };

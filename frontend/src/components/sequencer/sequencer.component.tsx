@@ -21,10 +21,10 @@ export const Sequencer: React.FC<SequencerProps> = ({ audioFiles }) => {
   const selectedTrack = tracks.find((track) => track.id === selectedTrackId);
 
   return (
-    <div className='flex flex-col w-full  gap-1 '>
+    <div className='flex flex-col w-full   p-2'>
       <Controls selectedPattern={selectedPattern} />
       <SongTimeline />
-      <div className='flex w-full gap-2 h-[60vh]'>
+      <div className='flex w-full gap-0 h-[60vh]'>
         <Explorer audioFiles={audioFiles} selectedTrack={selectedTrack || null} />
         <SequencerTable selectedPattern={selectedPattern} />
       </div>
