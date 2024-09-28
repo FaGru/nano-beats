@@ -11,14 +11,15 @@ import { CSS } from '@dnd-kit/utilities';
 import { useSequencerStore } from './useSequencerStore';
 import { Button } from '../ui/button';
 import { Plus, Trash2 } from 'lucide-react';
-import { SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { Separator } from '../ui/separator';
 
 interface SortableItemProps {
   item: { patternName?: string; id: string };
   isOver?: boolean;
+  isPlayingPattern?: boolean;
 }
-const SortableItem: React.FC<SortableItemProps> = ({ item, isOver }) => {
+const SortableItem: React.FC<SortableItemProps> = ({ item, isOver, isPlayingPattern }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: item.id
   });
@@ -40,7 +41,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ item, isOver }) => {
       ) : (
         <Button
           className='cursor-grab active:cursor-grabbing text-xs p-2'
-          variant='secondary'
+          variant={isPlayingPattern ? 'default' : 'secondary'}
           size='xs'
         >
           {item.patternName}
@@ -57,6 +58,9 @@ export const SongTimeline: React.FC<SongTimelineProps> = () => {
   const addPatternToSong = useSequencerStore((state) => state.addPatternToSong);
   const removePatternFromSong = useSequencerStore((state) => state.removePatternFromSong);
   const updateSongOrder = useSequencerStore((state) => state.updateSongOrder);
+  const currentSongPattern = useSequencerStore((state) => state.currentSongPattern);
+  const isPlaying = useSequencerStore((state) => state.isPlaying);
+  const mode = useSequencerStore((state) => state.mode);
 
   const [isDragActive, setIsDragActive] = useState(false);
   const [dragItems, setDragItems] = useState<{ active: string | null; over: string | null }>({
@@ -98,8 +102,12 @@ export const SongTimeline: React.FC<SongTimelineProps> = () => {
           strategy={verticalListSortingStrategy}
         >
           <div className='flex gap-2 '>
-            {song.map((pattern) => (
-              <SortableItem key={pattern.id} item={pattern} />
+            {song.map((pattern, idx) => (
+              <SortableItem
+                key={pattern.id}
+                item={pattern}
+                isPlayingPattern={currentSongPattern === idx && isPlaying && mode === 'song'}
+              />
             ))}
           </div>
           {song.length ? (

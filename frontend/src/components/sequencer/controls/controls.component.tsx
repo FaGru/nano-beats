@@ -12,8 +12,6 @@ import {
   SelectItem,
   SelectTrigger
 } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Separator } from '@/components/ui/separator';
 
 interface ControlProps {
   selectedPattern: TPattern | undefined;
@@ -32,6 +30,7 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
   const addPattern = useSequencerStore((state) => state.addPattern);
   const setSelectedPatternId = useSequencerStore((state) => state.setSelectedPatternId);
   const playSong = useSequencerStore((state) => state.playSong);
+  const sequence = useSequencerStore((state) => state.sequence);
 
   const { handleMouseDown, handleMouseUp } = useMouseMove('y');
 
@@ -76,27 +75,19 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
           variant='ghost'
           size='xs'
           className='w-4 '
-          onClick={() =>
-            handleStepLength(
-              selectedPattern?.sequence ? selectedPattern.sequence.events.length - 4 : 0
-            )
-          }
+          onClick={() => handleStepLength(sequence ? sequence.events.length - 4 : 0)}
         >
           -
         </Button>
         <p className='w-8 h-6 text-center relative'>
           <span className='absolute text-[0.50rem] -top-1.5 -left-2.5 z-20 '>steps</span>
-          {selectedPattern?.sequence?.events.length}
+          {sequence?.events.length}
         </p>
         <Button
           variant='ghost'
           size='xs'
           className='w-4'
-          onClick={() =>
-            handleStepLength(
-              selectedPattern?.sequence ? selectedPattern.sequence.events.length + 4 : 0
-            )
-          }
+          onClick={() => handleStepLength(sequence ? sequence.events.length + 4 : 0)}
         >
           +
         </Button>
@@ -121,7 +112,6 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {/* <SelectLabel>PATTERNS</SelectLabel> */}
             {patterns.map((pattern) => (
               <SelectItem value={pattern.id} key={pattern.name}>
                 {pattern.name}

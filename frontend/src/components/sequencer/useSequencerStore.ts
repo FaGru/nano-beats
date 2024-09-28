@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 const defaultPatternId = nanoid();
 
 type SequencerState = {
+  sequence: Tone.Sequence | null;
   tracks: TTrack[];
   currentStep: number;
   isPlaying: boolean;
@@ -16,7 +17,7 @@ type SequencerState = {
   mode: 'pattern' | 'song';
   patterns: TPattern[] | [];
   song: TSong;
-  playedSongPatterns: number;
+  currentSongPattern: number;
 };
 
 type SequencerActions = {
@@ -35,8 +36,6 @@ type SequencerActions = {
   setSelectedPatternId: (patternId: string) => void;
   updatePattern: (updatedPattern: TPattern) => void;
   getSelectedPattern: () => TPattern | undefined;
-  getSelectedTrack: () => TTrack | undefined;
-  addSequence: (sequenceLength: number) => Tone.Sequence;
   addPatternToSong: () => void;
   removePatternFromSong: (patternId: string) => void;
   playSong: () => void;
@@ -44,6 +43,7 @@ type SequencerActions = {
 };
 
 export const useSequencerStore = create<SequencerState & SequencerActions>()((set, get) => ({
+  sequence: null,
   tracks: [],
   currentStep: 0,
   isPlaying: false,
@@ -56,44 +56,86 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       trackTriggers: [],
       name: 'pattern 1',
       id: defaultPatternId,
-      sequence: null
+      sequenceStepNumber: Array.from({ length: 16 }, (_, i) => i)
     }
   ],
   song: [],
-  playedSongPatterns: 0,
+  currentSongPattern: 0,
 
   initSequencer: () => {
     const { addTrack } = get();
     for (let i = 0; i < 4; i++) addTrack();
+    const sequence = new Tone.Sequence(
+      (_, step) => {
+        const mode = get().mode;
+        const pattern = get().getSelectedPattern();
+        set({ currentStep: step });
 
-    const pattern = get().getSelectedPattern();
-    if (pattern) {
-      pattern.sequence = get().addSequence(16);
+        if (pattern) {
+          pattern.trackTriggers.forEach((trigger) => {
+            if (trigger.activeSteps.includes(step)) {
+              get().playTrack(trigger.trackId);
+            }
+          });
+        }
 
-      get().updatePattern(pattern);
-      Tone.getTransport().start();
-    }
+        if (mode === 'song') {
+          const song = get().song;
+          const currentSongPattern = get().currentSongPattern;
+          const sequence = get().sequence;
+
+          // set new sequence step length on the first step to ensure that the next pattern starts at the first step
+          if (sequence && pattern && step === 0) {
+            sequence.events = pattern.sequenceStepNumber;
+            set({ sequence });
+          }
+
+          if (pattern && sequence && step + 1 === sequence.events.length) {
+            // select next pattern at the last step
+            if (currentSongPattern + 1 < song.length) {
+              const patterns = get().patterns;
+              const newPattern = patterns.find(
+                (pattern) => pattern.id === song[currentSongPattern + 1].patternId
+              );
+              if (newPattern) {
+                set({ selectedPatternId: newPattern.id });
+                set({ currentSongPattern: currentSongPattern + 1 });
+              }
+            }
+            // stop at the last step of the last pattern and reset values
+            else {
+              get().startStopSequencer();
+              set({ isPlaying: false, currentStep: 0, currentSongPattern: 0 });
+            }
+          }
+        }
+      },
+      Array.from({ length: 16 }, (_, i) => i),
+      '16n'
+    );
+    sequence.start(0);
+    set({ sequence });
   },
   updateStepLength: (newStepLength: any) => {
     const pattern = get().getSelectedPattern();
-    if (pattern && pattern.sequence) {
-      pattern.sequence.events = newStepLength;
+    const sequence = get().sequence;
+    if (pattern && sequence) {
+      pattern.sequenceStepNumber = newStepLength;
+      sequence.events = newStepLength;
+      set({ sequence });
       get().updatePattern(pattern);
     }
   },
 
   startStopSequencer: () => {
     const { isPlaying } = get();
-    const pattern = get().getSelectedPattern();
-    if (pattern && pattern.sequence) {
-      if (!isPlaying) {
-        pattern.sequence.start();
-        set({ isPlaying: true });
-      } else {
-        pattern.sequence.stop();
-        set({ isPlaying: false, currentStep: 0 });
-      }
-      get().updatePattern(pattern);
+    if (!isPlaying) {
+      Tone.getTransport().start();
+      set({ isPlaying: true });
+    } else {
+      Tone.getTransport().position = 0;
+      Tone.getTransport().pause();
+      set({ isPlaying: false, currentStep: 0 });
     }
   },
 
@@ -193,6 +235,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   playTrack: (trackId) => {
     const tracks = get().tracks;
     const track = tracks.find((track) => track.id === trackId);
+
     if (track && track.player && track.player.loaded) {
       track.player.start();
     }
@@ -203,15 +246,6 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   setMode: (newMode) => {
     const isPlaying = get().isPlaying;
     if (isPlaying) get().startStopSequencer();
-    // const allPatterns = get().patterns;
-    // allPatterns.forEach((pattern) => {
-    //   if (newMode === 'song' && pattern.sequence) {
-    //     pattern.sequence.loop = false;
-    //   }
-    //   if (newMode === 'pattern' && pattern.sequence) {
-    //     pattern.sequence.loop = true;
-    //   }
-    // });
     set({ mode: newMode });
   },
   addPattern: () => {
@@ -222,7 +256,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         ...currentPattern,
         name: `pattern ${patterns.length + 1}`,
         id: nanoid(),
-        sequence: get().addSequence(currentPattern?.sequence?.events.length || 16)
+        sequencerStepNumber:
+          Array.from({ length: 16 }, (_, i) => i) || currentPattern.sequenceStepNumber
       };
 
       set({
@@ -232,74 +267,20 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     }
   },
   setSelectedPatternId: (patternId) => {
-    const isPlaying = get().isPlaying;
-    if (isPlaying) get().startStopSequencer();
     set({ selectedPatternId: patternId });
-    if (isPlaying) get().startStopSequencer();
+    const sequence = get().sequence;
+    const selectedPattern = get().getSelectedPattern();
+    if (selectedPattern && sequence) {
+      sequence.events = selectedPattern.sequenceStepNumber;
+      set({ sequence });
+    }
   },
 
   getSelectedPattern: () => {
     const patternId = get().selectedPatternId;
     return get().patterns.find((pattern) => pattern.id === patternId);
   },
-  getSelectedTrack: () => {
-    const selectedTrackId = get().selectedTrackId;
-    return get().tracks.find((track) => track.id === selectedTrackId);
-  },
-  addSequence: (sequenceLength) => {
-    return new Tone.Sequence(
-      (_, step) => {
-        const mode = get().mode;
 
-        const pattern = get().getSelectedPattern();
-        if (pattern) {
-          set({ currentStep: step });
-          pattern.trackTriggers.forEach((trigger) => {
-            if (trigger.activeSteps.includes(step)) {
-              get().playTrack(trigger.trackId);
-            }
-          });
-        }
-
-        if (mode === 'song') {
-          set({ currentStep: step });
-          const pattern = get().getSelectedPattern();
-          const song = get().song;
-          const playedSongPatterns = get().playedSongPatterns;
-
-          if (pattern && pattern.sequence) {
-            // stop song after last pattern
-            if (playedSongPatterns === song.length) {
-              pattern.sequence.stop();
-            }
-
-            if (step + 1 === pattern.sequence.events.length) {
-              set({ playedSongPatterns: playedSongPatterns + 1 });
-              pattern.sequence.stop();
-              if (playedSongPatterns + 1 >= song.length) {
-                set({ isPlaying: false, currentStep: 0, playedSongPatterns: 0 });
-              } else {
-                const patterns = get().patterns;
-                const newPattern = patterns.find(
-                  (pattern) => pattern.id === song[playedSongPatterns + 1].patternId
-                );
-                if (newPattern) {
-                  pattern.sequence.stop();
-                  set({ selectedPatternId: newPattern.id });
-                  const newSelectedPattern = get().getSelectedPattern();
-                  if (newSelectedPattern && newSelectedPattern.sequence) {
-                    newSelectedPattern.sequence.start();
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      Array.from({ length: sequenceLength }, (_, i) => i),
-      '16n'
-    );
-  },
   addPatternToSong: () => {
     const selectedPattern = get().getSelectedPattern();
     if (selectedPattern) {
@@ -320,7 +301,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   playSong: () => {
     const song = get().song;
     if (song.length) {
-      set({ selectedPatternId: song[0].patternId });
+      get().setSelectedPatternId(song[0].patternId);
+      set({ currentSongPattern: 0 });
       get().startStopSequencer();
     }
   }

@@ -16,7 +16,7 @@ export type TPattern = {
   trackTriggers: { trackId: string; activeSteps: number[] }[];
   name: string;
   id: string;
-  sequence: Tone.Sequence | null;
+  sequenceStepNumber: number[];
 };
 
 export type TSong = { id: string; patternName: string; patternId: string }[];

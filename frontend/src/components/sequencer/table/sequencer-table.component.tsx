@@ -5,7 +5,7 @@ import { Timeline } from './timeline';
 import { Track } from './track';
 import { Puff } from 'react-loader-spinner';
 import { TPattern } from '../sequencer.types';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 
 interface SequencerTableProps {
   selectedPattern: TPattern | undefined;
@@ -13,10 +13,10 @@ interface SequencerTableProps {
 
 export const SequencerTable: React.FC<SequencerTableProps> = ({ selectedPattern }) => {
   const tone = useToneStore((state) => state.tone);
-
   const currentStep = useSequencerStore((state) => state.currentStep);
   const tracks = useSequencerStore((state) => state.tracks);
   const addTrack = useSequencerStore((state) => state.addTrack);
+  const sequence = useSequencerStore((state) => state.sequence);
 
   if (!tone) {
     return (
@@ -30,9 +30,7 @@ export const SequencerTable: React.FC<SequencerTableProps> = ({ selectedPattern 
     <div className='w-full  overflow-auto bg-background border-neutral-600 border pr-2 '>
       <table className='max-w-full table-fixed border-collapse '>
         <thead>
-          {selectedPattern?.sequence ? (
-            <Timeline steps={selectedPattern.sequence.events} currentStep={currentStep} />
-          ) : null}
+          {sequence ? <Timeline steps={sequence.events} currentStep={currentStep} /> : null}
         </thead>
 
         <tbody>
@@ -40,11 +38,11 @@ export const SequencerTable: React.FC<SequencerTableProps> = ({ selectedPattern 
             <td className='pt-2'></td>
           </tr>
           {tracks.map((track, trackIndex) =>
-            selectedPattern?.sequence ? (
+            selectedPattern && sequence ? (
               <Track
                 key={trackIndex}
                 track={track}
-                steps={selectedPattern.sequence.events}
+                steps={sequence.events}
                 trackIndex={trackIndex}
                 activeSteps={
                   selectedPattern.trackTriggers.find((trigger) => trigger.trackId === track.id)
@@ -55,12 +53,14 @@ export const SequencerTable: React.FC<SequencerTableProps> = ({ selectedPattern 
           )}
           <tr>
             <td className='sticky left-0 z-10 p-2'>
-              <button
+              <Button
+                size='sm'
+                variant='outline'
                 onClick={() => addTrack()}
-                className={`my-4   text-gray-600 font-bold cursor-pointer `}
+                className={`my-4   font-bold cursor-pointer `}
               >
                 add track
-              </button>
+              </Button>
             </td>
           </tr>
         </tbody>
