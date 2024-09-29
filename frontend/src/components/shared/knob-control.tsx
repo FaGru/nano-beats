@@ -39,7 +39,7 @@ export const KnobControl: React.FC<KnobControlProps> = ({
       onTouchEnd={handleMouseUp}
       onDoubleClick={() => (handleDoupleClick ? handleDoupleClick() : null)}
     >
-      {title && <p className='text-xs mb-0.5'>{title}</p>}
+      {title && <p className='text-xxs mb-0.5'>{title}</p>}
       <div
         className={`relative ${sizeStyles.container} rounded-full flex justify-center items-center cursor-pointer`}
         style={{
@@ -75,7 +75,7 @@ export const KnobControl: React.FC<KnobControlProps> = ({
           ></div>
         </div>
       </div>
-      {text && <p className='text-xs'>{text}</p>}
+      {text && <p className='text-xxs'>{text}</p>}
     </div>
   );
 };
