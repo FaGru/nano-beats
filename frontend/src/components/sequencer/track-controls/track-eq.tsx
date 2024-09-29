@@ -1,10 +1,9 @@
 import { Power } from 'lucide-react';
 import { TTrack } from '../sequencer.types';
 import { useSequencerStore } from '../useSequencerStore';
-import { useMouseMove } from '@/hooks/useMouseMove';
 import { eqThreeDefaultVolume, eqThreeVolumeLimits } from '../sequencer.constants';
-import { FillableBox } from '@/components/shared/fillable-box';
 import { Card } from '@/components/ui/card';
+import { KnobControl } from '@/components/shared/knob-control';
 
 interface TrackEQProps {
   selectedTrack: TTrack;
@@ -19,11 +18,9 @@ export const TrackEQ: React.FC<TrackEQProps> = ({ selectedTrack }) => {
   const updateTrack = useSequencerStore((state) => state.updateTrack);
   const toggleEffectPower = useSequencerStore((state) => state.toggleEffectPower);
 
-  const { handleMouseDown, handleMouseUp } = useMouseMove('y');
-
   const handleTrackEQ = (updateValue: number, type: string | undefined) => {
     if (type && (type === 'high' || type === 'mid' || type === 'low')) {
-      let newVolume = selectedTrack.effects.eqThree[type].value + updateValue / 10;
+      let newVolume = selectedTrack.effects.eqThree[type].value + updateValue / 20;
       if (newVolume < eqThreeVolumeLimits.min) {
         newVolume = eqThreeVolumeLimits.min;
       } else if (newVolume > eqThreeVolumeLimits.max) {
@@ -40,34 +37,45 @@ export const TrackEQ: React.FC<TrackEQProps> = ({ selectedTrack }) => {
   };
   return (
     <Card
-      className={`py-1 px-6 flex gap-2 relative ${!selectedTrack.connectedEffects.includes('eqThree') ? 'opacity-50' : ''}`}
+      className={`py-1 px-6 flex gap-4 relative ${!selectedTrack.connectedEffects.includes('eqThree') ? 'opacity-50' : ''}`}
     >
       <Power
         className={`absolute left-0 top-0 w-4 h-4 ${selectedTrack.connectedEffects.includes('eqThree') ? 'bg-primary' : ''} border rounded p-0.5 cursor-pointer`}
         onClick={() => toggleEffectPower(selectedTrack.id, 'eqThree')}
       />
 
-      {Object.keys(eqThreeValues).map((type: string) => (
-        <div
-          key={type}
-          className='flex flex-col text-xs  items-center gap-0.5 '
-          onMouseDown={(e) => handleMouseDown(e, handleTrackEQ, type)}
-          onTouchStart={(e) => handleMouseDown(e, handleTrackEQ)}
-          onMouseUp={handleMouseUp}
-          onTouchEnd={handleMouseUp}
-          onDoubleClick={() => resetTrackEQ(type as 'high' | 'mid' | 'low')}
-        >
-          <p>{type}</p>
-          <FillableBox
-            value={(Math.round(eqThreeValues[type as 'high' | 'mid' | 'low'] * 10) / 10).toFixed(1)}
-            orientation='vertical'
-            height='100%'
-            width='16px'
-            max={eqThreeVolumeLimits.max}
-            min={eqThreeVolumeLimits.min}
-          />
-        </div>
-      ))}
+      <KnobControl
+        handleKnobChange={(valueChange) => handleTrackEQ(valueChange, 'high')}
+        handleDoupleClick={() => resetTrackEQ('high')}
+        maxValue={eqThreeVolumeLimits.max}
+        minValue={eqThreeVolumeLimits.min}
+        value={(eqThreeValues.high * 10) / 10}
+        size='md'
+        title={'GainHigh'}
+        text={`${((eqThreeValues.high * 10) / 10).toFixed(1)} dB`}
+      />
+
+      <KnobControl
+        handleKnobChange={(valueChange) => handleTrackEQ(valueChange, 'mid')}
+        handleDoupleClick={() => resetTrackEQ('mid')}
+        maxValue={eqThreeVolumeLimits.max}
+        minValue={eqThreeVolumeLimits.min}
+        value={(eqThreeValues.mid * 10) / 10}
+        size='md'
+        title={'GainMid '}
+        text={`${((eqThreeValues.mid * 10) / 10).toFixed(1)} dB`}
+      />
+
+      <KnobControl
+        handleKnobChange={(valueChange) => handleTrackEQ(valueChange, 'low')}
+        handleDoupleClick={() => resetTrackEQ('low')}
+        maxValue={eqThreeVolumeLimits.max}
+        minValue={eqThreeVolumeLimits.min}
+        value={(eqThreeValues.low * 10) / 10}
+        size='md'
+        title={'GainLow'}
+        text={`${((eqThreeValues.low * 10) / 10).toFixed(1)} dB`}
+      />
     </Card>
   );
 };
