@@ -323,25 +323,29 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   handleTrackConnection: (track) => {
     track.player?.disconnect();
 
+    // disconnect all effects
+    Object.keys(track.effects).forEach((effect) => {
+      track.effects[effect as TEffects].disconnect();
+    });
+
     track.connectedEffects.forEach((effectType, idx) => {
-      if (idx === 0 && idx + 1 === track.connectedEffects.length) {
-        console.log(`connect player to ${effectType} and then to destination`);
+      // connect player to first effect
+      if (idx === 0) {
         track.player?.connect(track.effects[effectType as TEffects]);
-        track.effects[effectType as TEffects].connect(Tone.getDestination());
-      } else if (idx === 0) {
-        console.log(`connect player to ${effectType} `);
-        track.player?.connect(track.effects[effectType as TEffects]);
-      } else if (idx + 1 === track.connectedEffects.length) {
-        track.effects[track.connectedEffects[idx - 1] as TEffects]
-          .connect(track.effects[effectType as TEffects])
-          .toDestination();
-      } else {
+      }
+      // connect last effect to next effect
+      else {
         track.effects[track.connectedEffects[idx - 1] as TEffects].connect(
           track.effects[effectType as TEffects]
         );
       }
+      // connect last effect to destination
+      if (idx + 1 === track.connectedEffects.length) {
+        track.effects[effectType as TEffects].connect(Tone.getDestination());
+      }
     });
 
+    // no effects => connect player to destination
     if (!track.connectedEffects.length) {
       track.player?.connect(Tone.getDestination());
     }
