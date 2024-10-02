@@ -3,6 +3,7 @@ import { TrackSample } from './track-sample';
 import { TrackEQ } from './track-eq';
 import { TrackDropZone } from './track-dropzone';
 import { TrackDelay } from './track-delay';
+import { TrackPitch } from './track-pitch';
 
 interface TrackControlsProps {
   selectedTrack: TTrack;
@@ -14,6 +15,7 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
       {selectedTrack?.player ? (
         <>
           <TrackSample selectedTrack={selectedTrack} />
+          <TrackPitch selectedTrack={selectedTrack} />
           <TrackEQ selectedTrack={selectedTrack} />
           <TrackDelay selectedTrack={selectedTrack} />
         </>

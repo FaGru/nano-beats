@@ -162,9 +162,9 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       name: `Track ${tracksLength + 1}`,
       player: null,
       effects: {
-        reverb: new Tone.Reverb().toDestination(),
-        delay: new Tone.FeedbackDelay().toDestination(),
-        pitchShift: new Tone.PitchShift().toDestination(),
+        reverb: new Tone.Reverb(),
+        delay: new Tone.FeedbackDelay(),
+        pitchShift: new Tone.PitchShift(),
         eqThree: new Tone.EQ3(eqThreeDefaultVolume, eqThreeDefaultVolume, eqThreeDefaultVolume)
       },
       connectedEffects: []
@@ -183,7 +183,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
 
     if (track) {
       if (!track.player) {
-        const player = new Tone.Player().toDestination();
+        const player = new Tone.Player().connect(Tone.getDestination());
         player.load(sampleUrl);
         const updatedTrack = { ...track, player, name: trackName };
         get().updateTrack(updatedTrack);
