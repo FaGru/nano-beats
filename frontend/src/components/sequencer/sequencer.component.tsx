@@ -24,7 +24,7 @@ export const Sequencer: React.FC<SequencerProps> = ({ audioFiles }) => {
     <div className='flex flex-col w-full   p-2'>
       <Controls selectedPattern={selectedPattern} />
       <SongTimeline />
-      <div className='flex w-full gap-0 h-[60vh]'>
+      <div className='flex w-full gap-0 max-h-[calc(100vh-316px)]'>
         <Explorer audioFiles={audioFiles} selectedTrack={selectedTrack || null} />
         <SequencerTable selectedPattern={selectedPattern} />
       </div>
