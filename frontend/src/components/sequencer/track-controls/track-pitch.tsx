@@ -20,7 +20,7 @@ export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
   const toggleEffectPower = useSequencerStore((state) => state.toggleEffectPower);
   const updateTrack = useSequencerStore((state) => state.updateTrack);
 
-  const handlePitchKnob = (valueChange: any) => {
+  const handlePitchKnob = (valueChange: number) => {
     let newPitch = selectedTrack.effects.pitchShift.pitch + valueChange;
     if (newPitch < pitchLimits.min) {
       newPitch = pitchLimits.min;
@@ -35,8 +35,7 @@ export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
     updateTrack(selectedTrack);
   };
 
-  const handleWindowSizeKnob = (valueChange: any) => {
-    console.log(valueChange / 1000);
+  const handleWindowSizeKnob = (valueChange: number) => {
     let newPitch = selectedTrack.effects.pitchShift.windowSize + valueChange / 1000;
     if (newPitch < pitchWindowSizeLimits.min) {
       newPitch = pitchWindowSizeLimits.min;
@@ -51,8 +50,8 @@ export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
     updateTrack(selectedTrack);
   };
 
-  const handleDelayTimeKnob = (valueChange: any) => {
-    let newPitch = (selectedTrack.effects.pitchShift.delayTime.value as number) + valueChange / 100;
+  const handleDelayTimeKnob = (valueChange: number) => {
+    let newPitch = Number(selectedTrack.effects.pitchShift.delayTime.value) + valueChange / 100;
     if (newPitch < pitchDelayTimeLimits.min) {
       newPitch = pitchDelayTimeLimits.min;
     } else if (newPitch > pitchDelayTimeLimits.max) {
@@ -66,8 +65,8 @@ export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
     updateTrack(selectedTrack);
   };
 
-  const handleFeedbackKnob = (valueChange: any) => {
-    let newPitch = (selectedTrack.effects.pitchShift.feedback.value as number) + valueChange / 100;
+  const handleFeedbackKnob = (valueChange: number) => {
+    let newPitch = selectedTrack.effects.pitchShift.feedback.value + valueChange / 100;
     if (newPitch < pitchFeedbackLimits.min) {
       newPitch = pitchFeedbackLimits.min;
     } else if (newPitch > pitchFeedbackLimits.max) {
@@ -117,10 +116,10 @@ export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
           handleDoupleClick={resetDelayTime}
           minValue={pitchDelayTimeLimits.min}
           maxValue={pitchDelayTimeLimits.max}
-          value={selectedTrack.effects.pitchShift.delayTime.value as number}
+          value={Number(selectedTrack.effects.pitchShift.delayTime.value)}
           size='sm'
           title='Delay Time'
-          text={`${(selectedTrack.effects.pitchShift.delayTime.value as Number).toFixed(2)} ms`}
+          text={`${(Number(selectedTrack.effects.pitchShift.delayTime.value) * 100).toFixed(0)} ms`}
         />
       </div>
       <div className='mt-2 '>
@@ -129,10 +128,10 @@ export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
           handleDoupleClick={resetFeedback}
           minValue={pitchFeedbackLimits.min}
           maxValue={pitchFeedbackLimits.max}
-          value={selectedTrack.effects.pitchShift.feedback.value as number}
+          value={selectedTrack.effects.pitchShift.feedback.value}
           size='sm'
           title='Feedback'
-          text={`${((selectedTrack.effects.pitchShift.feedback.value * 100) as Number).toFixed(0)} %`}
+          text={`${(selectedTrack.effects.pitchShift.feedback.value * 100).toFixed(0)} %`}
         />{' '}
       </div>
     </Card>

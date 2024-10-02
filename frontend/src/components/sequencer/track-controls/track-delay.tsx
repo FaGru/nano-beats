@@ -21,7 +21,7 @@ export const TrackDelay: React.FC<TrackDelayProps> = ({ selectedTrack }) => {
   const toggleEffectPower = useSequencerStore((state) => state.toggleEffectPower);
   const updateTrack = useSequencerStore((state) => state.updateTrack);
 
-  const handleDelayTimeKnob = (valueChange: any) => {
+  const handleDelayTimeKnob = (valueChange: number) => {
     let newDelayTime =
       Tone.Time(selectedTrack.effects.delay.delayTime.value).toSeconds() + valueChange / 100;
     if (newDelayTime < delayDelayTimeLimits.min) {
@@ -37,7 +37,7 @@ export const TrackDelay: React.FC<TrackDelayProps> = ({ selectedTrack }) => {
     updateTrack(selectedTrack);
   };
 
-  const handleDryWetKnob = (valueChange: any) => {
+  const handleDryWetKnob = (valueChange: number) => {
     let newDryWet = selectedTrack.effects.delay.wet.value + valueChange / 100;
     if (newDryWet < delayDryWetLimits.min) {
       newDryWet = delayDryWetLimits.min;
@@ -52,7 +52,7 @@ export const TrackDelay: React.FC<TrackDelayProps> = ({ selectedTrack }) => {
     updateTrack(selectedTrack);
   };
 
-  const handleFeedbackKnob = (valueChange: any) => {
+  const handleFeedbackKnob = (valueChange: number) => {
     let newFeedback = selectedTrack.effects.delay.feedback.value + valueChange / 100;
     if (newFeedback < delayFeedbackLimits.min) {
       newFeedback = delayFeedbackLimits.min;
@@ -78,18 +78,18 @@ export const TrackDelay: React.FC<TrackDelayProps> = ({ selectedTrack }) => {
       <KnobControl
         handleKnobChange={handleDelayTimeKnob}
         handleDoupleClick={resetDelayTime}
-        minValue={0}
-        maxValue={1}
+        minValue={delayDelayTimeLimits.min}
+        maxValue={delayDelayTimeLimits.max}
         value={Number(selectedTrack.effects.delay.delayTime.value)}
         size='md'
         title='Delay Time'
-        text={`${Number(selectedTrack.effects.delay.delayTime.value)} ms`}
+        text={`${Number(selectedTrack.effects.delay.delayTime.value) * 100} ms`}
       />
       <KnobControl
         handleKnobChange={handleFeedbackKnob}
         handleDoupleClick={resetFeedback}
-        minValue={0}
-        maxValue={1}
+        minValue={delayFeedbackLimits.min}
+        maxValue={delayFeedbackLimits.max}
         value={selectedTrack.effects.delay.feedback.value}
         size='md'
         title='Feedback'

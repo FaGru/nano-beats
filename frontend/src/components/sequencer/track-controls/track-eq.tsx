@@ -42,8 +42,8 @@ export const TrackEQ: React.FC<TrackEQProps> = ({ selectedTrack }) => {
 
   const handleTrackEQHighFrequency = (updateValue: number, type: string | undefined) => {
     if (type && type === 'highFrequency') {
-      let currentFrequency = selectedTrack.effects.eqThree.highFrequency.value as number;
-      let newFrequency = currentFrequency * Math.pow(2, updateValue / 20); // Exponentielles Scaling
+      let currentFrequency = Number(selectedTrack.effects.eqThree.highFrequency.value);
+      let newFrequency = currentFrequency * Math.pow(2, updateValue / 20);
 
       if (newFrequency < eqThreeHighFrequencyLimits.min) {
         newFrequency = eqThreeHighFrequencyLimits.min;
@@ -58,8 +58,8 @@ export const TrackEQ: React.FC<TrackEQProps> = ({ selectedTrack }) => {
 
   const handleTrackEQLowFrequency = (updateValue: number, type: string | undefined) => {
     if (type && type === 'lowFrequency') {
-      let currentFrequency = selectedTrack.effects.eqThree.lowFrequency.value as number;
-      let newFrequency = currentFrequency * Math.pow(2, updateValue / 20); // Exponentielle Anpassung
+      let currentFrequency = Number(selectedTrack.effects.eqThree.lowFrequency.value);
+      let newFrequency = currentFrequency * Math.pow(2, updateValue / 20);
 
       if (newFrequency < eqThreeLowFrequencyLimits.min) {
         newFrequency = eqThreeLowFrequencyLimits.min;
@@ -103,7 +103,7 @@ export const TrackEQ: React.FC<TrackEQProps> = ({ selectedTrack }) => {
           value={eqThreeValues.lowFrequency}
           size='sm'
           title={'FreqLow'}
-          text={converToFrequenceText(eqThreeValues.lowFrequency as number)}
+          text={converToFrequenceText(eqThreeValues.lowFrequency)}
         />
       </div>
       <div className=' w-14'>
@@ -153,7 +153,7 @@ export const TrackEQ: React.FC<TrackEQProps> = ({ selectedTrack }) => {
           value={((eqThreeValues.highFrequency as number) * 10) / 10}
           size='sm'
           title={'FreqHigh'}
-          text={converToFrequenceText(eqThreeValues.highFrequency as number)}
+          text={converToFrequenceText(eqThreeValues.highFrequency)}
         />
       </div>
     </Card>
