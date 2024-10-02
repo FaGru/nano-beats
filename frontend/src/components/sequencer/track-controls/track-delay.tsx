@@ -12,6 +12,7 @@ import {
   delayFeedbackLimits
 } from '../sequencer.constants';
 import * as Tone from 'tone';
+import { EffectHeader } from './track-effect-header';
 
 interface TrackDelayProps {
   selectedTrack: TTrack;
@@ -68,43 +69,40 @@ export const TrackDelay: React.FC<TrackDelayProps> = ({ selectedTrack }) => {
   };
 
   return (
-    <Card
-      className={`py-1 pt-2 px-6 flex gap-4 relative ${!selectedTrack.connectedEffects.includes('delay') ? 'opacity-50' : ''}`}
-    >
-      <Power
-        className={`absolute left-0 top-0 w-4 h-4 ${selectedTrack.connectedEffects.includes('delay') ? 'bg-primary' : ''} border rounded p-0.5 cursor-pointer`}
-        onClick={() => toggleEffectPower(selectedTrack.id, 'delay')}
-      />
-      <KnobControl
-        handleKnobChange={handleDelayTimeKnob}
-        handleDoupleClick={resetDelayTime}
-        minValue={delayDelayTimeLimits.min}
-        maxValue={delayDelayTimeLimits.max}
-        value={Number(selectedTrack.effects.delay.delayTime.value)}
-        size='md'
-        title='Delay Time'
-        text={`${Number(selectedTrack.effects.delay.delayTime.value) * 100} ms`}
-      />
-      <KnobControl
-        handleKnobChange={handleFeedbackKnob}
-        handleDoupleClick={resetFeedback}
-        minValue={delayFeedbackLimits.min}
-        maxValue={delayFeedbackLimits.max}
-        value={selectedTrack.effects.delay.feedback.value}
-        size='md'
-        title='Feedback'
-        text={`${(selectedTrack.effects.delay.feedback.value * 100).toFixed(0)} %`}
-      />
-      <KnobControl
-        handleKnobChange={handleDryWetKnob}
-        handleDoupleClick={resetDryWet}
-        minValue={delayDryWetLimits.min}
-        maxValue={delayDryWetLimits.max}
-        value={selectedTrack.effects.delay.wet.value}
-        size='md'
-        title='Dry / Wet'
-        text={`${(selectedTrack.effects.delay.wet.value * 100).toFixed(0)} %`}
-      />
+    <Card className={`${!selectedTrack.connectedEffects.includes('delay') ? 'opacity-50' : ''}`}>
+      <EffectHeader selectedTrack={selectedTrack} effectType='delay' effectName='Delay' />
+      <div className={`flex gap-4 py-1 px-4 mt-4`}>
+        <KnobControl
+          handleKnobChange={handleDelayTimeKnob}
+          handleDoupleClick={resetDelayTime}
+          minValue={delayDelayTimeLimits.min}
+          maxValue={delayDelayTimeLimits.max}
+          value={Number(selectedTrack.effects.delay.delayTime.value)}
+          size='md'
+          title='Delay Time'
+          text={`${Number(selectedTrack.effects.delay.delayTime.value) * 100} ms`}
+        />
+        <KnobControl
+          handleKnobChange={handleFeedbackKnob}
+          handleDoupleClick={resetFeedback}
+          minValue={delayFeedbackLimits.min}
+          maxValue={delayFeedbackLimits.max}
+          value={selectedTrack.effects.delay.feedback.value}
+          size='md'
+          title='Feedback'
+          text={`${(selectedTrack.effects.delay.feedback.value * 100).toFixed(0)} %`}
+        />
+        <KnobControl
+          handleKnobChange={handleDryWetKnob}
+          handleDoupleClick={resetDryWet}
+          minValue={delayDryWetLimits.min}
+          maxValue={delayDryWetLimits.max}
+          value={selectedTrack.effects.delay.wet.value}
+          size='md'
+          title='Dry / Wet'
+          text={`${(selectedTrack.effects.delay.wet.value * 100).toFixed(0)} %`}
+        />
+      </div>
     </Card>
   );
 };

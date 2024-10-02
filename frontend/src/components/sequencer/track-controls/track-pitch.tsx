@@ -11,6 +11,7 @@ import {
   pitchWindowSizeDefault,
   pitchWindowSizeLimits
 } from '../sequencer.constants';
+import { EffectHeader } from './track-effect-header';
 
 interface TrackPitchProps {
   selectedTrack: TTrack;
@@ -82,57 +83,55 @@ export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
 
   return (
     <Card
-      className={`py-1 pt-2 px-6 flex gap-2 relative ${!selectedTrack.connectedEffects.includes('pitchShift') ? 'opacity-50' : ''}`}
+      className={`${!selectedTrack.connectedEffects.includes('pitchShift') ? 'opacity-50' : ''}`}
     >
-      <Power
-        className={`absolute left-0 top-0 w-4 h-4 ${selectedTrack.connectedEffects.includes('pitchShift') ? 'bg-primary' : ''} border rounded p-0.5 cursor-pointer`}
-        onClick={() => toggleEffectPower(selectedTrack.id, 'pitchShift')}
-      />
-
-      <KnobControl
-        handleKnobChange={handlePitchKnob}
-        handleDoupleClick={resetPitch}
-        minValue={pitchLimits.min}
-        maxValue={pitchLimits.max}
-        value={selectedTrack.effects.pitchShift.pitch}
-        size='md'
-        title='Pitch'
-        text={`${selectedTrack.effects.pitchShift.pitch.toFixed(0)}`}
-      />
-
-      <KnobControl
-        handleKnobChange={handleWindowSizeKnob}
-        handleDoupleClick={resetWindowSize}
-        minValue={pitchWindowSizeLimits.min}
-        maxValue={pitchWindowSizeLimits.max}
-        value={selectedTrack.effects.pitchShift.windowSize}
-        size='md'
-        title='Window Size'
-        text={`${selectedTrack.effects.pitchShift.windowSize.toFixed(3)}`}
-      />
-      <div className='mt-2'>
+      <EffectHeader selectedTrack={selectedTrack} effectType='pitchShift' effectName='Pitch' />
+      <div className={`flex gap-2 py-1 px-4 mt-4`}>
         <KnobControl
-          handleKnobChange={handleDelayTimeKnob}
-          handleDoupleClick={resetDelayTime}
-          minValue={pitchDelayTimeLimits.min}
-          maxValue={pitchDelayTimeLimits.max}
-          value={Number(selectedTrack.effects.pitchShift.delayTime.value)}
-          size='sm'
-          title='Delay Time'
-          text={`${(Number(selectedTrack.effects.pitchShift.delayTime.value) * 100).toFixed(0)} ms`}
+          handleKnobChange={handlePitchKnob}
+          handleDoupleClick={resetPitch}
+          minValue={pitchLimits.min}
+          maxValue={pitchLimits.max}
+          value={selectedTrack.effects.pitchShift.pitch}
+          size='md'
+          title='Pitch'
+          text={`${selectedTrack.effects.pitchShift.pitch.toFixed(0)}`}
         />
-      </div>
-      <div className='mt-2 '>
+
         <KnobControl
-          handleKnobChange={handleFeedbackKnob}
-          handleDoupleClick={resetFeedback}
-          minValue={pitchFeedbackLimits.min}
-          maxValue={pitchFeedbackLimits.max}
-          value={selectedTrack.effects.pitchShift.feedback.value}
-          size='sm'
-          title='Feedback'
-          text={`${(selectedTrack.effects.pitchShift.feedback.value * 100).toFixed(0)} %`}
-        />{' '}
+          handleKnobChange={handleWindowSizeKnob}
+          handleDoupleClick={resetWindowSize}
+          minValue={pitchWindowSizeLimits.min}
+          maxValue={pitchWindowSizeLimits.max}
+          value={selectedTrack.effects.pitchShift.windowSize}
+          size='md'
+          title='Window Size'
+          text={`${selectedTrack.effects.pitchShift.windowSize.toFixed(3)}`}
+        />
+        <div className='mt-2'>
+          <KnobControl
+            handleKnobChange={handleDelayTimeKnob}
+            handleDoupleClick={resetDelayTime}
+            minValue={pitchDelayTimeLimits.min}
+            maxValue={pitchDelayTimeLimits.max}
+            value={Number(selectedTrack.effects.pitchShift.delayTime.value)}
+            size='sm'
+            title='Delay'
+            text={`${(Number(selectedTrack.effects.pitchShift.delayTime.value) * 100).toFixed(0)} ms`}
+          />
+        </div>
+        <div className='mt-2 '>
+          <KnobControl
+            handleKnobChange={handleFeedbackKnob}
+            handleDoupleClick={resetFeedback}
+            minValue={pitchFeedbackLimits.min}
+            maxValue={pitchFeedbackLimits.max}
+            value={selectedTrack.effects.pitchShift.feedback.value}
+            size='sm'
+            title='Feedback'
+            text={`${(selectedTrack.effects.pitchShift.feedback.value * 100).toFixed(0)} %`}
+          />{' '}
+        </div>
       </div>
     </Card>
   );

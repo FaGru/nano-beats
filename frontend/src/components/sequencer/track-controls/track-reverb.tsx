@@ -1,4 +1,4 @@
-import { Card } from '@/components/ui/card';
+import { Card, CardHeader } from '@/components/ui/card';
 import { TTrack } from '../sequencer.types';
 import { Power } from 'lucide-react';
 import { useSequencerStore } from '../useSequencerStore';
@@ -12,13 +12,13 @@ import {
   reverbPreDelayLimits
 } from '../sequencer.constants';
 import * as Tone from 'tone';
+import { EffectHeader } from './track-effect-header';
 
 interface TrackReverbProps {
   selectedTrack: TTrack;
 }
 
 export const TrackReverb: React.FC<TrackReverbProps> = ({ selectedTrack }) => {
-  const toggleEffectPower = useSequencerStore((state) => state.toggleEffectPower);
   const updateTrack = useSequencerStore((state) => state.updateTrack);
 
   console.log(selectedTrack.effects.reverb);
@@ -69,47 +69,44 @@ export const TrackReverb: React.FC<TrackReverbProps> = ({ selectedTrack }) => {
   };
 
   return (
-    <Card
-      className={`py-1 pt-2 px-6 flex gap-4 relative ${!selectedTrack.connectedEffects.includes('reverb') ? 'opacity-50' : ''}`}
-    >
-      <Power
-        className={`absolute left-0 top-0 w-4 h-4 ${selectedTrack.connectedEffects.includes('reverb') ? 'bg-primary' : ''} border rounded p-0.5 cursor-pointer`}
-        onClick={() => toggleEffectPower(selectedTrack.id, 'reverb')}
-      />
-      <KnobControl
-        handleKnobChange={handlePreDelayKnob}
-        handleDoupleClick={resetPreDelay}
-        minValue={reverbPreDelayLimits.min}
-        maxValue={reverbPreDelayLimits.max}
-        value={Number(selectedTrack.effects.reverb.preDelay)}
-        size='md'
-        title='Predelay'
-        text={`${Number(selectedTrack.effects.reverb.preDelay) * 1000} ms`}
-      />
-      <KnobControl
-        handleKnobChange={handleDecayKnob}
-        handleDoupleClick={resetDecay}
-        minValue={reverbDecayLimits.min}
-        maxValue={reverbDecayLimits.max}
-        value={Number(selectedTrack.effects.reverb.decay)}
-        size='md'
-        title='Decay Time'
-        text={
-          Number(selectedTrack.effects.reverb.decay) >= 1
-            ? `${selectedTrack.effects.reverb.decay} s`
-            : `${Number(selectedTrack.effects.reverb.decay) * 1000} ms`
-        }
-      />
-      <KnobControl
-        handleKnobChange={handleDryWetKnob}
-        handleDoupleClick={resetDryWet}
-        minValue={reverbDryWetLimits.min}
-        maxValue={reverbDryWetLimits.max}
-        value={selectedTrack.effects.reverb.wet.value}
-        size='md'
-        title='Dry / Wet'
-        text={`${(selectedTrack.effects.reverb.wet.value * 100).toFixed(0)} %`}
-      />
+    <Card className={`${!selectedTrack.connectedEffects.includes('reverb') ? 'opacity-50' : ''}`}>
+      <EffectHeader selectedTrack={selectedTrack} effectType='reverb' effectName='Reverb' />
+      <div className={`flex gap-4 py-1 px-4 mt-4`}>
+        <KnobControl
+          handleKnobChange={handlePreDelayKnob}
+          handleDoupleClick={resetPreDelay}
+          minValue={reverbPreDelayLimits.min}
+          maxValue={reverbPreDelayLimits.max}
+          value={Number(selectedTrack.effects.reverb.preDelay)}
+          size='md'
+          title='Predelay'
+          text={`${Number(selectedTrack.effects.reverb.preDelay) * 1000} ms`}
+        />
+        <KnobControl
+          handleKnobChange={handleDecayKnob}
+          handleDoupleClick={resetDecay}
+          minValue={reverbDecayLimits.min}
+          maxValue={reverbDecayLimits.max}
+          value={Number(selectedTrack.effects.reverb.decay)}
+          size='md'
+          title='Decay Time'
+          text={
+            Number(selectedTrack.effects.reverb.decay) >= 1
+              ? `${selectedTrack.effects.reverb.decay} s`
+              : `${Number(selectedTrack.effects.reverb.decay) * 1000} ms`
+          }
+        />
+        <KnobControl
+          handleKnobChange={handleDryWetKnob}
+          handleDoupleClick={resetDryWet}
+          minValue={reverbDryWetLimits.min}
+          maxValue={reverbDryWetLimits.max}
+          value={selectedTrack.effects.reverb.wet.value}
+          size='md'
+          title='Dry / Wet'
+          text={`${(selectedTrack.effects.reverb.wet.value * 100).toFixed(0)} %`}
+        />
+      </div>
     </Card>
   );
 };
