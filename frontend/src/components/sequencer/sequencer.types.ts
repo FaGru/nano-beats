@@ -10,6 +10,7 @@ export type TTrack = {
     pitchShift: Tone.PitchShift;
     eqThree: Tone.EQ3;
   };
+  connectedEffects: string[];
 };
 
 export type TPattern = {
@@ -20,3 +21,5 @@ export type TPattern = {
 };
 
 export type TSong = { id: string; patternName: string; patternId: string }[];
+
+export type TEffects = 'reverb' | 'delay' | 'pitchShift' | 'eqThree';
