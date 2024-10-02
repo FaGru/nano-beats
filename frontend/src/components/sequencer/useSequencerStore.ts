@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import * as Tone from 'tone';
-import { TPattern, TSong, TTrack } from './sequencer.types';
+import { TEffects, TPattern, TSong, TTrack } from './sequencer.types';
 import { eqThreeDefaultVolume, sequencerBpmLimits } from './sequencer.constants';
 import { nanoid } from 'nanoid';
 
@@ -40,6 +40,8 @@ type SequencerActions = {
   removePatternFromSong: (patternId: string) => void;
   playSong: () => void;
   updateSongOrder: (newOrder: TSong) => void;
+  toggleEffectPower: (trackId: string, effectType: TEffects) => void;
+  handleTrackConnection: (track: TTrack) => void;
 };
 
 export const useSequencerStore = create<SequencerState & SequencerActions>()((set, get) => ({
@@ -133,8 +135,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       Tone.getTransport().start();
       set({ isPlaying: true });
     } else {
-      Tone.getTransport().position = 0;
       Tone.getTransport().pause();
+      Tone.getTransport().position = 0;
       set({ isPlaying: false, currentStep: 0 });
     }
   },
@@ -164,7 +166,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         delay: new Tone.FeedbackDelay().toDestination(),
         pitchShift: new Tone.PitchShift().toDestination(),
         eqThree: new Tone.EQ3(eqThreeDefaultVolume, eqThreeDefaultVolume, eqThreeDefaultVolume)
-      }
+      },
+      connectedEffects: []
     };
     set({
       tracks: [...tracks, newTrack],
@@ -182,7 +185,6 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       if (!track.player) {
         const player = new Tone.Player().toDestination();
         player.load(sampleUrl);
-        player.chain(track.effects.eqThree, Tone.getDestination());
         const updatedTrack = { ...track, player, name: trackName };
         get().updateTrack(updatedTrack);
       }
@@ -305,5 +307,48 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       set({ currentSongPattern: 0 });
       get().startStopSequencer();
     }
+  },
+  toggleEffectPower: (trackId, effectType) => {
+    const track = get().tracks.find((track) => track.id === trackId);
+    if (track) {
+      if (track.connectedEffects.includes(effectType)) {
+        track.connectedEffects = track.connectedEffects.filter((effect) => effect !== effectType);
+      } else {
+        track.connectedEffects = [...track.connectedEffects, effectType];
+      }
+
+      get().handleTrackConnection(track);
+    }
+  },
+  handleTrackConnection: (track) => {
+    track.player?.disconnect();
+
+    // disconnect all effects
+    Object.keys(track.effects).forEach((effect) => {
+      track.effects[effect as TEffects].disconnect();
+    });
+
+    track.connectedEffects.forEach((effectType, idx) => {
+      // connect player to first effect
+      if (idx === 0) {
+        track.player?.connect(track.effects[effectType as TEffects]);
+      }
+      // connect last effect to next effect
+      else {
+        track.effects[track.connectedEffects[idx - 1] as TEffects].connect(
+          track.effects[effectType as TEffects]
+        );
+      }
+      // connect last effect to destination
+      if (idx + 1 === track.connectedEffects.length) {
+        track.effects[effectType as TEffects].connect(Tone.getDestination());
+      }
+    });
+
+    // no effects => connect player to destination
+    if (!track.connectedEffects.length) {
+      track.player?.connect(Tone.getDestination());
+    }
+    get().updateTrack(track);
   }
 }));
