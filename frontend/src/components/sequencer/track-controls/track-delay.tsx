@@ -98,8 +98,8 @@ export const TrackDelay: React.FC<TrackDelayProps> = ({ selectedTrack }) => {
       <KnobControl
         handleKnobChange={handleDryWetKnob}
         handleDoupleClick={resetDryWet}
-        minValue={0}
-        maxValue={1}
+        minValue={delayDryWetLimits.min}
+        maxValue={delayDryWetLimits.max}
         value={selectedTrack.effects.delay.wet.value}
         size='md'
         title='Dry / Wet'
