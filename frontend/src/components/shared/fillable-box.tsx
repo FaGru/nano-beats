@@ -20,7 +20,7 @@ export const FillableBox: React.FC<FillableBoxProps> = ({
   const percentage = ((Number(value) - min) / (max - min)) * 100;
   return (
     <div
-      className={` border-2 border-neutral-500 relative rounded py-2 cursor-pointer`}
+      className={` border border-neutral-400 relative rounded py-2 cursor-pointer`}
       style={{ height, width }}
     >
       <div

@@ -42,8 +42,10 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
   }, [selectedTrack]);
 
   return (
-    <Card className='p-1 flex flex-col gap-2'>
-      <div className='flex items-center  justify-between pr-2'>
+    <Card>
+      <p className='text-xxs bg-card-highlight text-center p-0.5 rounded-t-md'>Sample</p>
+
+      <div className='flex items-center justify-between p-2 mt-4'>
         <Input
           disabled={!isNameChangeActive}
           className={`h-6 w-32 mr-2 bg-transparent rounded-none disabled:cursor-default  ${isNameChangeActive ? 'border-b-primary-foreground' : ''}`}
@@ -67,7 +69,7 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
         )}
       </div>
       <div
-        className='flex flex-col items-center justify-center mt-1'
+        className='flex flex-col items-center justify-center '
         onMouseDown={(e) => handleMouseDown(e, handleTrackGain)}
         onTouchStart={(e) => handleMouseDown(e, handleTrackGain)}
         onMouseUp={handleMouseUp}
