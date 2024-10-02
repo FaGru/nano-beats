@@ -22,7 +22,7 @@ export const delayDryWetDefault = 1;
 export const delayFeedbackLimits = { max: 1, min: 0 };
 export const delayFeedbackDefault = 0.125;
 
-// reverb constants
+// pitch constants
 export const pitchDefault = 0;
 export const pitchLimits = { max: 64, min: -64 };
 export const pitchWindowSizeDefault = 0.1;
@@ -31,3 +31,11 @@ export const pitchDelayTimeDefault = 0;
 export const pitchDelayTimeLimits = { max: 1, min: 0 };
 export const pitchFeedbackDefault = 0;
 export const pitchFeedbackLimits = { max: 1, min: 0 };
+
+// reverb constants
+export const reverbDryWetLimits = { max: 1, min: 0 };
+export const reverbDryWetDefault = 1;
+export const reverbDecayLimits = { max: 60, min: 0.2 };
+export const reverbDecayDefault = 1.5;
+export const reverbPreDelayLimits = { max: 0.25, min: 0.001 };
+export const reverbPreDelayDefault = 0.01;
