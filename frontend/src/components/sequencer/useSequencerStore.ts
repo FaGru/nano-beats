@@ -165,7 +165,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         reverb: new Tone.Reverb(),
         delay: new Tone.FeedbackDelay(),
         pitchShift: new Tone.PitchShift(),
-        eqThree: new Tone.EQ3(eqThreeDefaultVolume, eqThreeDefaultVolume, eqThreeDefaultVolume)
+        eqThree: new Tone.EQ3(eqThreeDefaultVolume, eqThreeDefaultVolume, eqThreeDefaultVolume),
+        distortion: new Tone.Distortion()
       },
       connectedEffects: []
     };

@@ -39,3 +39,9 @@ export const reverbDecayLimits = { max: 60, min: 0.2 };
 export const reverbDecayDefault = 1.5;
 export const reverbPreDelayLimits = { max: 0.25, min: 0.001 };
 export const reverbPreDelayDefault = 0.01;
+
+// distortion constants
+export const distortionDryWetLimits = { max: 1, min: 0 };
+export const distortionDryWetDefault = 1;
+export const distortionLimits = { max: 1, min: 0 };
+export const distortionDefault = 0.4;
