@@ -116,7 +116,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       '16n'
     );
     sequence.start(0);
-    set({ sequence });
+    const tracks = get().tracks;
+    set({ sequence, selectedTrackId: tracks[0].id });
   },
   updateStepLength: (newStepLength: any) => {
     const pattern = get().getSelectedPattern();
