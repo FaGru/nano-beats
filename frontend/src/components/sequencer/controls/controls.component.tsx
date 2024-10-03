@@ -48,7 +48,7 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
   };
 
   return (
-    <div className='flex bg-background border-neutral-600 border p-1 rounded-t-md w-full h-[6vh] gap-4 items-center px-2'>
+    <div className='flex bg-background border-neutral-600 border p-1 rounded-t-md w-full h-12 gap-4 items-center px-2'>
       <Button
         onClick={() => (mode === 'pattern' ? startStopSequencer() : playSong())}
         size='xs'
