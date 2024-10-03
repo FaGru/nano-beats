@@ -119,7 +119,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     const tracks = get().tracks;
     set({ sequence, selectedTrackId: tracks[0].id });
   },
-  updateStepLength: (newStepLength: any) => {
+  updateStepLength: (newStepLength) => {
     const pattern = get().getSelectedPattern();
     const sequence = get().sequence;
     if (pattern && sequence) {
