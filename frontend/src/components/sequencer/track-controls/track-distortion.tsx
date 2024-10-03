@@ -22,8 +22,6 @@ export const TrackDistortion: React.FC<TrackDistortionProps> = ({ selectedTrack 
 
   const overSamplingTypes = ['none', '2x', '4x'];
 
-  console.log(selectedTrack.effects.distortion);
-
   const handleDryWetKnob = (valueChange: number) => {
     let newDryWet = selectedTrack.effects.distortion.wet.value + valueChange / 100;
     if (newDryWet < distortionDryWetLimits.min) {
