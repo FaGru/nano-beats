@@ -36,6 +36,7 @@ type SequencerActions = {
   setSelectedPatternId: (patternId: string) => void;
   updatePattern: (updatedPattern: TPattern) => void;
   getSelectedPattern: () => TPattern | undefined;
+  getSelectedTrack: () => TTrack | undefined;
   addPatternToSong: () => void;
   removePatternFromSong: (patternId: string) => void;
   playSong: () => void;
@@ -169,8 +170,11 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         eqThree: new Tone.EQ3(eqThreeDefaultVolume, eqThreeDefaultVolume, eqThreeDefaultVolume),
         distortion: new Tone.Distortion()
       },
-      connectedEffects: []
+      connectedEffects: [],
+      wavesurfer: null,
+      playerStartTime: 0
     };
+
     set({
       tracks: [...tracks, newTrack],
       patterns: patterns.map((pattern) => ({
@@ -183,11 +187,19 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     const tracks = get().tracks;
     const track = tracks.find((track) => track.id === trackId);
 
+    const setBufferLoaded = () => {
+      const selectedTrack = get().getSelectedTrack();
+
+      if (selectedTrack) {
+        get().updateTrack(selectedTrack);
+      }
+    };
+
     if (track) {
       if (!track.player) {
-        const player = new Tone.Player().connect(Tone.getDestination());
-        player.load(sampleUrl);
+        const player = new Tone.Player(sampleUrl, setBufferLoaded).connect(Tone.getDestination());
         const updatedTrack = { ...track, player, name: trackName };
+
         get().updateTrack(updatedTrack);
       }
       if (track.player) {
@@ -241,7 +253,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     const track = tracks.find((track) => track.id === trackId);
 
     if (track && track.player && track.player.loaded) {
-      track.player.start();
+      track.player.start(track.playerStartTime);
     }
   },
   selectTrack: (trackId) => {
@@ -283,6 +295,10 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   getSelectedPattern: () => {
     const patternId = get().selectedPatternId;
     return get().patterns.find((pattern) => pattern.id === patternId);
+  },
+  getSelectedTrack: () => {
+    const trackId = get().selectedTrackId;
+    return get().tracks.find((track) => track.id === trackId);
   },
 
   addPatternToSong: () => {

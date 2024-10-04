@@ -1,4 +1,5 @@
 import * as Tone from 'tone';
+import WaveSurfer from 'wavesurfer.js';
 
 export type TTrack = {
   id: string;
@@ -12,6 +13,8 @@ export type TTrack = {
     distortion: Tone.Distortion;
   };
   connectedEffects: string[];
+  playerStartTime: number;
+  wavesurfer: WaveSurfer | null;
 };
 
 export type TPattern = {

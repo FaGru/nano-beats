@@ -16,7 +16,7 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
   return (
     <ScrollArea className='flex whitespace-nowrap bg-background border-neutral-600 border border-t-0'>
       <div className='flex  gap-2  px-4 rounded-b-md h-36  p-2 '>
-        {selectedTrack?.player ? (
+        {selectedTrack?.player?.buffer.loaded ? (
           <>
             <TrackSample selectedTrack={selectedTrack} />
             <TrackPitch selectedTrack={selectedTrack} />
