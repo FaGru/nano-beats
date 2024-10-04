@@ -172,7 +172,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       },
       connectedEffects: [],
       wavesurfer: null,
-      playerStartTime: 0
+      playerStartTime: 0,
+      initWaveform: true
     };
 
     set({
@@ -189,8 +190,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
 
     const setBufferLoaded = () => {
       const selectedTrack = get().getSelectedTrack();
-
       if (selectedTrack) {
+        selectedTrack.initWaveform = true;
         get().updateTrack(selectedTrack);
       }
     };
@@ -253,7 +254,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     const track = tracks.find((track) => track.id === trackId);
 
     if (track && track.player && track.player.loaded) {
-      track.player.start(track.playerStartTime);
+      track.player.start(0, track.playerStartTime);
     }
   },
   selectTrack: (trackId) => {

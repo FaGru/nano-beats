@@ -71,14 +71,6 @@ export const PlayerWaveform: React.FC<PlayerWaveformProps> = ({ selectedTrack })
   const updateTrack = useSequencerStore((state) => state.updateTrack);
   const { handleMouseDown, handleMouseUp } = useMouseMove('y');
 
-  const reverseAudioBuffer = (audioBuffer: AudioBuffer): AudioBuffer => {
-    for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
-      const channelData = audioBuffer.getChannelData(i);
-      Array.prototype.reverse.call(channelData); // Reverse the channel data
-    }
-    return audioBuffer;
-  };
-
   const initWavesurfer = async () => {
     if (waveformRef.current && timelineRef.current) {
       if (wavesurferRef.current && isReadyForInit.current) {
@@ -139,15 +131,15 @@ export const PlayerWaveform: React.FC<PlayerWaveformProps> = ({ selectedTrack })
     }
     selectedTrack.wavesurfer = wavesurferRef.current;
     selectedTrack.playerStartTime = 0;
+    selectedTrack.initWaveform = false;
     updateTrack(selectedTrack);
   };
 
   useEffect(() => {
     if (waveformRef.current && isReadyForInit.current) {
-      console.log('init');
       initWavesurfer();
     }
-  }, [selectedTrack, selectedTrack.player?.reverse]);
+  }, [selectedTrack.initWaveform, selectedTrack.player?.reverse]);
 
   const handleZoom = (newValue: number) => {
     if (selectedTrack.wavesurfer) {

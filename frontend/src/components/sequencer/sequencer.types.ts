@@ -15,6 +15,7 @@ export type TTrack = {
   connectedEffects: string[];
   playerStartTime: number;
   wavesurfer: WaveSurfer | null;
+  initWaveform: boolean;
 };
 
 export type TPattern = {

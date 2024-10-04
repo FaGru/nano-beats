@@ -70,7 +70,7 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
           />
         )} */}
         <div
-          className='flex gap-2 items-center justify-center'
+          className='flex gap-1 items-center justify-center'
           onMouseDown={(e) => handleMouseDown(e, handleTrackGain)}
           onTouchStart={(e) => handleMouseDown(e, handleTrackGain)}
           onMouseUp={handleMouseUp}
@@ -96,6 +96,7 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
             }}
             className=' z-20 p-1 -top-[18px]'
             size='xxs'
+            variant={selectedTrack.player?.reverse ? 'default' : 'ghost'}
           >
             <RotateCcw className='h-3 w-3 ' />
           </Button>
