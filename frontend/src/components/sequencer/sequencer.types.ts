@@ -1,4 +1,5 @@
 import * as Tone from 'tone';
+import WaveSurfer from 'wavesurfer.js';
 
 export type TTrack = {
   id: string;
@@ -9,8 +10,12 @@ export type TTrack = {
     delay: Tone.FeedbackDelay;
     pitchShift: Tone.PitchShift;
     eqThree: Tone.EQ3;
+    distortion: Tone.Distortion;
   };
   connectedEffects: string[];
+  playerStartTime: number;
+  wavesurfer: WaveSurfer | null;
+  initWaveform: boolean;
 };
 
 export type TPattern = {
@@ -22,4 +27,4 @@ export type TPattern = {
 
 export type TSong = { id: string; patternName: string; patternId: string }[];
 
-export type TEffects = 'reverb' | 'delay' | 'pitchShift' | 'eqThree';
+export type TEffects = 'reverb' | 'delay' | 'pitchShift' | 'eqThree' | 'distortion';

@@ -6,6 +6,7 @@ import { TrackDelay } from './track-delay';
 import { TrackPitch } from './track-pitch';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { TrackReverb } from './track-reverb';
+import { TrackDistortion } from './track-distortion';
 
 interface TrackControlsProps {
   selectedTrack: TTrack;
@@ -22,6 +23,7 @@ export const TrackControls: React.FC<TrackControlsProps> = ({ selectedTrack }) =
             <TrackEQ selectedTrack={selectedTrack} />
             <TrackDelay selectedTrack={selectedTrack} />
             <TrackReverb selectedTrack={selectedTrack} />
+            <TrackDistortion selectedTrack={selectedTrack} />
           </>
         ) : (
           <>

@@ -21,9 +21,7 @@ interface TrackReverbProps {
 export const TrackReverb: React.FC<TrackReverbProps> = ({ selectedTrack }) => {
   const updateTrack = useSequencerStore((state) => state.updateTrack);
 
-  console.log(selectedTrack.effects.reverb);
-
-  const handleDecayKnob = (valueChange: any) => {
+  const handleDecayKnob = (valueChange: number) => {
     let newDelayTime = Tone.Time(selectedTrack.effects.reverb.decay).toSeconds() + valueChange / 10;
     if (newDelayTime < reverbDecayLimits.min) {
       newDelayTime = reverbDecayLimits.min;
@@ -37,7 +35,7 @@ export const TrackReverb: React.FC<TrackReverbProps> = ({ selectedTrack }) => {
     selectedTrack.effects.reverb.decay = reverbDecayDefault;
     updateTrack(selectedTrack);
   };
-  const handlePreDelayKnob = (valueChange: any) => {
+  const handlePreDelayKnob = (valueChange: number) => {
     let newDelayTime =
       Tone.Time(selectedTrack.effects.reverb.preDelay).toSeconds() + valueChange / 1000;
     if (newDelayTime < reverbPreDelayLimits.min) {
@@ -53,7 +51,7 @@ export const TrackReverb: React.FC<TrackReverbProps> = ({ selectedTrack }) => {
     updateTrack(selectedTrack);
   };
 
-  const handleDryWetKnob = (valueChange: any) => {
+  const handleDryWetKnob = (valueChange: number) => {
     let newDryWet = selectedTrack.effects.reverb.wet.value + valueChange / 100;
     if (newDryWet < reverbDryWetLimits.min) {
       newDryWet = reverbDryWetLimits.min;
