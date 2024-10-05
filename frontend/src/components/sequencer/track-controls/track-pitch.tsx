@@ -18,7 +18,6 @@ interface TrackPitchProps {
 }
 
 export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
-  const toggleEffectPower = useSequencerStore((state) => state.toggleEffectPower);
   const updateTrack = useSequencerStore((state) => state.updateTrack);
 
   const handlePitchKnob = (valueChange: number) => {
@@ -130,7 +129,7 @@ export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
             size='sm'
             title='Feedback'
             text={`${(selectedTrack.effects.pitchShift.feedback.value * 200).toFixed(0)} %`}
-          />{' '}
+          />
         </div>
       </div>
     </Card>
