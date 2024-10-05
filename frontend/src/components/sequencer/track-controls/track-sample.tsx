@@ -1,4 +1,4 @@
-import { useMouseMove } from '@/hooks/useMouseMove';
+import { useMouseMove } from '@/lib/hooks/useMouseMove';
 import { TTrack } from '../sequencer.types';
 import { sequencerDefaultVolume, sequencerVolumeLimits } from '../sequencer.constants';
 import { useSequencerStore } from '../useSequencerStore';
@@ -91,6 +91,7 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
             onClick={() => {
               if (selectedTrack.player) {
                 selectedTrack.player.reverse = !selectedTrack.player.reverse;
+                selectedTrack.initWaveform = true;
                 updateTrack(selectedTrack);
               }
             }}

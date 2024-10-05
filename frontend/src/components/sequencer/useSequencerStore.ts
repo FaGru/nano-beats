@@ -205,7 +205,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       }
       if (track.player) {
         track.player.load(sampleUrl);
-        const updatedTrack = { ...track, name: trackName };
+        const updatedTrack = { ...track, name: trackName, playerStartTime: 0 };
         get().updateTrack(updatedTrack);
       }
     }

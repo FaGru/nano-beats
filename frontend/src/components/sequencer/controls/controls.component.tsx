@@ -1,5 +1,5 @@
 'use client';
-import { useMouseMove } from '@/hooks/useMouseMove';
+import { useMouseMove } from '@/lib/hooks/useMouseMove';
 import { useSequencerStore } from '../useSequencerStore';
 import { stepsLimits } from '../sequencer.constants';
 import { TPattern } from '../sequencer.types';
