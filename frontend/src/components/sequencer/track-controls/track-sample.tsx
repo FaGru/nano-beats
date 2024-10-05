@@ -48,27 +48,6 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
       <p className='text-xxs bg-card-highlight text-center p-0.5 rounded-t-md'>{trackName}</p>
 
       <div className='flex flex-col gap-2 items-center justify-between p-2 mt-1'>
-        {/* <Input
-          disabled={!isNameChangeActive}
-          className={`h-6 w-32 mr-2 bg-transparent rounded-none disabled:cursor-default  ${isNameChangeActive ? 'border-b-primary-foreground' : ''}`}
-          value={trackName}
-          onChange={(e) => setTrackName(e.target.value)}
-        />
-        {isNameChangeActive ? (
-          <Check
-            className='w-4 h-4  cursor-pointer'
-            onClick={() => {
-              setIsNameChangeActive(false);
-              selectedTrack.name = trackName;
-              updateTrack(selectedTrack);
-            }}
-          />
-        ) : (
-          <Pencil
-            className='w-4 h-4 p-0.5 cursor-pointer'
-            onClick={() => setIsNameChangeActive(true)}
-          />
-        )} */}
         <div
           className='flex gap-1 items-center justify-center'
           onMouseDown={(e) => handleMouseDown(e, handleTrackGain)}
@@ -117,14 +96,6 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
         </div>
 
         {selectedTrack.player?.buffer.loaded && <PlayerWaveform selectedTrack={selectedTrack} />}
-
-        {/* <button onClick={() => selectedTrack?.player?.start()}>play</button> */}
-        {/* <Waveform
-        device={
-          // new Tone.Oscillator()
-          selectedTrack.player
-        }
-      /> */}
       </div>
     </Card>
   );
