@@ -1,12 +1,14 @@
-import { useMouseMove } from '@/hooks/useMouseMove';
+import { useMouseMove } from '@/lib/hooks/useMouseMove';
 import { TTrack } from '../sequencer.types';
 import { sequencerDefaultVolume, sequencerVolumeLimits } from '../sequencer.constants';
 import { useSequencerStore } from '../useSequencerStore';
 import { FillableBox } from '@/components/shared/fillable-box';
-import { Check, Pencil } from 'lucide-react';
+import { Check, Pencil, Play, RotateCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { PlayerWaveform } from './player-waveform';
+import { Button } from '@/components/ui/button';
 
 interface TrackSampleProps {
   selectedTrack: TTrack;
@@ -42,9 +44,11 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
   }, [selectedTrack]);
 
   return (
-    <Card className='p-1 flex flex-col gap-2'>
-      <div className='flex items-center  justify-between pr-2'>
-        <Input
+    <Card>
+      <p className='text-xxs bg-card-highlight text-center p-0.5 rounded-t-md'>{trackName}</p>
+
+      <div className='flex flex-col gap-2 items-center justify-between p-2 mt-1'>
+        {/* <Input
           disabled={!isNameChangeActive}
           className={`h-6 w-32 mr-2 bg-transparent rounded-none disabled:cursor-default  ${isNameChangeActive ? 'border-b-primary-foreground' : ''}`}
           value={trackName}
@@ -64,29 +68,63 @@ export const TrackSample: React.FC<TrackSampleProps> = ({ selectedTrack }) => {
             className='w-4 h-4 p-0.5 cursor-pointer'
             onClick={() => setIsNameChangeActive(true)}
           />
-        )}
-      </div>
-      <div
-        className='flex flex-col items-center justify-center mt-1'
-        onMouseDown={(e) => handleMouseDown(e, handleTrackGain)}
-        onTouchStart={(e) => handleMouseDown(e, handleTrackGain)}
-        onMouseUp={handleMouseUp}
-        onTouchEnd={handleMouseUp}
-        onDoubleClick={resetTrackGain}
-      >
-        <FillableBox
-          value={
-            selectedTrack.player
-              ? (Math.round(selectedTrack.player.volume.value * 10) / 10).toFixed(1)
-              : '0.0'
-          }
-          orientation='horizontal'
-          height={'16px'}
-          width='144px'
-          max={sequencerVolumeLimits.max}
-          min={sequencerVolumeLimits.min}
-          valueType={'dB'}
-        />
+        )} */}
+        <div
+          className='flex gap-1 items-center justify-center'
+          onMouseDown={(e) => handleMouseDown(e, handleTrackGain)}
+          onTouchStart={(e) => handleMouseDown(e, handleTrackGain)}
+          onMouseUp={handleMouseUp}
+          onTouchEnd={handleMouseUp}
+          onDoubleClick={resetTrackGain}
+        >
+          <Button
+            onClick={() => {
+              selectedTrack.wavesurfer?.pause();
+              selectedTrack.wavesurfer?.play();
+            }}
+            className=' z-20 p-1 -top-[18px]'
+            size='xxs'
+          >
+            <Play className='h-3 w-3 ' />
+          </Button>
+          <Button
+            onClick={() => {
+              if (selectedTrack.player) {
+                selectedTrack.player.reverse = !selectedTrack.player.reverse;
+                selectedTrack.initWaveform = true;
+                updateTrack(selectedTrack);
+              }
+            }}
+            className=' z-20 p-1 -top-[18px]'
+            size='xxs'
+            variant={selectedTrack.player?.reverse ? 'default' : 'ghost'}
+          >
+            <RotateCcw className='h-3 w-3 ' />
+          </Button>
+          <FillableBox
+            value={
+              selectedTrack.player
+                ? (Math.round(selectedTrack.player.volume.value * 10) / 10).toFixed(1)
+                : '0.0'
+            }
+            orientation='horizontal'
+            height={'16px'}
+            width='128px'
+            max={sequencerVolumeLimits.max}
+            min={sequencerVolumeLimits.min}
+            valueType={'dB'}
+          />
+        </div>
+
+        {selectedTrack.player?.buffer.loaded && <PlayerWaveform selectedTrack={selectedTrack} />}
+
+        {/* <button onClick={() => selectedTrack?.player?.start()}>play</button> */}
+        {/* <Waveform
+        device={
+          // new Tone.Oscillator()
+          selectedTrack.player
+        }
+      /> */}
       </div>
     </Card>
   );

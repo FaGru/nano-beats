@@ -90,7 +90,7 @@ export const SongTimeline: React.FC<SongTimelineProps> = () => {
     }
   };
   return (
-    <div className='flex p-2 w-full h-[6vh] gap-2 items-center px-2 bg-background border-neutral-600 border-x'>
+    <div className='flex p-2 w-full h-12 gap-2 items-center px-2 bg-background border-neutral-600 border-x'>
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}

@@ -1,5 +1,5 @@
 'use client';
-import { useMouseMove } from '@/hooks/useMouseMove';
+import { useMouseMove } from '@/lib/hooks/useMouseMove';
 import { useSequencerStore } from '../useSequencerStore';
 import { stepsLimits } from '../sequencer.constants';
 import { TPattern } from '../sequencer.types';
@@ -48,7 +48,7 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
   };
 
   return (
-    <div className='flex bg-background border-neutral-600 border p-1 rounded-t-md w-full h-[6vh] gap-4 items-center px-2'>
+    <div className='flex bg-background border-neutral-600 border p-1 rounded-t-md w-full h-12 gap-4 items-center px-2'>
       <Button
         onClick={() => (mode === 'pattern' ? startStopSequencer() : playSong())}
         size='xs'

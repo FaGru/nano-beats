@@ -36,6 +36,7 @@ type SequencerActions = {
   setSelectedPatternId: (patternId: string) => void;
   updatePattern: (updatedPattern: TPattern) => void;
   getSelectedPattern: () => TPattern | undefined;
+  getSelectedTrack: () => TTrack | undefined;
   addPatternToSong: () => void;
   removePatternFromSong: (patternId: string) => void;
   playSong: () => void;
@@ -116,9 +117,10 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       '16n'
     );
     sequence.start(0);
-    set({ sequence });
+    const tracks = get().tracks;
+    set({ sequence, selectedTrackId: tracks[0].id });
   },
-  updateStepLength: (newStepLength: any) => {
+  updateStepLength: (newStepLength) => {
     const pattern = get().getSelectedPattern();
     const sequence = get().sequence;
     if (pattern && sequence) {
@@ -162,13 +164,18 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       name: `Track ${tracksLength + 1}`,
       player: null,
       effects: {
-        reverb: new Tone.Reverb().toDestination(),
-        delay: new Tone.FeedbackDelay().toDestination(),
-        pitchShift: new Tone.PitchShift().toDestination(),
-        eqThree: new Tone.EQ3(eqThreeDefaultVolume, eqThreeDefaultVolume, eqThreeDefaultVolume)
+        reverb: new Tone.Reverb(),
+        delay: new Tone.FeedbackDelay(),
+        pitchShift: new Tone.PitchShift(),
+        eqThree: new Tone.EQ3(eqThreeDefaultVolume, eqThreeDefaultVolume, eqThreeDefaultVolume),
+        distortion: new Tone.Distortion()
       },
-      connectedEffects: []
+      connectedEffects: [],
+      wavesurfer: null,
+      playerStartTime: 0,
+      initWaveform: true
     };
+
     set({
       tracks: [...tracks, newTrack],
       patterns: patterns.map((pattern) => ({
@@ -181,16 +188,24 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     const tracks = get().tracks;
     const track = tracks.find((track) => track.id === trackId);
 
+    const setBufferLoaded = () => {
+      const selectedTrack = get().getSelectedTrack();
+      if (selectedTrack) {
+        selectedTrack.initWaveform = true;
+        get().updateTrack(selectedTrack);
+      }
+    };
+
     if (track) {
       if (!track.player) {
-        const player = new Tone.Player().toDestination();
-        player.load(sampleUrl);
+        const player = new Tone.Player(sampleUrl, setBufferLoaded).connect(Tone.getDestination());
         const updatedTrack = { ...track, player, name: trackName };
+
         get().updateTrack(updatedTrack);
       }
       if (track.player) {
         track.player.load(sampleUrl);
-        const updatedTrack = { ...track, name: trackName };
+        const updatedTrack = { ...track, name: trackName, playerStartTime: 0 };
         get().updateTrack(updatedTrack);
       }
     }
@@ -239,7 +254,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     const track = tracks.find((track) => track.id === trackId);
 
     if (track && track.player && track.player.loaded) {
-      track.player.start();
+      track.player.start(0, track.playerStartTime);
     }
   },
   selectTrack: (trackId) => {
@@ -281,6 +296,10 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
   getSelectedPattern: () => {
     const patternId = get().selectedPatternId;
     return get().patterns.find((pattern) => pattern.id === patternId);
+  },
+  getSelectedTrack: () => {
+    const trackId = get().selectedTrackId;
+    return get().tracks.find((track) => track.id === trackId);
   },
 
   addPatternToSong: () => {
