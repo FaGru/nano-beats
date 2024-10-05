@@ -18,7 +18,6 @@ interface TrackPitchProps {
 }
 
 export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
-  const toggleEffectPower = useSequencerStore((state) => state.toggleEffectPower);
   const updateTrack = useSequencerStore((state) => state.updateTrack);
 
   const handlePitchKnob = (valueChange: number) => {
@@ -67,7 +66,7 @@ export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
   };
 
   const handleFeedbackKnob = (valueChange: number) => {
-    let newPitch = selectedTrack.effects.pitchShift.feedback.value + valueChange / 100;
+    let newPitch = selectedTrack.effects.pitchShift.feedback.value + valueChange / 200;
     if (newPitch < pitchFeedbackLimits.min) {
       newPitch = pitchFeedbackLimits.min;
     } else if (newPitch > pitchFeedbackLimits.max) {
@@ -129,8 +128,8 @@ export const TrackPitch: React.FC<TrackPitchProps> = ({ selectedTrack }) => {
             value={selectedTrack.effects.pitchShift.feedback.value}
             size='sm'
             title='Feedback'
-            text={`${(selectedTrack.effects.pitchShift.feedback.value * 100).toFixed(0)} %`}
-          />{' '}
+            text={`${(selectedTrack.effects.pitchShift.feedback.value * 200).toFixed(0)} %`}
+          />
         </div>
       </div>
     </Card>

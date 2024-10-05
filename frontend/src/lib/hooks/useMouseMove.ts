@@ -1,5 +1,4 @@
-import { useSequencerStore } from '@/components/sequencer/useSequencerStore';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 export const useMouseMove = (permittedAxes?: 'x' | 'y') => {
   const mousePositionRef = useRef({ x: 0, y: 0 });

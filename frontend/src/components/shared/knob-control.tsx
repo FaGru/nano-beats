@@ -1,4 +1,4 @@
-import { useMouseMove } from '@/hooks/useMouseMove';
+import { useMouseMove } from '@/lib/hooks/useMouseMove';
 
 interface KnobControlProps {
   handleKnobChange: (valueChange: number) => void;

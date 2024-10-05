@@ -30,7 +30,7 @@ export const pitchWindowSizeLimits = { max: 0.1, min: 0.005 };
 export const pitchDelayTimeDefault = 0;
 export const pitchDelayTimeLimits = { max: 1, min: 0 };
 export const pitchFeedbackDefault = 0;
-export const pitchFeedbackLimits = { max: 1, min: 0 };
+export const pitchFeedbackLimits = { max: 0.5, min: 0 };
 
 // reverb constants
 export const reverbDryWetLimits = { max: 1, min: 0 };
