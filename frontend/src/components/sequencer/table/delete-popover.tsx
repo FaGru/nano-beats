@@ -22,6 +22,7 @@ export const DeletePopover: React.FC<DeletePopoverProps> = ({ onDelete }) => {
           </Button>
           <Button
             size='sm'
+            variant='destructive'
             onClick={(e) => {
               e.stopPropagation();
               onDelete();
