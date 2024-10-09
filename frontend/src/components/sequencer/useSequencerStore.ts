@@ -27,7 +27,7 @@ type SequencerActions = {
   updateTrackSample: (sampleUrl: string, trackId: string, trackName: string) => void;
   updateStepTrigger: (trackId: string, currentStep: number) => void;
   updateTrack: (updatedTrack: TTrack) => void;
-  playTrack: (trackId: string) => void;
+  triggerSample: (trackId: string) => void;
   selectTrack: (trackId: string) => void;
   setSequencerBpm: (updateValue: number) => void;
   updateStepLength: (newStepLength: number[]) => void;
@@ -79,7 +79,7 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         if (pattern) {
           pattern.trackTriggers.forEach((trigger) => {
             if (trigger.activeSteps.includes(step)) {
-              get().playTrack(trigger.trackId);
+              get().triggerSample(trigger.trackId);
             }
           });
         }
@@ -122,16 +122,6 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     const tracks = get().tracks;
     set({ sequence, selectedTrackId: tracks[0].id });
   },
-  updateStepLength: (newStepLength) => {
-    const pattern = get().getSelectedPattern();
-    const sequence = get().sequence;
-    if (pattern && sequence) {
-      pattern.sequenceStepNumber = newStepLength;
-      sequence.events = newStepLength;
-      set({ sequence });
-      get().updatePattern(pattern);
-    }
-  },
 
   startStopSequencer: () => {
     const { isPlaying } = get();
@@ -157,6 +147,151 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     set({ sequencerBpm: newValue });
   },
 
+  updateStepTrigger: (trackId, currentStep) => {
+    const pattern = get().getSelectedPattern();
+    if (pattern) {
+      const trackTriggers = pattern.trackTriggers;
+      const track = trackTriggers.find((trigger) => trigger.trackId === trackId);
+      if (track) {
+        let activeSteps = track.activeSteps;
+        if (activeSteps.includes(currentStep)) {
+          activeSteps = activeSteps.filter((step) => step !== currentStep);
+        } else {
+          activeSteps = [...activeSteps, currentStep];
+        }
+        const updatedPattern = {
+          ...pattern,
+          trackTriggers: pattern.trackTriggers.map((trigger) =>
+            trigger.trackId === trackId ? { ...trigger, activeSteps } : trigger
+          )
+        };
+        get().updatePattern(updatedPattern);
+      }
+    }
+  },
+
+  triggerSample: (trackId) => {
+    const tracks = get().tracks;
+    const track = tracks.find((track) => track.id === trackId);
+
+    if (track && track.player && track.player.loaded) {
+      track.player.start(0, track.playerStartTime);
+    }
+  },
+  setMode: (newMode) => {
+    const isPlaying = get().isPlaying;
+    if (isPlaying) get().startStopSequencer();
+    set({ mode: newMode });
+  },
+
+  // song
+  removePatternFromSong: (id) => {
+    set((state) => ({
+      song: state.song.filter((pattern) => pattern.id !== id)
+    }));
+  },
+  addPatternToSong: (patternId) => {
+    const selectedPattern = get().patterns.find((pattern) => pattern.id === patternId);
+    if (selectedPattern) {
+      set((state) => ({
+        song: [
+          ...state.song,
+          { patternId: selectedPattern?.id, patternName: selectedPattern.name, id: nanoid() }
+        ]
+      }));
+    }
+  },
+  updateSongOrder: (newOrder) => set({ song: newOrder }),
+  playSong: () => {
+    const song = get().song;
+    if (song.length) {
+      get().setSelectedPatternId(song[0].patternId);
+      set({ currentSongPattern: 0 });
+      get().startStopSequencer();
+    }
+  },
+
+  // pattern
+  addPattern: () => {
+    const currentPattern = get().getSelectedPattern();
+    const patterns = get().patterns;
+    if (currentPattern) {
+      const newPattern = {
+        ...currentPattern,
+        name: `pattern ${patterns.length + 1}`,
+        id: nanoid(),
+        sequencerStepNumber:
+          Array.from({ length: 16 }, (_, i) => i) || currentPattern.sequenceStepNumber
+      };
+
+      set({
+        patterns: [...get().patterns, newPattern],
+        selectedPatternId: newPattern.id
+      });
+    }
+  },
+  updateStepLength: (newStepLength) => {
+    const pattern = get().getSelectedPattern();
+    const sequence = get().sequence;
+    if (pattern && sequence) {
+      pattern.sequenceStepNumber = newStepLength;
+      sequence.events = newStepLength;
+      set({ sequence });
+      get().updatePattern(pattern);
+    }
+  },
+  setSelectedPatternId: (patternId) => {
+    set({ selectedPatternId: patternId });
+    const sequence = get().sequence;
+    const selectedPattern = get().getSelectedPattern();
+    if (selectedPattern && sequence) {
+      sequence.events = selectedPattern.sequenceStepNumber;
+      set({ sequence });
+    }
+  },
+
+  getSelectedPattern: () => {
+    const patternId = get().selectedPatternId;
+    return get().patterns.find((pattern) => pattern.id === patternId);
+  },
+  updatePattern: (updatedPattern) => {
+    const allPatterns = get().patterns;
+    set({
+      patterns: allPatterns.map((pattern) =>
+        pattern.id === updatedPattern.id ? updatedPattern : pattern
+      )
+    });
+  },
+  updatePatternsOrder: (newOrder) => set({ patterns: newOrder }),
+  deletePattern: (id) => {
+    const patterns = get().patterns;
+    patterns.forEach((pattern, idx) => {
+      if (pattern.id === id) {
+        get().setSelectedPatternId(patterns[idx > 0 ? idx - 1 : idx + 1].id);
+      }
+    });
+
+    set((state) => ({
+      patterns: state.patterns.filter((pattern) => pattern.id !== id),
+      song: state.song.filter((pattern) => pattern.patternId !== id)
+    }));
+  },
+
+  // track
+  selectTrack: (trackId) => {
+    set({ selectedTrackId: trackId });
+  },
+  updateTrack: (updatedTrack) => {
+    const tracks = get().tracks;
+    set({
+      tracks: tracks.map((track) => (track.id === updatedTrack.id ? updatedTrack : track))
+    });
+  },
+
+  getSelectedTrack: () => {
+    const trackId = get().selectedTrackId;
+    return get().tracks.find((track) => track.id === trackId);
+  },
   addTrack: () => {
     const tracks = get().tracks;
     const tracksLength = tracks.length;
@@ -186,6 +321,18 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
       }))
     });
   },
+  toggleEffectPower: (trackId, effectType) => {
+    const track = get().tracks.find((track) => track.id === trackId);
+    if (track) {
+      if (track.connectedEffects.includes(effectType)) {
+        track.connectedEffects = track.connectedEffects.filter((effect) => effect !== effectType);
+      } else {
+        track.connectedEffects = [...track.connectedEffects, effectType];
+      }
+
+      get().handleTrackConnection(track);
+    }
+  },
   updateTrackSample: (sampleUrl, trackId, trackName) => {
     const tracks = get().tracks;
     const track = tracks.find((track) => track.id === trackId);
@@ -210,149 +357,6 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
         const updatedTrack = { ...track, name: trackName, playerStartTime: 0 };
         get().updateTrack(updatedTrack);
       }
-    }
-  },
-
-  updateStepTrigger: (trackId, currentStep) => {
-    const pattern = get().getSelectedPattern();
-    if (pattern) {
-      const trackTriggers = pattern.trackTriggers;
-      const track = trackTriggers.find((trigger) => trigger.trackId === trackId);
-      if (track) {
-        let activeSteps = track.activeSteps;
-        if (activeSteps.includes(currentStep)) {
-          activeSteps = activeSteps.filter((step) => step !== currentStep);
-        } else {
-          activeSteps = [...activeSteps, currentStep];
-        }
-        const updatedPattern = {
-          ...pattern,
-          trackTriggers: pattern.trackTriggers.map((trigger) =>
-            trigger.trackId === trackId ? { ...trigger, activeSteps } : trigger
-          )
-        };
-        get().updatePattern(updatedPattern);
-      }
-    }
-  },
-
-  updateTrack: (updatedTrack) => {
-    const tracks = get().tracks;
-    set({
-      tracks: tracks.map((track) => (track.id === updatedTrack.id ? updatedTrack : track))
-    });
-  },
-  updatePattern: (updatedPattern) => {
-    const allPatterns = get().patterns;
-    set({
-      patterns: allPatterns.map((pattern) =>
-        pattern.id === updatedPattern.id ? updatedPattern : pattern
-      )
-    });
-  },
-
-  playTrack: (trackId) => {
-    const tracks = get().tracks;
-    const track = tracks.find((track) => track.id === trackId);
-
-    if (track && track.player && track.player.loaded) {
-      track.player.start(0, track.playerStartTime);
-    }
-  },
-  selectTrack: (trackId) => {
-    set({ selectedTrackId: trackId });
-  },
-  setMode: (newMode) => {
-    const isPlaying = get().isPlaying;
-    if (isPlaying) get().startStopSequencer();
-    set({ mode: newMode });
-  },
-  addPattern: () => {
-    const currentPattern = get().getSelectedPattern();
-    const patterns = get().patterns;
-    if (currentPattern) {
-      const newPattern = {
-        ...currentPattern,
-        name: `pattern ${patterns.length + 1}`,
-        id: nanoid(),
-        sequencerStepNumber:
-          Array.from({ length: 16 }, (_, i) => i) || currentPattern.sequenceStepNumber
-      };
-
-      set({
-        patterns: [...get().patterns, newPattern],
-        selectedPatternId: newPattern.id
-      });
-    }
-  },
-  setSelectedPatternId: (patternId) => {
-    set({ selectedPatternId: patternId });
-    const sequence = get().sequence;
-    const selectedPattern = get().getSelectedPattern();
-    if (selectedPattern && sequence) {
-      sequence.events = selectedPattern.sequenceStepNumber;
-      set({ sequence });
-    }
-  },
-
-  getSelectedPattern: () => {
-    const patternId = get().selectedPatternId;
-    return get().patterns.find((pattern) => pattern.id === patternId);
-  },
-  getSelectedTrack: () => {
-    const trackId = get().selectedTrackId;
-    return get().tracks.find((track) => track.id === trackId);
-  },
-
-  addPatternToSong: (patternId) => {
-    const selectedPattern = get().patterns.find((pattern) => pattern.id === patternId);
-    if (selectedPattern) {
-      set((state) => ({
-        song: [
-          ...state.song,
-          { patternId: selectedPattern?.id, patternName: selectedPattern.name, id: nanoid() }
-        ]
-      }));
-    }
-  },
-  removePatternFromSong: (id) => {
-    set((state) => ({
-      song: state.song.filter((pattern) => pattern.id !== id)
-    }));
-  },
-  updateSongOrder: (newOrder) => set({ song: newOrder }),
-  updatePatternsOrder: (newOrder) => set({ patterns: newOrder }),
-  deletePattern: (id) => {
-    const patterns = get().patterns;
-    patterns.forEach((pattern, idx) => {
-      if (pattern.id === id) {
-        get().setSelectedPatternId(patterns[idx > 0 ? idx - 1 : idx + 1].id);
-      }
-    });
-
-    set((state) => ({
-      patterns: state.patterns.filter((pattern) => pattern.id !== id),
-      song: state.song.filter((pattern) => pattern.patternId !== id)
-    }));
-  },
-  playSong: () => {
-    const song = get().song;
-    if (song.length) {
-      get().setSelectedPatternId(song[0].patternId);
-      set({ currentSongPattern: 0 });
-      get().startStopSequencer();
-    }
-  },
-  toggleEffectPower: (trackId, effectType) => {
-    const track = get().tracks.find((track) => track.id === trackId);
-    if (track) {
-      if (track.connectedEffects.includes(effectType)) {
-        track.connectedEffects = track.connectedEffects.filter((effect) => effect !== effectType);
-      } else {
-        track.connectedEffects = [...track.connectedEffects, effectType];
-      }
-
-      get().handleTrackConnection(track);
     }
   },
   handleTrackConnection: (track) => {
