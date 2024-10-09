@@ -2,6 +2,9 @@ import { Button } from '@/components/ui/button';
 import { TTrack } from '../sequencer.types';
 import { useSequencerStore } from '../useSequencerStore';
 import { NameChangePopover } from '@/components/shared/name-change-popover';
+import { Trash2 } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DeletePopover } from './delete-popover';
 
 interface TrackProps {
   track: TTrack;
@@ -16,6 +19,8 @@ export const Track: React.FC<TrackProps> = ({ track, steps, trackIndex, activeSt
   const selectTrack = useSequencerStore((state) => state.selectTrack);
   const updateTrack = useSequencerStore((state) => state.updateTrack);
   const selectedTrackId = useSequencerStore((state) => state.selectedTrackId);
+  const deleteTrack = useSequencerStore((state) => state.deleteTrack);
+  const tracks = useSequencerStore((state) => state.tracks);
 
   const getColors = (index: number) => {
     let colors = 'bg-neutral-300';
@@ -35,18 +40,27 @@ export const Track: React.FC<TrackProps> = ({ track, steps, trackIndex, activeSt
   return (
     <tr key={trackIndex} onClick={() => selectTrack(track.id)} className={` `}>
       <td className={`sticky left-0 z-10 text-xs   font-bold cursor-pointer rounded bg-background`}>
-        <Button
-          variant={selectedTrackId === track.id ? 'default' : 'ghost'}
-          title={isTrackNameTruncated ? track.name : ''}
-          className='w-full flex justify-start relative mr-2'
-        >
-          <p>{truncatedText}</p>
+        <div className='relative'>
+          <Button
+            variant={selectedTrackId === track.id ? 'default' : 'ghost'}
+            title={isTrackNameTruncated ? track.name : ''}
+            className='w-full flex justify-start relative mr-2'
+          >
+            <p>{truncatedText}</p>
+          </Button>
           {selectedTrackId === track.id && (
-            <div className='absolute right-1 top-1'>
-              <NameChangePopover onSubmit={handleNameChange} value={track.name} />
-            </div>
+            <>
+              <div className='absolute right-1 top-1'>
+                <NameChangePopover onSubmit={handleNameChange} value={track.name} />
+              </div>
+              {tracks.length > 1 && (
+                <div className='absolute right-1 bottom-1 '>
+                  <DeletePopover onDelete={() => deleteTrack(selectedTrackId)} />
+                </div>
+              )}
+            </>
           )}
-        </Button>
+        </div>
       </td>
       {steps.map((step) => (
         <td key={step}>

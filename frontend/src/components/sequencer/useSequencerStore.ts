@@ -27,6 +27,7 @@ type SequencerActions = {
   updateTrackSample: (sampleUrl: string, trackId: string, trackName: string) => void;
   updateStepTrigger: (trackId: string, currentStep: number) => void;
   updateTrack: (updatedTrack: TTrack) => void;
+  deleteTrack: (id: string) => void;
   triggerSample: (trackId: string) => void;
   selectTrack: (trackId: string) => void;
   setSequencerBpm: (updateValue: number) => void;
@@ -286,6 +287,24 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     set({
       tracks: tracks.map((track) => (track.id === updatedTrack.id ? updatedTrack : track))
     });
+  },
+  deleteTrack: (id) => {
+    const tracks = get().tracks;
+    tracks.forEach((track, idx) => {
+      if (track.id === id) {
+        set({ selectedTrackId: tracks[idx > 0 ? idx - 1 : idx + 1].id });
+      }
+    });
+
+    set((state) => ({
+      tracks: state.tracks.filter((track) => track.id !== id),
+      patterns: state.patterns.map((pattern) => {
+        return {
+          ...pattern,
+          trackTriggers: pattern.trackTriggers.filter((trigger) => trigger.trackId !== id)
+        };
+      })
+    }));
   },
 
   getSelectedTrack: () => {
