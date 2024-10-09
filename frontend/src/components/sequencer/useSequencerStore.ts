@@ -43,6 +43,8 @@ type SequencerActions = {
   updateSongOrder: (newOrder: TSong) => void;
   toggleEffectPower: (trackId: string, effectType: TEffects) => void;
   handleTrackConnection: (track: TTrack) => void;
+  updatePatternsOrder: (newOrder: TPattern[]) => void;
+  deletePattern: (id: string) => void;
 };
 
 export const useSequencerStore = create<SequencerState & SequencerActions>()((set, get) => ({
@@ -319,6 +321,20 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     }));
   },
   updateSongOrder: (newOrder) => set({ song: newOrder }),
+  updatePatternsOrder: (newOrder) => set({ patterns: newOrder }),
+  deletePattern: (id) => {
+    const patterns = get().patterns;
+    patterns.forEach((pattern, idx) => {
+      if (pattern.id === id) {
+        get().setSelectedPatternId(patterns[idx > 0 ? idx - 1 : idx + 1].id);
+      }
+    });
+
+    set((state) => ({
+      patterns: state.patterns.filter((pattern) => pattern.id !== id),
+      song: state.song.filter((pattern) => pattern.patternId !== id)
+    }));
+  },
   playSong: () => {
     const song = get().song;
     if (song.length) {

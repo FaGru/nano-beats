@@ -86,8 +86,6 @@ export const SongTimeline: React.FC<SongTimelineProps> = () => {
       const newOrder = arrayMove(song, oldIndex, newIndex);
       updateSongOrder(newOrder);
     }
-    if (over.id === 'TRASH') {
-    }
   };
   return (
     <div className='flex p-2 w-full h-12 gap-2 items-center px-2 bg-background border-neutral-600 border-x'>

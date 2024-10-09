@@ -42,7 +42,9 @@ export const Track: React.FC<TrackProps> = ({ track, steps, trackIndex, activeSt
         >
           <p>{truncatedText}</p>
           {selectedTrackId === track.id && (
-            <NameChangePopover onSubmit={handleNameChange} value={track.name} />
+            <div className='absolute right-1 top-1'>
+              <NameChangePopover onSubmit={handleNameChange} value={track.name} />
+            </div>
           )}
         </Button>
       </td>

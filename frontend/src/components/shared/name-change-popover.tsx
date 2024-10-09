@@ -36,7 +36,7 @@ export const NameChangePopover: React.FC<NameChangePopoverProps> = ({ onSubmit, 
     <Popover open={isOpen}>
       <PopoverTrigger asChild>
         <Pencil
-          className='w-4 h-4 p-0.5 cursor- absolute right-1 top-1'
+          className='w-4 h-4 p-0.5 cursor-pointer right-1 top-1'
           onClick={() => setIsOpen(true)}
         />
       </PopoverTrigger>
