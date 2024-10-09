@@ -6,7 +6,6 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { Label } from '@/components/ui/label';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
-import { useForm } from 'react-hook-form';
 
 interface NameChangePopoverProps {
   onSubmit: (name: string) => void;
@@ -40,7 +39,7 @@ export const NameChangePopover: React.FC<NameChangePopoverProps> = ({ onSubmit, 
           onClick={() => setIsOpen(true)}
         />
       </PopoverTrigger>
-      <PopoverContent className='w-48' onPointerDownOutside={() => {}}>
+      <PopoverContent className='w-48' onPointerDownOutside={() => setIsOpen(false)}>
         <form onSubmit={handleSubmit}>
           <Label>
             <Input
