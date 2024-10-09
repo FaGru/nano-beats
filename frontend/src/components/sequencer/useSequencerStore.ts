@@ -37,7 +37,7 @@ type SequencerActions = {
   updatePattern: (updatedPattern: TPattern) => void;
   getSelectedPattern: () => TPattern | undefined;
   getSelectedTrack: () => TTrack | undefined;
-  addPatternToSong: () => void;
+  addPatternToSong: (patternId: string) => void;
   removePatternFromSong: (patternId: string) => void;
   playSong: () => void;
   updateSongOrder: (newOrder: TSong) => void;
@@ -304,8 +304,8 @@ export const useSequencerStore = create<SequencerState & SequencerActions>()((se
     return get().tracks.find((track) => track.id === trackId);
   },
 
-  addPatternToSong: () => {
-    const selectedPattern = get().getSelectedPattern();
+  addPatternToSong: (patternId) => {
+    const selectedPattern = get().patterns.find((pattern) => pattern.id === patternId);
     if (selectedPattern) {
       set((state) => ({
         song: [
