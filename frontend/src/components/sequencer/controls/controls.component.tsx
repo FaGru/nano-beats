@@ -5,19 +5,10 @@ import { stepsLimits } from '../sequencer.constants';
 import { TPattern } from '../sequencer.types';
 import { Button } from '@/components/ui/button';
 import { Pause, Play } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectValue,
-  SelectItem,
-  SelectTrigger
-} from '@/components/ui/select';
 
-interface ControlProps {
-  selectedPattern: TPattern | undefined;
-}
+interface ControlProps {}
 
-export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
+export const Controls: React.FC<ControlProps> = () => {
   const startStopSequencer = useSequencerStore((state) => state.startStopSequencer);
   const isPlaying = useSequencerStore((state) => state.isPlaying);
   const sequencerBpm = useSequencerStore((state) => state.sequencerBpm);
@@ -26,9 +17,7 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
 
   const mode = useSequencerStore((state) => state.mode);
   const setMode = useSequencerStore((state) => state.setMode);
-  const patterns = useSequencerStore((state) => state.patterns);
-  const addPattern = useSequencerStore((state) => state.addPattern);
-  const setSelectedPatternId = useSequencerStore((state) => state.setSelectedPatternId);
+
   const playSong = useSequencerStore((state) => state.playSong);
   const sequence = useSequencerStore((state) => state.sequence);
 
@@ -37,14 +26,6 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
   const handleStepLength = (newLength: number) => {
     if (newLength <= stepsLimits.max && newLength >= stepsLimits.min)
       updateStepLength(Array.from({ length: Number(newLength) }, (_, i) => i));
-  };
-
-  const handlePatternChange = (patternId: string) => {
-    if (patternId === 'new') {
-      addPattern();
-    } else {
-      setSelectedPatternId(patternId);
-    }
   };
 
   return (
@@ -103,25 +84,6 @@ export const Controls: React.FC<ControlProps> = ({ selectedPattern }) => {
           <span className='absolute text-[0.50rem] -top-2.5 left-2 z-20'>mode</span>
           {mode}
         </Button>
-      </div>
-
-      <div>
-        <Select value={selectedPattern?.id} onValueChange={(value) => handlePatternChange(value)}>
-          <SelectTrigger className='w-32 h-6 relative pl-4 pr-1'>
-            <span className='absolute text-[0.50rem] -top-[0.7rem] left-2 z-20'>pattern</span>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {patterns.map((pattern) => (
-              <SelectItem value={pattern.id} key={pattern.name}>
-                {pattern.name}
-              </SelectItem>
-            ))}
-            <SelectItem className='' value='new'>
-              ADD NEW
-            </SelectItem>
-          </SelectContent>
-        </Select>
       </div>
     </div>
   );
