@@ -13,6 +13,8 @@ import { Button } from '../ui/button';
 import { Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Separator } from '../ui/separator';
+import { PatternsPopover } from './patterns-popover';
+import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 
 interface SortableItemProps {
   item: { patternName?: string; id: string };
@@ -55,7 +57,6 @@ interface SongTimelineProps {}
 
 export const SongTimeline: React.FC<SongTimelineProps> = () => {
   const song = useSequencerStore((state) => state.song);
-  const addPatternToSong = useSequencerStore((state) => state.addPatternToSong);
   const removePatternFromSong = useSequencerStore((state) => state.removePatternFromSong);
   const updateSongOrder = useSequencerStore((state) => state.updateSongOrder);
   const currentSongPattern = useSequencerStore((state) => state.currentSongPattern);
@@ -86,48 +87,47 @@ export const SongTimeline: React.FC<SongTimelineProps> = () => {
       const newOrder = arrayMove(song, oldIndex, newIndex);
       updateSongOrder(newOrder);
     }
-    if (over.id === 'TRASH') {
-    }
   };
   return (
-    <div className='flex p-2 w-full h-12 gap-2 items-center px-2 bg-background border-neutral-600 border-x'>
-      <DndContext
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-        onDragOver={handleDragOver}
-        onDragStart={() => setIsDragActive(true)}
-      >
-        <SortableContext
-          items={[...song.map((pattern) => pattern.id), { id: 'TRASH' }]}
-          strategy={verticalListSortingStrategy}
+    <ScrollArea
+      type='scroll'
+      className='flex whitespace-nowrap bg-background border-neutral-600 border border-t-0'
+    >
+      <div className='flex p-2 w-full h-12 gap-2 items-center px-2 bg-background border-neutral-600 border-x'>
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+          onDragOver={handleDragOver}
+          onDragStart={() => setIsDragActive(true)}
         >
-          <div className='flex gap-2 '>
-            {song.map((pattern, idx) => (
+          <SortableContext
+            items={[...song.map((pattern) => pattern.id), { id: 'TRASH' }]}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className='flex gap-2 '>
+              {song.map((pattern, idx) => (
+                <SortableItem
+                  key={pattern.id}
+                  item={pattern}
+                  isPlayingPattern={currentSongPattern === idx && isPlaying && mode === 'song'}
+                />
+              ))}
+            </div>
+            {song.length ? (
+              <Separator orientation='vertical' className=' h-7 bg-neutral-600 mx-2' />
+            ) : null}
+            {isDragActive && (
               <SortableItem
-                key={pattern.id}
-                item={pattern}
-                isPlayingPattern={currentSongPattern === idx && isPlaying && mode === 'song'}
+                key='TRASH'
+                item={{ id: 'TRASH' }}
+                isOver={dragItems.over === 'TRASH'}
               />
-            ))}
-          </div>
-          {song.length ? (
-            <Separator orientation='vertical' className=' h-7 bg-neutral-600 mx-2' />
-          ) : null}
-          {isDragActive && (
-            <SortableItem key='TRASH' item={{ id: 'TRASH' }} isOver={dragItems.over === 'TRASH'} />
-          )}
-        </SortableContext>
-      </DndContext>
-      {!isDragActive && (
-        <Button
-          variant='secondary'
-          className='rounded-md  p-2 '
-          size='xs'
-          onClick={() => addPatternToSong()}
-        >
-          <Plus className='w-4 h-4' />
-        </Button>
-      )}
-    </div>
+            )}
+          </SortableContext>
+        </DndContext>
+        {!isDragActive && <PatternsPopover />}
+      </div>
+      <ScrollBar orientation='horizontal' />
+    </ScrollArea>
   );
 };
