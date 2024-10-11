@@ -32,7 +32,6 @@ const registerUser = async (req: Request, res: Response) => {
 
     // Create new user
     const newUser = await UserModel.create({ name, email, password: hashPassword });
-    console.log(newUser);
 
     if (newUser) {
       res

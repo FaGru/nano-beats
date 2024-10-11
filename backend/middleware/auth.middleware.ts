@@ -18,8 +18,6 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
       const decoded = jwt.verify(token, token) as JwtPayload;
       // @ts-ignore
       req.user = await UserModel.findById(decoded.id).select("-password");
-      // @ts-ignore
-      console.log(req.user);
 
       next();
     } catch (error) {
