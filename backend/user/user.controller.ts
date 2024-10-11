@@ -15,9 +15,9 @@ const getUser = async (req: Request, res: Response) => {
 const registerUser = async (req: Request, res: Response) => {
   try {
     // check if user has entered all fields
-    const { name, email, password } = req.body;
+    const { username, email, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (!username || !email || !password) {
       res.status(400).json({ errors: [{ msg: "Please enter all fields" }] });
     }
 
@@ -31,12 +31,17 @@ const registerUser = async (req: Request, res: Response) => {
     const hashPassword = await bcrypt.hash(password, salt);
 
     // Create new user
-    const newUser = await UserModel.create({ name, email, password: hashPassword });
+    const newUser = await UserModel.create({ username, email, password: hashPassword });
 
     if (newUser) {
       res
         .status(201)
-        .json({ _id: newUser._id, name: newUser.name, email: newUser.email, token: generateToken(newUser._id) });
+        .json({
+          _id: newUser._id,
+          username: newUser.username,
+          email: newUser.email,
+          token: generateToken(newUser._id),
+        });
     } else {
       res.status(400).json({ errors: [{ msg: "Invalid user data" }] });
     }
@@ -53,7 +58,7 @@ const loginUser = async (req: Request, res: Response) => {
     if (user && (await bcrypt.compare(password, user.password))) {
       res.status(200).json({
         _id: user._id,
-        name: user.name,
+        name: user.username,
         email: user.email,
         token: generateToken(user._id),
       });

@@ -5,7 +5,7 @@ import { Card } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-
+import axios from 'axios';
 interface RegistrationProps {}
 
 export const Registration: React.FC<RegistrationProps> = () => {
@@ -25,7 +25,7 @@ export const Registration: React.FC<RegistrationProps> = () => {
     }));
   };
 
-  const onSubmit = (e: React.SyntheticEvent) => {
+  const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     const userData = {
@@ -34,7 +34,20 @@ export const Registration: React.FC<RegistrationProps> = () => {
       password
     };
     if (!isDisabled) {
-      console.log('register with: ', userData);
+      try {
+        // Registrierungs-Request mit Axios
+        const response = await axios.post('http://localhost:8000/api/user/', userData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = response.data;
+
+        console.log('data', data);
+      } catch (error) {
+        console.error('Registration error:', error);
+      }
     }
   };
 

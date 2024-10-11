@@ -27,6 +27,7 @@
     "@tanstack/react-table": "^8.20.5",
     "@tippyjs/react": "^4.2.6",
     "@wavesurfer/react": "^1.0.7",
+    "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cookies-next": "^4.3.0",
