@@ -3,9 +3,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import userRoutes from "./user/user.routes";
-
-const colors = require("colors") as any;
 import connectDB from "./config/db";
+import "colors";
 
 connectDB();
 
