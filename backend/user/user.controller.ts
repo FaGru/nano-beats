@@ -15,12 +15,10 @@ const getUser = async (req: Request, res: Response) => {
 const registerUser = async (req: Request, res: Response) => {
   try {
     // check if user has entered all fields
-    const { name, email, password, confirmedPassword } = req.body;
-    if (!name || !email || !password || !confirmedPassword) {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
       res.status(400).json({ errors: [{ msg: "Please enter all fields" }] });
-    }
-    if (password !== confirmedPassword) {
-      res.status(400).json({ errors: [{ msg: "password and confirmed password are not the same" }] });
     }
 
     // Check for existing user
@@ -34,6 +32,7 @@ const registerUser = async (req: Request, res: Response) => {
 
     // Create new user
     const newUser = await UserModel.create({ name, email, password: hashPassword });
+    console.log(newUser);
 
     if (newUser) {
       res
