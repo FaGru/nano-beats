@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { CONFIG } from '@/lib/config/config';
 import { QUERY_KEYS } from '@/lib/hooks/queries/query-keys.constants';
 import { useUserQ } from '@/lib/hooks/queries/useUser.query';
 
@@ -33,8 +34,12 @@ export const UserDropdown: React.FC = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => router.push('/registration')}>SignUp</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/login')}>SignIn</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push(CONFIG.CLIENT.SIGN_UP)}>
+            SignUp
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push(CONFIG.CLIENT.LOGIN)}>
+            SignIn
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
@@ -54,14 +59,12 @@ export const UserDropdown: React.FC = () => {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => router.push('/user')}>Profile</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/settings')}>Settings</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            console.log('logout');
-            removeToken();
             queryClient.setQueryData([QUERY_KEYS.USER.GET_USER], null);
+            removeToken();
           }}
         >
           Log out

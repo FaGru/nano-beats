@@ -11,9 +11,13 @@ export const CONFIG = {
     },
     METHODS: { USER: { GET_USER: '/user', LOGIN: '/user/login' } }
   },
-  NEXT_API: {
-    METHODS: {
-      COOKIE: '/api/cookie'
-    }
+  CLIENT: {
+    ENDPOINT: process.env.CLIENT_ENDPOINT || 'http://localhost:3000',
+    DRUM_MACHINE: '/drum-machine',
+    DJ: '/dj',
+    SEQUENCER: '/sequencer',
+    USER: '/user',
+    LOGIN: '/login',
+    SIGN_UP: '/sign-up'
   }
 };

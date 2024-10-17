@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
 import { Input } from '../ui/input';
@@ -8,6 +8,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 
 import { useRouter } from 'next/navigation';
 import { useLoginUserMutation } from '@/lib/hooks/queries/use-login-user.mutation';
+import { useUserQ } from '@/lib/hooks/queries/useUser.query';
+import { CONFIG } from '@/lib/config/config';
 
 interface RegistrationProps {}
 
@@ -18,6 +20,11 @@ export const Login: React.FC<RegistrationProps> = () => {
     password: ''
   });
   const loginUserMutation = useLoginUserMutation();
+  const { data: user } = useUserQ();
+
+  if (user) {
+    router.push(CONFIG.CLIENT.USER);
+  }
 
   const { email, password } = formData;
 

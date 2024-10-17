@@ -7,10 +7,13 @@ import { Label } from '../ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 import { useSignUpUserMutation } from '@/lib/hooks/queries/use-signup-user.mutation';
+import { useUserQ } from '@/lib/hooks/queries/useUser.query';
+import { useRouter } from 'next/navigation';
+import { CONFIG } from '@/lib/config/config';
 
-interface RegistrationProps {}
+interface SignUpProps {}
 
-export const Registration: React.FC<RegistrationProps> = () => {
+export const SignUp: React.FC<SignUpProps> = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -19,8 +22,13 @@ export const Registration: React.FC<RegistrationProps> = () => {
   });
 
   const { username, email, password, passwordConfirm } = formData;
-
   const signupMutation = useSignUpUserMutation();
+  const { data: user } = useUserQ();
+  const router = useRouter();
+
+  if (user) {
+    router.push(CONFIG.CLIENT.USER);
+  }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevState) => ({
