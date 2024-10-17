@@ -58,7 +58,9 @@ export const UserDropdown: React.FC = () => {
       <DropdownMenuContent className='w-56'>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/user')}>Profile</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push(CONFIG.CLIENT.USER)}>
+            Profile
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -67,7 +69,7 @@ export const UserDropdown: React.FC = () => {
             removeToken();
           }}
         >
-          Log out
+          Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
