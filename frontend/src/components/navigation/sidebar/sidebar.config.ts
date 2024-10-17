@@ -1,13 +1,13 @@
-import { Disc3 } from 'lucide-react';
+import { CONFIG } from '@/lib/config/config';
 
 export const navigationConfig = [
   {
     type: 'header',
     name: 'Devices',
     childs: [
-      { name: 'Drum Machine', pathname: '/drum-machine', icon: 'drum-machine' },
-      { name: 'DJing', pathname: '/dj', icon: 'dj' },
-      { name: 'Sequencer', pathname: '/sequencer', icon: 'sequencer' }
+      { name: 'Drum Machine', pathname: CONFIG.CLIENT.DRUM_MACHINE, icon: 'drum-machine' },
+      { name: 'DJing', pathname: CONFIG.CLIENT.DJ, icon: 'dj' },
+      { name: 'Sequencer', pathname: CONFIG.CLIENT.SEQUENCER, icon: 'sequencer' }
     ]
   }
 ];

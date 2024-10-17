@@ -5,11 +5,17 @@ export const ZUSTAND_GLOBAL_STORE_KEY = 'globalStore';
 
 type State = {
   isSidebarOpen: boolean;
+  token: string | null;
 };
-type Actions = { setIsSidebarOpen: (newValue: boolean) => void };
+type Actions = {
+  setIsSidebarOpen: (newValue: boolean) => void;
+  removeToken: () => void;
+  setToken: (token: string) => void;
+};
 
 const initialState: State = {
-  isSidebarOpen: true
+  isSidebarOpen: true,
+  token: null
 };
 
 export const useGlobalStore = create<State & Actions>()(
@@ -18,6 +24,12 @@ export const useGlobalStore = create<State & Actions>()(
       ...initialState,
       setIsSidebarOpen: (newValue) => {
         set({ isSidebarOpen: newValue });
+      },
+      removeToken: () => {
+        set({ token: null });
+      },
+      setToken: (token) => {
+        set({ token });
       }
     }),
     {

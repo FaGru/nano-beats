@@ -4,9 +4,26 @@ import bcrypt from "bcrypt";
 import UserModel from "./user.model";
 import mongoose from "mongoose";
 
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
+
 const getUser = async (req: Request, res: Response) => {
+  const email = req?.user?.email;
+
   try {
-    res.status(200).json({ message: "get user" });
+    const user = await UserModel.findOne({ email });
+
+    if (user) {
+      res.status(201).json({
+        username: user.username,
+        email: user.email,
+      });
+    }
   } catch (error: any) {
     res.status(400).json({ errors: [{ msg: `user.${error.message}` }] });
   }
@@ -15,9 +32,9 @@ const getUser = async (req: Request, res: Response) => {
 const registerUser = async (req: Request, res: Response) => {
   try {
     // check if user has entered all fields
-    const { name, email, password } = req.body;
+    const { username, email, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (!username || !email || !password) {
       res.status(400).json({ errors: [{ msg: "Please enter all fields" }] });
     }
 
@@ -31,12 +48,15 @@ const registerUser = async (req: Request, res: Response) => {
     const hashPassword = await bcrypt.hash(password, salt);
 
     // Create new user
-    const newUser = await UserModel.create({ name, email, password: hashPassword });
+    const newUser = await UserModel.create({ username, email, password: hashPassword });
 
     if (newUser) {
-      res
-        .status(201)
-        .json({ _id: newUser._id, name: newUser.name, email: newUser.email, token: generateToken(newUser._id) });
+      res.status(201).json({
+        _id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        token: generateToken(newUser._id),
+      });
     } else {
       res.status(400).json({ errors: [{ msg: "Invalid user data" }] });
     }
@@ -47,14 +67,9 @@ const registerUser = async (req: Request, res: Response) => {
 const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    // Check for existing user
     const user = await UserModel.findOne({ email });
-
     if (user && (await bcrypt.compare(password, user.password))) {
       res.status(200).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
         token: generateToken(user._id),
       });
     }
