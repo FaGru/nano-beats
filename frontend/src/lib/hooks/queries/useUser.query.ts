@@ -6,7 +6,6 @@ import { CONFIG } from '@/lib/config/config';
 import { useGlobalStore } from '@/lib/state-managment/useGlobalStore';
 
 export const fetchUser = async ({ userToken }: { userToken: string }) => {
-  console.log('fetchUser');
   const response = await requestApi({
     url: CONFIG.API.ENDPOINT + CONFIG.API.METHODS.USER.GET_USER,
     method: 'get',
@@ -18,7 +17,7 @@ export const fetchUser = async ({ userToken }: { userToken: string }) => {
 
 export const useUserQ = () => {
   const userToken = useGlobalStore((state) => state.token);
-  console.log('useUserQ token', userToken);
+
   return useQuery({
     enabled: !!userToken,
     queryKey: [QUERY_KEYS.USER.GET_USER],
