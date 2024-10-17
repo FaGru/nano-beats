@@ -15,7 +15,8 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
         throw new Error("JWT_SECRET is not defined");
       }
       // Verify token
-      const decoded = jwt.verify(token, token) as JwtPayload;
+      const decoded = jwt.verify(token, secret) as JwtPayload;
+
       // @ts-ignore
       req.user = await UserModel.findById(decoded.id).select("-password");
 

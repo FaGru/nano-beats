@@ -4,9 +4,26 @@ import bcrypt from "bcrypt";
 import UserModel from "./user.model";
 import mongoose from "mongoose";
 
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
+
 const getUser = async (req: Request, res: Response) => {
+  const email = req?.user?.email;
+
   try {
-    res.status(200).json({ message: "get user" });
+    const user = await UserModel.findOne({ email });
+
+    if (user) {
+      res.status(201).json({
+        username: user.username,
+        email: user.email,
+      });
+    }
   } catch (error: any) {
     res.status(400).json({ errors: [{ msg: `user.${error.message}` }] });
   }
@@ -34,14 +51,12 @@ const registerUser = async (req: Request, res: Response) => {
     const newUser = await UserModel.create({ username, email, password: hashPassword });
 
     if (newUser) {
-      res
-        .status(201)
-        .json({
-          _id: newUser._id,
-          username: newUser.username,
-          email: newUser.email,
-          token: generateToken(newUser._id),
-        });
+      res.status(201).json({
+        _id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        token: generateToken(newUser._id),
+      });
     } else {
       res.status(400).json({ errors: [{ msg: "Invalid user data" }] });
     }
@@ -52,14 +67,9 @@ const registerUser = async (req: Request, res: Response) => {
 const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    // Check for existing user
     const user = await UserModel.findOne({ email });
-
     if (user && (await bcrypt.compare(password, user.password))) {
       res.status(200).json({
-        _id: user._id,
-        name: user.username,
-        email: user.email,
         token: generateToken(user._id),
       });
     }
