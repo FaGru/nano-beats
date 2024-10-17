@@ -37,7 +37,7 @@ export const Login: React.FC<RegistrationProps> = () => {
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    console.log('loginUserMutation');
+
     loginUserMutation.mutate({ email, password });
   };
 

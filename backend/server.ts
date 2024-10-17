@@ -1,4 +1,3 @@
-// import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
@@ -14,7 +13,7 @@ const PORT = process.env.PORT || 8000;
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "DEINER_ANDERER_ORIGIN"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
