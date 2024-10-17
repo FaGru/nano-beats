@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 8000;
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "nano-beats-server.vercel.app"],
+    origin: ["http://localhost:3000", "https://nano-beats-server.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
