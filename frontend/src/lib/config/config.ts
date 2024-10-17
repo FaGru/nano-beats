@@ -1,6 +1,6 @@
 export const CONFIG = {
   API: {
-    ENDPOINT: process.env.API_ENDPOINT || 'http://localhost:8000/api',
+    ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT,
     OAUTH: {
       FB: {
         SIGN_UP: '/user/signup/facebook'
@@ -12,7 +12,7 @@ export const CONFIG = {
     METHODS: { USER: { GET_USER: '/user', LOGIN: '/user/login' } }
   },
   CLIENT: {
-    ENDPOINT: process.env.CLIENT_ENDPOINT || 'http://localhost:3000',
+    ENDPOINT: process.env.NEXT_PUBLIC_CLIENT_ENDPOINT,
     DRUM_MACHINE: '/drum-machine',
     DJ: '/dj',
     SEQUENCER: '/sequencer',
