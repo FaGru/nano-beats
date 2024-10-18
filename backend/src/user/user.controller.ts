@@ -65,6 +65,7 @@ const registerUser = async (req: Request, res: Response) => {
   }
 };
 const loginUser = async (req: Request, res: Response) => {
+  console.log("Login-Anfrage empfangen:", req.body);
   try {
     const { email, password } = req.body;
     const user = await UserModel.findOne({ email });
