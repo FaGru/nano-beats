@@ -6,8 +6,6 @@ import connectDB from "./config/db";
 import "colors";
 import cors from "cors";
 
-connectDB();
-
 const PORT = process.env.PORT || 8000;
 const app = express();
 
