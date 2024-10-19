@@ -4,7 +4,6 @@ import { Button } from '../ui/button';
 import { Card } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 import { useSignUpUserMutation } from '@/lib/hooks/queries/use-signup-user.mutation';
 import { useUserQ } from '@/lib/hooks/queries/useUser.query';
@@ -20,11 +19,14 @@ export const SignUp: React.FC<SignUpProps> = () => {
     password: '',
     passwordConfirm: ''
   });
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const { username, email, password, passwordConfirm } = formData;
   const signupMutation = useSignUpUserMutation();
   const { data: user } = useUserQ();
   const router = useRouter();
+  const isDisabled =
+    !username || !email || !password || !passwordConfirm || password !== passwordConfirm;
 
   if (user) {
     router.push(CONFIG.CLIENT.USER);
@@ -39,6 +41,12 @@ export const SignUp: React.FC<SignUpProps> = () => {
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
+    if (isDisabled) {
+      if (!username || !email || !password || !passwordConfirm)
+        setErrorMsg('Please enter all fields');
+      if (password !== passwordConfirm) setErrorMsg('Passwords do not match');
+      return;
+    }
 
     const userData = {
       username,
@@ -50,20 +58,12 @@ export const SignUp: React.FC<SignUpProps> = () => {
     }
   };
 
-  const isDisabled =
-    !username || !email || !password || !passwordConfirm || password !== passwordConfirm;
-
-  const getTooltipContent = () => {
-    if (!username || !email || !password || !passwordConfirm) return 'Please enter all fields';
-    if (password !== passwordConfirm) return 'Passwords do not match';
-  };
-
   return (
     <div className='bg-background w-full flex flex-col items-center gap-2 rounded p-2'>
       <h2 className='text-3xl'>SignUp</h2>
       <Card className='p-4 w-96 '>
-        <form onSubmit={onSubmit} className='flex flex-col'>
-          <div className='mb-4'>
+        <form onSubmit={onSubmit} className='flex flex-col gap-1'>
+          <div>
             <Label className='ml-1' htmlFor='username'>
               Username
             </Label>
@@ -76,7 +76,7 @@ export const SignUp: React.FC<SignUpProps> = () => {
               onChange={onChange}
             />
           </div>
-          <div className='mb-4'>
+          <div>
             <Label className='ml-1' htmlFor='email'>
               Email
             </Label>
@@ -89,7 +89,7 @@ export const SignUp: React.FC<SignUpProps> = () => {
               onChange={onChange}
             />
           </div>
-          <div className='mb-4'>
+          <div>
             <Label className='ml-1' htmlFor='password'>
               Password
             </Label>
@@ -102,7 +102,7 @@ export const SignUp: React.FC<SignUpProps> = () => {
               onChange={onChange}
             />
           </div>
-          <div className='mb-4'>
+          <div className='mb-6'>
             <Label className='ml-1' htmlFor='confirm-password'>
               Confirm Password
             </Label>
@@ -115,20 +115,8 @@ export const SignUp: React.FC<SignUpProps> = () => {
               onChange={onChange}
             />
           </div>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button className='flex-grow' disabled={isDisabled}>
-                  register
-                </Button>
-              </TooltipTrigger>
-              {isDisabled && (
-                <TooltipContent>
-                  <p>{getTooltipContent()}</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
-          </TooltipProvider>
+          <Button className='flex-grow'>register</Button>
+          {errorMsg && <p className='text-destructive'>{errorMsg}</p>}
         </form>
       </Card>
     </div>

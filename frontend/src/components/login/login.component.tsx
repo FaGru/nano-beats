@@ -4,7 +4,6 @@ import { Button } from '../ui/button';
 import { Card } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 import { useRouter } from 'next/navigation';
 import { useLoginUserMutation } from '@/lib/hooks/queries/use-login-user.mutation';
@@ -19,6 +18,7 @@ export const Login: React.FC<RegistrationProps> = () => {
     email: '',
     password: ''
   });
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const loginUserMutation = useLoginUserMutation();
   const { data: user } = useUserQ();
 
@@ -37,18 +37,19 @@ export const Login: React.FC<RegistrationProps> = () => {
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-
+    if (!email || !password) {
+      setErrorMsg('Please fill in all fields');
+      return;
+    }
     loginUserMutation.mutate({ email, password });
   };
 
-  const isDisabled = !email || !password;
-
   return (
-    <div className='bg-background w-full flex flex-col items-center gap-2 rounded p-2'>
+    <div className='bg-background w-full flex flex-col items-center gap-2 rounded p-4'>
       <h2 className='text-3xl'>SignIn</h2>
       <Card className='p-4 w-96 '>
-        <form onSubmit={onSubmit} className='flex flex-col'>
-          <div className='mb-4'>
+        <form onSubmit={onSubmit} className='flex flex-col gap-1'>
+          <div>
             <Label className='ml-1' htmlFor='email'>
               Email
             </Label>
@@ -61,7 +62,7 @@ export const Login: React.FC<RegistrationProps> = () => {
               onChange={onChange}
             />
           </div>
-          <div className='mb-4'>
+          <div className='mb-6'>
             <Label className='ml-1' htmlFor='password'>
               Password
             </Label>
@@ -74,21 +75,8 @@ export const Login: React.FC<RegistrationProps> = () => {
               onChange={onChange}
             />
           </div>
-
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button className='flex-grow' disabled={isDisabled}>
-                  login
-                </Button>
-              </TooltipTrigger>
-              {isDisabled && (
-                <TooltipContent>
-                  <p>Please enter all fields</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
-          </TooltipProvider>
+          <Button className='flex-grow'>Login</Button>
+          {errorMsg && <p className='text-destructive'>{errorMsg}</p>}
         </form>
       </Card>
     </div>
