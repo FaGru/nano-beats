@@ -2,17 +2,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { requestApi } from '@/lib/api/requestApi.helper';
 import { CONFIG } from '@/lib/config/config';
-
-import { useGlobalStore } from '@/lib/state-managment/useGlobalStore';
 import { QUERY_KEYS } from './query-keys.constants';
+import { setCookie } from 'cookies-next';
 
 export const useSignUpUserMutation = () => {
   const url = `${CONFIG.API.ENDPOINT}${CONFIG.API.METHODS.USER.GET_USER}`;
   const queryClient = useQueryClient();
-  const setToken = useGlobalStore((state) => state.setToken);
 
   return useMutation({
-    // mutationKey: ['user-session'],
     mutationFn: async ({
       email,
       password,
@@ -29,7 +26,7 @@ export const useSignUpUserMutation = () => {
       });
 
       if (response.data) {
-        setToken(response.data.token);
+        setCookie('token', response.data.token);
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER.GET_USER] });
       }
 

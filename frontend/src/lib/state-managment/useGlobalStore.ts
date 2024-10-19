@@ -9,8 +9,6 @@ type State = {
 };
 type Actions = {
   setIsSidebarOpen: (newValue: boolean) => void;
-  removeToken: () => void;
-  setToken: (token: string) => void;
 };
 
 const initialState: State = {
@@ -24,12 +22,6 @@ export const useGlobalStore = create<State & Actions>()(
       ...initialState,
       setIsSidebarOpen: (newValue) => {
         set({ isSidebarOpen: newValue });
-      },
-      removeToken: () => {
-        set({ token: null });
-      },
-      setToken: (token) => {
-        set({ token });
       }
     }),
     {

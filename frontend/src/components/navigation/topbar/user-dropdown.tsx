@@ -13,15 +13,15 @@ import { CONFIG } from '@/lib/config/config';
 import { QUERY_KEYS } from '@/lib/hooks/queries/query-keys.constants';
 import { useUserQ } from '@/lib/hooks/queries/useUser.query';
 
-import { useGlobalStore } from '@/lib/state-managment/useGlobalStore';
 import { useQueryClient } from '@tanstack/react-query';
+import { deleteCookie } from 'cookies-next';
 import { CircleUserRound } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
 
 export const UserDropdown: React.FC = () => {
   const { data: user } = useUserQ();
-  const removeToken = useGlobalStore((state) => state.removeToken);
+
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -65,8 +65,8 @@ export const UserDropdown: React.FC = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
+            deleteCookie('token');
             queryClient.setQueryData([QUERY_KEYS.USER.GET_USER], null);
-            removeToken();
           }}
         >
           Logout
