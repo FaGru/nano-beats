@@ -2,10 +2,10 @@
   "name": "nano-beats-server",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "api/index.ts",
   "scripts": {
-    "start": "tsc && node dist/index.js",
-    "server": "nodemon server.ts"
+    "start": "ts-node api/index.ts",
+    "server": "nodemon api/index.ts"
   },
   "author": "Fabian Gruber",
   "license": "ISC",
