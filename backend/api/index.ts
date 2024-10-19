@@ -21,8 +21,6 @@ app.use(express.urlencoded({ extended: false }));
 connectDB();
 
 app.use("/api/user", userRoutes);
-// @ts-ignore
-app.get("/", (req, res) => res.send("Express on Vercel"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
