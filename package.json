@@ -1,0 +1,13 @@
+{
+  "name": "nano-beats",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "client": "npm run dev --workspace frontend",
+    "server": "npm run dev --workspace backend"
+  }
+}
