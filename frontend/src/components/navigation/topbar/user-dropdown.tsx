@@ -48,12 +48,9 @@ export const UserDropdown: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar>
-          <AvatarFallback>
-            {user.username[0] || ''}
-            {user.username[1] || ''}
-          </AvatarFallback>
-        </Avatar>
+        <Button variant='outline' size='icon'>
+          <CircleUserRound className='h-6 w-6' />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-56'>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
