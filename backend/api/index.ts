@@ -4,6 +4,7 @@ import express from "express";
 import userRoutes from "./user/user.routes";
 import connectDB from "./config/db";
 import cors from "cors";
+import "colors";
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -23,9 +24,6 @@ app.use(express.urlencoded({ extended: false }));
 connectDB();
 
 app.use("/api/user", userRoutes);
-app.use("/api/test", (req, res) => {
-  res.send("Hello World");
-});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

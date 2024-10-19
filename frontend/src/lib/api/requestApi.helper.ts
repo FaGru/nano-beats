@@ -8,7 +8,6 @@ type RequestApi = {
 };
 
 export const requestApi = async ({ url, method, data = {}, token }: RequestApi) => {
-  console.log('requestApi', { url, method, data, token });
   return await axios({
     url,
     method,
