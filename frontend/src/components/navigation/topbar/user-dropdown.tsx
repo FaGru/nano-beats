@@ -29,7 +29,7 @@ export const UserDropdown: React.FC = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='outline' size='icon'>
-            <CircleUserRound className='h-6 w-6' />
+            <CircleUserRound className='h-8 w-8' />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -48,7 +48,7 @@ export const UserDropdown: React.FC = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant='outline' size='icon'>
-          <CircleUserRound className='h-6 w-6' />
+          <CircleUserRound className='h-8 w-8' />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-56'>
