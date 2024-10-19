@@ -6,14 +6,10 @@ import { CONFIG } from '@/lib/config/config';
 import { Card } from '../ui/card';
 
 export const UserComponent = () => {
-  const { data: user, isFetched } = useUserQ();
+  const { data: user } = useUserQ();
   const router = useRouter();
 
-  if (!isFetched) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user && isFetched) {
+  if (!user) {
     return (
       <Card className=' bg-background w-full p-4 flex flex-col items-center  gap-4'>
         <p>No user found</p>
