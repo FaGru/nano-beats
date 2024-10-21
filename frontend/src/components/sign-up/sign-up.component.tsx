@@ -19,14 +19,20 @@ export const SignUp: React.FC<SignUpProps> = () => {
     password: '',
     passwordConfirm: ''
   });
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string[]>([]);
 
   const { username, email, password, passwordConfirm } = formData;
+
   const signupMutation = useSignUpUserMutation();
   const { data: user } = useUserQ();
   const router = useRouter();
   const isDisabled =
-    !username || !email || !password || !passwordConfirm || password !== passwordConfirm;
+    !username ||
+    !email ||
+    !password ||
+    !passwordConfirm ||
+    password !== passwordConfirm ||
+    !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 
   if (user) {
     router.push(CONFIG.CLIENT.USER);
@@ -41,18 +47,25 @@ export const SignUp: React.FC<SignUpProps> = () => {
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (isDisabled) {
-      if (!username || !email || !password || !passwordConfirm)
-        setErrorMsg('Please enter all fields');
-      if (password !== passwordConfirm) setErrorMsg('Passwords do not match');
-      return;
-    }
 
     const userData = {
       username,
       email,
       password
     };
+
+    let newErrors: string[] = [];
+    if (!username || !email || !password || !passwordConfirm) {
+      newErrors = [...newErrors, 'Please enter all fields'];
+    }
+    if (password !== passwordConfirm) {
+      newErrors = [...newErrors, 'Passwords do not match'];
+    }
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+      newErrors = [...newErrors, 'Please enter a valid email'];
+    }
+    setErrorMsg(newErrors);
+
     if (!isDisabled) {
       signupMutation.mutate(userData);
     }
@@ -116,7 +129,11 @@ export const SignUp: React.FC<SignUpProps> = () => {
             />
           </div>
           <Button className='flex-grow'>register</Button>
-          {errorMsg && <p className='text-destructive'>{errorMsg}</p>}
+          {errorMsg.map((msg: string) => (
+            <p className='text-destructive text-xs' key={msg}>
+              {msg}
+            </p>
+          ))}
         </form>
       </Card>
     </div>
