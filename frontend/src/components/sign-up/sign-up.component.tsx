@@ -9,6 +9,7 @@ import { useSignUpUserMutation } from '@/lib/hooks/queries/use-signup-user.mutat
 import { useUserQ } from '@/lib/hooks/queries/useUser.query';
 import { useRouter } from 'next/navigation';
 import { CONFIG } from '@/lib/config/config';
+import { RotatingLines } from 'react-loader-spinner';
 
 interface SignUpProps {}
 
@@ -24,6 +25,7 @@ export const SignUp: React.FC<SignUpProps> = () => {
   const { username, email, password, passwordConfirm } = formData;
 
   const signupMutation = useSignUpUserMutation();
+
   const { data: user } = useUserQ();
   const router = useRouter();
   const isDisabled =
@@ -128,7 +130,13 @@ export const SignUp: React.FC<SignUpProps> = () => {
               onChange={onChange}
             />
           </div>
-          <Button className='flex-grow'>register</Button>
+          <Button className='flex-grow' disabled={signupMutation.isPending}>
+            {signupMutation.isPending ? (
+              <RotatingLines strokeColor={'hsl(var(--background))'} width='32' />
+            ) : (
+              'register'
+            )}
+          </Button>
           {errorMsg.map((msg: string) => (
             <p className='text-destructive text-xs' key={msg}>
               {msg}
