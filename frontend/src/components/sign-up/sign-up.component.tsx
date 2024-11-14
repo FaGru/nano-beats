@@ -1,149 +1,116 @@
 'use client';
-import { useState } from 'react';
+
 import { Button } from '../ui/button';
-import { Card } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-
+import * as Yup from 'yup';
 import { useSignUpUserMutation } from '@/lib/hooks/queries/use-signup-user.mutation';
 import { useUserQ } from '@/lib/hooks/queries/useUser.query';
 import { useRouter } from 'next/navigation';
+import { useFormik } from 'formik';
+import { Separator } from '../ui/separator';
+import { UserPlus } from 'lucide-react';
 import { CONFIG } from '@/lib/config/config';
 import { RotatingLines } from 'react-loader-spinner';
 
 interface SignUpProps {}
 
 export const SignUp: React.FC<SignUpProps> = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    passwordConfirm: ''
-  });
-  const [errorMsg, setErrorMsg] = useState<string[]>([]);
-
-  const { username, email, password, passwordConfirm } = formData;
-
   const signupMutation = useSignUpUserMutation();
 
   const { data: user } = useUserQ();
   const router = useRouter();
-  const isDisabled =
-    !username ||
-    !email ||
-    !password ||
-    !passwordConfirm ||
-    password !== passwordConfirm ||
-    !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 
   if (user) {
     router.push(CONFIG.CLIENT.USER);
   }
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value
-    }));
-  };
-
-  const onSubmit = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-
-    const userData = {
-      username,
-      email,
-      password
-    };
-
-    let newErrors: string[] = [];
-    if (!username || !email || !password || !passwordConfirm) {
-      newErrors = [...newErrors, 'Please enter all fields'];
+  const validationSchema = Yup.object({
+    username: Yup.string().required('Username is required'),
+    email: Yup.string().email('Please enter a valid email').required('Email is required'),
+    password: Yup.string()
+      .min(8, 'Das Passwort muss mindestens 8 Zeichen lang sein')
+      .matches(/[A-Z]/, 'The password must contain at least one capital letter')
+      .matches(/[a-z]/, 'The password must contain at least one lowercase letter')
+      .required('Password is required'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password')], 'Passwords must match')
+      .required('Confirm Password is required')
+  });
+  const formik = useFormik({
+    initialValues: {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      const { username, email, password } = values;
+      console.log('values', values);
+      signupMutation.mutate({ username, email, password });
     }
-    if (password !== passwordConfirm) {
-      newErrors = [...newErrors, 'Passwords do not match'];
-    }
-    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-      newErrors = [...newErrors, 'Please enter a valid email'];
-    }
-    setErrorMsg(newErrors);
-
-    if (!isDisabled) {
-      signupMutation.mutate(userData);
-    }
-  };
+  });
 
   return (
-    <div className='bg-background w-full flex flex-col items-center gap-2 rounded p-2'>
-      <h2 className='text-3xl'>SignUp</h2>
-      <Card className='p-4 w-96 '>
-        <form onSubmit={onSubmit} className='flex flex-col gap-1'>
-          <div>
-            <Label className='ml-1' htmlFor='username'>
-              Username
-            </Label>
-            <Input
-              id='username'
-              type='text'
-              placeholder='Username'
-              name='username'
-              value={username}
-              onChange={onChange}
-            />
+    <Card className='max-w-md self-center bg-background mt-8 w-full'>
+      <CardHeader>
+        <CardTitle className='text-2xl font-bold flex gap-2 items-center text-center'>
+          <UserPlus className='h-6 w-6' />
+          Sign Up
+        </CardTitle>
+        <Separator className='my-4' />
+      </CardHeader>
+      <CardContent>
+        <form
+          onSubmit={formik.handleSubmit}
+          className='space-y-4 max-w-4xl xl:max-w-md  flex flex-col '
+        >
+          <div className='relative'>
+            <Label htmlFor='username'>Username</Label>
+            <Input id='username' {...formik.getFieldProps('username')} />
+            {formik.touched.username && formik.errors.username ? (
+              <div className='text-destructive text-xs absolute'>{formik.errors.username}</div>
+            ) : null}
           </div>
-          <div>
-            <Label className='ml-1' htmlFor='email'>
-              Email
-            </Label>
-            <Input
-              id='email'
-              type='text'
-              placeholder='Email'
-              name='email'
-              value={email}
-              onChange={onChange}
-            />
+          <div className='relative'>
+            <Label htmlFor='email'>Email</Label>
+            <Input id='email' {...formik.getFieldProps('email')} />
+            {formik.touched.email && formik.errors.email ? (
+              <div className='text-destructive text-xs absolute'>{formik.errors.email}</div>
+            ) : null}
           </div>
-          <div>
-            <Label className='ml-1' htmlFor='password'>
-              Password
-            </Label>
-            <Input
-              id='password'
-              type='password'
-              placeholder='Password'
-              name='password'
-              value={password}
-              onChange={onChange}
-            />
+
+          <div className='relative'>
+            <Label htmlFor='password'>Password</Label>
+            <Input id='password' {...formik.getFieldProps('password')} />
+            {formik.touched.password && formik.errors.password ? (
+              <div className='text-destructive text-xs absolute'>{formik.errors.password}</div>
+            ) : null}
           </div>
-          <div className='mb-6'>
-            <Label className='ml-1' htmlFor='confirm-password'>
-              Confirm Password
-            </Label>
-            <Input
-              id='confirm-password'
-              type='password'
-              placeholder='Confirm Password'
-              name='passwordConfirm'
-              value={passwordConfirm}
-              onChange={onChange}
-            />
+
+          <div className='relative'>
+            <Label htmlFor='confirmPassword'>Confirm Password</Label>
+            <Input id='confirmPassword' {...formik.getFieldProps('confirmPassword')} />
+            {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+              <div className='text-destructive text-xs absolute'>
+                {formik.errors.confirmPassword}
+              </div>
+            ) : null}
           </div>
-          <Button className='flex-grow' disabled={signupMutation.isPending}>
-            {signupMutation.isPending ? (
-              <RotatingLines strokeColor={'hsl(var(--background))'} width='32' />
-            ) : (
-              'register'
-            )}
-          </Button>
-          {errorMsg.map((msg: string) => (
-            <p className='text-destructive text-xs' key={msg}>
-              {msg}
-            </p>
-          ))}
+
+          <div className='flex justify-center '>
+            <Button type='submit' className='flex-grow mt-4'>
+              {signupMutation.isPending ? (
+                <RotatingLines strokeColor={'hsl(var(--background))'} width='32' />
+              ) : (
+                'Sign Up'
+              )}
+            </Button>
+          </div>
         </form>
-      </Card>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
