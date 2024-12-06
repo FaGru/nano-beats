@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import * as Tone from 'tone';
 import { TDJDeck, TDJMixer } from './dj.types';
-import { crossFaderDefault } from './dj.constants';
+import { crossFaderDefault, eqDefault } from './dj.constants';
 
 type DrumMachineState = {
   faderPosition: number;
@@ -37,7 +37,7 @@ export const useDJStore = create<DrumMachineState & DrumMachineActions>()((set, 
         type: 'lowpass'
       }).connect(highpassFilter);
 
-      const eqThree = new Tone.EQ3(-15, -15, -15).connect(lowpassFilter);
+      const eqThree = new Tone.EQ3(eqDefault, eqDefault, eqDefault).connect(lowpassFilter);
 
       const djPlayer = new Tone.Player('https://tonejs.github.io/audio/berklee/gong_1.mp3').connect(
         eqThree
