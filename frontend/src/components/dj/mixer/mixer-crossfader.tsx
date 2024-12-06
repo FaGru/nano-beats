@@ -31,7 +31,7 @@ export const MixerCrossfader: React.FC<MixerCrossfaderProps> = () => {
         value={djMixer.crossFader.fade.value}
         minValue={0}
         maxValue={1}
-        width='w-28'
+        size='lg'
       />
     </div>
   );

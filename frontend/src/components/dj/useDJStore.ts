@@ -57,8 +57,6 @@ export const useDJStore = create<DrumMachineState & DrumMachineActions>()((set, 
         djDecks: [...djDecks, deck]
       });
     }
-
-    console.log(get().djDecks);
   },
   updateDJDeck: (updatedDeck) => {
     const allDecks = get().djDecks;

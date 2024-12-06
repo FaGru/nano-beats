@@ -54,7 +54,7 @@ export const DJPlayer: React.FC<DJPlayerProps> = ({ djDeck }) => {
   };
 
   return (
-    <div className='flex flex-col bg-background p-4 rounded-xl gap-1'>
+    <div className='flex flex-col bg-background p-4 rounded-xl gap-1 w-64'>
       <div>
         <p className='text-sm' onDrop={handleDrop} onDragOver={handleDragOver}>
           {truncatedText}

@@ -28,34 +28,40 @@ export const MixerEQ: React.FC<MixerEQProps> = ({ djDeck }) => {
     updateDJDeck(djDeck);
   };
   return (
-    <div>
-      <KnobControl
-        handleKnobChange={(valueChange) => handleEQThreeOne(valueChange, 'high')}
-        handleDoupleClick={() => resetEQThree('high')}
-        minValue={eqLimits.min}
-        maxValue={eqLimits.max}
-        value={djDeck.eqThree.high.value}
-        size='md'
-        text={(djDeck.eqThree.high.value + 15).toFixed(1)}
-      />
-      <KnobControl
-        handleKnobChange={(valueChange) => handleEQThreeOne(valueChange, 'mid')}
-        handleDoupleClick={() => resetEQThree('mid')}
-        minValue={eqLimits.min}
-        maxValue={eqLimits.max}
-        value={djDeck.eqThree.mid.value}
-        size='md'
-        text={(djDeck.eqThree.mid.value + 15).toFixed(1)}
-      />
-      <KnobControl
-        handleKnobChange={(valueChange) => handleEQThreeOne(valueChange, 'low')}
-        handleDoupleClick={() => resetEQThree('low')}
-        minValue={eqLimits.min}
-        maxValue={eqLimits.max}
-        value={djDeck.eqThree.low.value}
-        size='md'
-        text={(djDeck.eqThree.low.value + 15).toFixed(1)}
-      />
+    <div className='flex flex-col  gap-2'>
+      <div>
+        <p className='text-xxs leading-3 text-center'>HI</p>
+        <KnobControl
+          handleKnobChange={(valueChange) => handleEQThreeOne(valueChange, 'high')}
+          handleDoupleClick={() => resetEQThree('high')}
+          minValue={eqLimits.min}
+          maxValue={eqLimits.max}
+          value={djDeck.eqThree.high.value}
+          size='md'
+        />
+      </div>
+      <div>
+        <p className='text-xxs leading-3 text-center'>MID</p>
+        <KnobControl
+          handleKnobChange={(valueChange) => handleEQThreeOne(valueChange, 'mid')}
+          handleDoupleClick={() => resetEQThree('mid')}
+          minValue={eqLimits.min}
+          maxValue={eqLimits.max}
+          value={djDeck.eqThree.mid.value}
+          size='md'
+        />
+      </div>
+      <div>
+        <p className='text-xxs leading-3 text-center'>LOW</p>
+        <KnobControl
+          handleKnobChange={(valueChange) => handleEQThreeOne(valueChange, 'low')}
+          handleDoupleClick={() => resetEQThree('low')}
+          minValue={eqLimits.min}
+          maxValue={eqLimits.max}
+          value={djDeck.eqThree.low.value}
+          size='md'
+        />
+      </div>
     </div>
   );
 };
