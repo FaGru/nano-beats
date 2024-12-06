@@ -9,6 +9,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      animation: { 'spin-slow': 'spin 2s linear infinite' },
       fontSize: {
         xxs: '0.625rem'
       },

@@ -1,13 +1,28 @@
 'use client';
-import { ThreeCircles } from 'react-loader-spinner';
+
+import { DJPlayer } from './dj-player';
+import { useDJStore } from './useDJStore';
+import { Explorer } from './explorer';
+import { Mixer } from './mixer/mixer.component';
 
 interface DJProps {}
 
 export const DJ: React.FC<DJProps> = () => {
+  const djDecks = useDJStore((state) => state.djDecks);
+
+  if (!djDecks.length || djDecks.length < 2) {
+    return;
+  }
+
   return (
-    <div className='bg-background h-[60vh] w-full flex flex-col justify-center items-center rounded-md p-4 gap-8 text-xl'>
-      DJ Page is still in progress
-      <ThreeCircles height='96' width='96' color={'hsl(var(--primary))'} ariaLabel='puff-loading' />
+    <div className=' h-[90vh] w-full flex flex-col justify-center items-center rounded-md p-2 gap-1 text-xl '>
+      <div className='flex gap-2'>
+        <DJPlayer djDeck={djDecks[0]} />
+        <Mixer djDecks={djDecks} />
+        <DJPlayer djDeck={djDecks[1]} />
+      </div>
+
+      <Explorer />
     </div>
   );
 };
