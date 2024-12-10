@@ -11,4 +11,5 @@ export type TDJDeck = {
 
 export type TDJMixer = {
   crossFader: Tone.CrossFade;
+  masterGain: Tone.Gain;
 };

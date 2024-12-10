@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import * as Tone from 'tone';
 import { TDJDeck, TDJMixer } from './dj.types';
-import { crossFaderDefault, eqDefault } from './dj.constants';
+import { crossFaderDefault, eqDefault, gainDefault } from './dj.constants';
 
 type DrumMachineState = {
   faderPosition: number;
@@ -14,20 +14,24 @@ type DrumMachineActions = {
   initDJTable: () => void;
   updateDJDeck: (updatedDeck: TDJDeck) => void;
   setCurrentFiles: (files: any[]) => void;
-  updateDJMixer: (newMixerSettings: { crossFader: Tone.CrossFade }) => void;
+  updateDJMixer: (newMixerSettings: TDJMixer) => void;
 };
 
 export const useDJStore = create<DrumMachineState & DrumMachineActions>()((set, get) => ({
   faderPosition: 63.5,
   djDecks: [],
   currentFiles: [],
-  djMixer: { crossFader: new Tone.CrossFade(crossFaderDefault).toDestination() },
+  djMixer: {
+    crossFader: new Tone.CrossFade(crossFaderDefault),
+    masterGain: new Tone.Gain(gainDefault).toDestination()
+  },
 
   initDJTable: () => {
     for (let i = 1; i < 3; i++) {
       const sample = 'https://tonejs.github.io/audio/berklee/gong_1.mp3';
 
-      const crossFader = get().djMixer.crossFader;
+      const { crossFader, masterGain } = get().djMixer;
+      crossFader.connect(masterGain);
       const highpassFilter = new Tone.Filter({
         frequency: 0,
         type: 'highpass'
