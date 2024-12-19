@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDJStore } from '../useDJStore';
 import { Fader } from '@/components/shared/fader';
 import { crossFaderLimits } from '../dj.constants';
@@ -22,6 +22,24 @@ export const MixerCrossfader: React.FC<MixerCrossfaderProps> = () => {
     updateDJMixer(djMixer);
     setFade(newValue);
   };
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') {
+      handleCrossfader(-8);
+    }
+    if (event.key === 'ArrowRight') {
+      handleCrossfader(+8);
+    }
+  };
+  const handleKeyUp = (event: KeyboardEvent) => {};
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [djMixer]);
 
   return (
     <div className='mb-2'>

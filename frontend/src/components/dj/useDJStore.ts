@@ -46,6 +46,7 @@ export const useDJStore = create<DrumMachineState & DrumMachineActions>()((set, 
       const djPlayer = new Tone.Player('https://tonejs.github.io/audio/berklee/gong_1.mp3').connect(
         eqThree
       );
+
       const djDecks = get().djDecks;
 
       const deck = {
@@ -54,7 +55,13 @@ export const useDJStore = create<DrumMachineState & DrumMachineActions>()((set, 
         highpassFilter,
         lowpassFilter,
         eqThree,
-        sample
+        sample,
+        cuePoint: 0,
+        wavesurfer: null,
+        initWavesurfer: false,
+        regions: null,
+        defaultBPM: null,
+        shiftActive: false
       };
 
       set({
@@ -62,6 +69,7 @@ export const useDJStore = create<DrumMachineState & DrumMachineActions>()((set, 
       });
     }
   },
+
   updateDJDeck: (updatedDeck) => {
     const allDecks = get().djDecks;
     set({

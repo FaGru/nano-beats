@@ -10,7 +10,7 @@ interface DJMixerProps {
 
 export const Mixer: React.FC<DJMixerProps> = ({ djDecks }) => {
   return (
-    <div className='bg-background  rounded-xl p-2 flex flex-col justify-between w-72'>
+    <div className='bg-background  rounded-xl p-2 flex flex-col justify-between w-80'>
       <div className='mb-2'>
         <MixerGain />
       </div>
