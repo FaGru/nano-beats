@@ -1,7 +1,7 @@
-import { Fader } from '@/components/shared/fader';
 import { useDJStore } from '../useDJStore';
 import { TDJDeck } from '../dj.types';
 import { playerVolumeLimits } from '../dj.constants';
+import { FaderSlider } from '@/components/shared/fader-slider';
 
 interface MixerLineFaderProps {
   djDeck: TDJDeck;
@@ -10,13 +10,7 @@ interface MixerLineFaderProps {
 export const MixerLineFader: React.FC<MixerLineFaderProps> = ({ djDeck }) => {
   const updateDJDeck = useDJStore((state) => state.updateDJDeck);
 
-  const handleFader = (updateValue: number) => {
-    const currentVolume =
-      djDeck.player.volume.value === -Infinity
-        ? playerVolumeLimits.min
-        : djDeck.player.volume.value;
-
-    let newValue = currentVolume + updateValue / 5;
+  const handleFader = (newValue: number) => {
     if (newValue < playerVolumeLimits.min) {
       newValue = playerVolumeLimits.min;
     } else if (newValue > playerVolumeLimits.max) {
@@ -30,8 +24,8 @@ export const MixerLineFader: React.FC<MixerLineFaderProps> = ({ djDeck }) => {
   };
 
   return (
-    <Fader
-      handleKnobChange={handleFader}
+    <FaderSlider
+      handleChange={handleFader}
       handleDoupleClick={() => null}
       value={
         djDeck.player.volume.value === -Infinity
@@ -42,6 +36,7 @@ export const MixerLineFader: React.FC<MixerLineFaderProps> = ({ djDeck }) => {
       maxValue={playerVolumeLimits.max}
       size='lg'
       orientation='vertical'
+      step={0.01}
     />
   );
 };

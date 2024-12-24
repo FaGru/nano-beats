@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDJStore } from '../useDJStore';
-import { Fader } from '@/components/shared/fader';
 import { crossFaderLimits } from '../dj.constants';
+import { FaderSlider } from '@/components/shared/fader-slider';
 
 interface MixerCrossfaderProps {}
 
@@ -11,23 +11,25 @@ export const MixerCrossfader: React.FC<MixerCrossfaderProps> = () => {
 
   const [fade, setFade] = useState(djMixer.crossFader.fade.value);
 
-  const handleCrossfader = (updateValue: number) => {
-    let newValue = djMixer.crossFader.fade.value + updateValue / 200;
-    if (newValue < crossFaderLimits.min) {
-      newValue = crossFaderLimits.min;
-    } else if (newValue > crossFaderLimits.max) {
-      newValue = crossFaderLimits.max;
+  const handleCrossfader = (position: number) => {
+    if (position < crossFaderLimits.min) {
+      djMixer.crossFader.fade.value = crossFaderLimits.min;
+    } else if (position > crossFaderLimits.max) {
+      djMixer.crossFader.fade.value = crossFaderLimits.max;
+    } else {
+      djMixer.crossFader.fade.value = position;
     }
-    djMixer.crossFader.fade.value = newValue;
     updateDJMixer(djMixer);
-    setFade(newValue);
+    setFade(position);
   };
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowLeft') {
-      handleCrossfader(-8);
+      const oldPosition = useDJStore.getState().djMixer.crossFader.fade.value;
+      handleCrossfader(oldPosition - 0.05);
     }
     if (event.key === 'ArrowRight') {
-      handleCrossfader(+8);
+      const oldPosition = useDJStore.getState().djMixer.crossFader.fade.value;
+      handleCrossfader(oldPosition + 0.05);
     }
   };
   const handleKeyUp = (event: KeyboardEvent) => {};
@@ -43,13 +45,14 @@ export const MixerCrossfader: React.FC<MixerCrossfaderProps> = () => {
 
   return (
     <div className='mb-2'>
-      <Fader
-        handleKnobChange={handleCrossfader}
+      <FaderSlider
+        handleChange={handleCrossfader}
         handleDoupleClick={() => null}
         value={djMixer.crossFader.fade.value}
-        minValue={0}
-        maxValue={1}
+        minValue={crossFaderLimits.min}
+        maxValue={crossFaderLimits.max}
         size='lg'
+        step={0.01}
       />
     </div>
   );
