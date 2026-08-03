@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { requestApi } from '@/lib/api/requestApi.helper';
 import { QUERY_KEYS } from './query-keys.constants';
 import { CONFIG } from '@/lib/config/config';
-import { useGlobalStore } from '@/lib/state-managment/useGlobalStore';
+import { getCookie } from 'cookies-next';
 
 export const fetchUser = async ({ userToken }: { userToken: string }) => {
   const response = await requestApi({
@@ -16,7 +16,7 @@ export const fetchUser = async ({ userToken }: { userToken: string }) => {
 };
 
 export const useUserQ = () => {
-  const userToken = useGlobalStore((state) => state.token);
+  const userToken = getCookie('token');
 
   return useQuery({
     enabled: !!userToken,

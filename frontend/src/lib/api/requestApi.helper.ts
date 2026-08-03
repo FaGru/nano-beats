@@ -3,8 +3,8 @@ import axios from 'axios';
 type RequestApi = {
   url: string;
   method: 'get' | 'post' | 'put' | 'delete';
-  data?: any;
-  token?: any;
+  data?: unknown;
+  token?: string;
 };
 
 export const requestApi = async ({ url, method, data = {}, token }: RequestApi) => {

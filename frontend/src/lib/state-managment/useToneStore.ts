@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import * as Tone from 'tone';
 import { useSequencerStore } from '@/components/sequencer/useSequencerStore';
 import { useDrumMachineStore } from '@/components/drum-machine/useDrumMachineStore';
+import { useDJStore } from '@/components/dj/useDJStore';
 
 type ToneState = {
   tone: any;
@@ -21,11 +22,13 @@ export const useToneStore = create<ToneState & ToneActions>()((set, get) => ({
       const tone = get().tone;
       const { initSequencer } = useSequencerStore.getState();
       const { initDrumPadPlayers } = useDrumMachineStore.getState();
+      const { initDJTable } = useDJStore.getState();
 
       if (!tone) {
         get().initTone();
         initSequencer();
         initDrumPadPlayers();
+        initDJTable();
         await Tone.start();
       }
     };
