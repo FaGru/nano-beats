@@ -25,10 +25,15 @@ export const useDJStore = create<DrumMachineState & DrumMachineActions>()((set, 
   currentFiles: [],
   djDeckOne: [],
   djDeckTwo: [],
-  djMixer: {
-    crossFader: new Tone.CrossFade(crossFaderDefault),
-    masterGain: new Tone.Gain(gainDefault).toDestination()
-  },
+  // Tone-Nodes nur im Browser anlegen. Auf dem Server (Next.js Build/SSR) gibt es
+  // keinen AudioContext, sonst crasht der Build ("param must be an AudioParam").
+  djMixer:
+    typeof window === 'undefined'
+      ? ({ crossFader: null, masterGain: null } as unknown as TDJMixer)
+      : {
+          crossFader: new Tone.CrossFade(crossFaderDefault),
+          masterGain: new Tone.Gain(gainDefault).toDestination()
+        },
 
   initDJTable: () => {
     for (let i = 1; i < 3; i++) {
