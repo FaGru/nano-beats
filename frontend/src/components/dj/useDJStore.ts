@@ -8,11 +8,13 @@ type DrumMachineState = {
   djDecks: TDJDeck[];
   currentFiles: any[];
   djMixer: TDJMixer;
+  djDeckOne: TDJDeck[];
+  djDeckTwo: TDJDeck[];
 };
 
 type DrumMachineActions = {
   initDJTable: () => void;
-  updateDJDeck: (updatedDeck: TDJDeck) => void;
+  updateDJDeck: (updatedDeck: TDJDeck, deckNumber: number) => void;
   setCurrentFiles: (files: any[]) => void;
   updateDJMixer: (newMixerSettings: TDJMixer) => void;
 };
@@ -21,6 +23,8 @@ export const useDJStore = create<DrumMachineState & DrumMachineActions>()((set, 
   faderPosition: 63.5,
   djDecks: [],
   currentFiles: [],
+  djDeckOne: [],
+  djDeckTwo: [],
   djMixer: {
     crossFader: new Tone.CrossFade(crossFaderDefault),
     masterGain: new Tone.Gain(gainDefault).toDestination()
@@ -64,17 +68,37 @@ export const useDJStore = create<DrumMachineState & DrumMachineActions>()((set, 
         shiftActive: false
       };
 
-      set({
-        djDecks: [...djDecks, deck]
-      });
+      if (i === 1) {
+        set({
+          djDeckOne: [deck]
+        });
+      }
+      if (i === 2) {
+        set({
+          djDeckTwo: [deck]
+        });
+      }
+      // set({
+      //   djDecks: [...djDecks, deck]
+      // });
     }
   },
 
-  updateDJDeck: (updatedDeck) => {
-    const allDecks = get().djDecks;
-    set({
-      djDecks: allDecks.map((deck) => (deck.id === updatedDeck.id ? updatedDeck : deck))
-    });
+  updateDJDeck: (updatedDeck, deckNumber) => {
+    if (deckNumber === 1) {
+      set({
+        djDeckOne: [updatedDeck]
+      });
+    }
+    if (deckNumber === 2) {
+      set({
+        djDeckTwo: [updatedDeck]
+      });
+    }
+    // const allDecks = get().djDecks;
+    // set({
+    //   djDecks: allDecks.map((deck) => (deck.id === updatedDeck.id ? updatedDeck : deck))
+    // });
   },
   updateDJMixer: (newMixerSettings) => {
     const allDecks = get().djDecks;

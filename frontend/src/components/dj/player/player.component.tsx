@@ -38,7 +38,7 @@ export const DJPlayer: React.FC<DJPlayerProps> = ({ djDeck }) => {
       djDeck.player.stop();
     }
 
-    updateDJDeck(djDeck);
+    updateDJDeck(djDeck, djDeck.id);
     setIsPlaying(!isPlaying);
   };
 
@@ -66,14 +66,14 @@ export const DJPlayer: React.FC<DJPlayerProps> = ({ djDeck }) => {
     djDeck.sample = file.name;
     djDeck.initWavesurfer = true;
     djDeck.defaultBPM = tempo;
-    updateDJDeck(djDeck);
+    updateDJDeck(djDeck, djDeck.id);
   };
 
   const handleCueDown = () => {
     djDeck.cuePoint = djDeck.wavesurfer?.getCurrentTime() || 0;
     djDeck.player.stop();
     djDeck.wavesurfer?.play();
-    updateDJDeck(djDeck);
+    updateDJDeck(djDeck, djDeck.id);
   };
 
   const handleCueUp = () => {
@@ -92,7 +92,7 @@ export const DJPlayer: React.FC<DJPlayerProps> = ({ djDeck }) => {
           .filter((region) => region.id !== hotCue.id.toString());
         djDeck.regions?.clearRegions();
         newRegions?.forEach((region) => djDeck.regions?.addRegion(region));
-        updateDJDeck(djDeck);
+        updateDJDeck(djDeck, djDeck.id);
       } else {
         djDeck.player.seek(hotCue.region.start);
         djDeck.wavesurfer?.setTime(hotCue.region.start);
@@ -107,7 +107,7 @@ export const DJPlayer: React.FC<DJPlayerProps> = ({ djDeck }) => {
         drag: false
       });
 
-      updateDJDeck(djDeck);
+      updateDJDeck(djDeck, djDeck.id);
     }
   };
 
@@ -202,7 +202,7 @@ export const DJPlayer: React.FC<DJPlayerProps> = ({ djDeck }) => {
             variant={djDeck.shiftActive ? 'default' : 'secondary'}
             onClick={() => {
               djDeck.shiftActive = !djDeck.shiftActive;
-              updateDJDeck(djDeck);
+              updateDJDeck(djDeck, djDeck.id);
             }}
           >
             SHIFT

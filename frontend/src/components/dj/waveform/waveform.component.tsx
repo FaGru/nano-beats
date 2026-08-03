@@ -87,7 +87,7 @@ export const Waveform: React.FC<WaveformProps> = ({ djDeck }) => {
       djDeck.regions = regionsRef.current;
 
       djDeck.initWavesurfer = false;
-      updateDJDeck(djDeck);
+      updateDJDeck(djDeck, djDeck.id);
     }
   };
 

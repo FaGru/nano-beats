@@ -10,21 +10,23 @@ interface DJProps {}
 
 export const DJ: React.FC<DJProps> = () => {
   const djDecks = useDJStore((state) => state.djDecks);
+  const djDeckOne = useDJStore((state) => state.djDeckOne);
+  const djDeckTwo = useDJStore((state) => state.djDeckTwo);
 
-  if (!djDecks.length || djDecks.length < 2) {
-    return;
-  }
+  // if (!djDecks.length || djDecks.length < 2) {
+  //   return;
+  // }
 
   return (
     <div className='  w-full max-w-[1024px] flex flex-col justify-center items-center rounded-md p-2 gap-1 text-xl '>
       <div className='divide-y-2 divide-dotted bg-background p-1 rounded-md w-full'>
-        <Waveform djDeck={djDecks[0]} />
-        <Waveform djDeck={djDecks[1]} />
+        <Waveform djDeck={djDeckOne[0]} />
+        <Waveform djDeck={djDeckTwo[0]} />
       </div>
       <div className='flex w-full justify-between'>
-        <DJPlayer djDeck={djDecks[0]} />
-        <Mixer djDecks={djDecks} />
-        <DJPlayer djDeck={djDecks[1]} />
+        <DJPlayer djDeck={djDeckOne[0]} />
+        <Mixer djDecks={[djDeckOne[0], djDeckTwo[0]]} />
+        <DJPlayer djDeck={djDeckTwo[0]} />
       </div>
       <Explorer />
     </div>

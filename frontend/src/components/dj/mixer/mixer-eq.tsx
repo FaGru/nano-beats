@@ -20,12 +20,12 @@ export const MixerEQ: React.FC<MixerEQProps> = ({ djDeck }) => {
     }
 
     djDeck.eqThree[type].value = newFrequency;
-    updateDJDeck(djDeck);
+    updateDJDeck(djDeck, djDeck.id);
   };
 
   const resetEQThree = (type: 'high' | 'mid' | 'low') => {
     djDeck.eqThree[type].value = eqDefault;
-    updateDJDeck(djDeck);
+    updateDJDeck(djDeck, djDeck.id);
   };
   return (
     <div className='flex flex-col  gap-2'>

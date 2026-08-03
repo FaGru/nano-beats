@@ -13,12 +13,12 @@ export const PitchFader: React.FC<PitchFaderProps> = ({ djDeck }) => {
   const handleFader = (newPitch: number) => {
     djDeck.player.playbackRate = newPitch;
     djDeck.wavesurfer?.setPlaybackRate(newPitch);
-    updateDJDeck(djDeck);
+    updateDJDeck(djDeck, djDeck.id);
   };
 
   const handleReset = () => {
     djDeck.player.playbackRate = pitchDefault;
-    updateDJDeck(djDeck);
+    updateDJDeck(djDeck, djDeck.id);
   };
 
   return (

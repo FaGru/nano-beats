@@ -20,7 +20,7 @@ export const MixerLineFader: React.FC<MixerLineFaderProps> = ({ djDeck }) => {
     if (newValue < playerVolumeLimits.min + 0.1) {
       djDeck.player.mute = true;
     }
-    updateDJDeck(djDeck);
+    updateDJDeck(djDeck, djDeck.id);
   };
 
   return (

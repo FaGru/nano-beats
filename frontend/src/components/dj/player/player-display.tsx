@@ -90,7 +90,7 @@ export const Display: React.FC<DisplayProps> = ({ djDeck }) => {
       djDeck.regions = regionsRef.current;
 
       djDeck.initWavesurfer = false;
-      updateDJDeck(djDeck);
+      updateDJDeck(djDeck, djDeck.id);
     }
   };
 

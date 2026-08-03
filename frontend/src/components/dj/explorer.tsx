@@ -57,19 +57,18 @@ export const Explorer = () => {
     setRootFolder(folderStructure);
   };
 
-  const djDecks = useDJStore((state) => state.djDecks);
+  // const djDecks = useDJStore((state) => state.djDecks);
   const updateDJDeck = useDJStore((state) => state.updateDJDeck);
   const handleFileSelect = async (file: File) => {
-    console.log('file', file);
-    if (djDecks.length || djDecks[0].player) {
-      const arrayBuffer = await file.arrayBuffer();
-      const audioBuffer = await Tone.getContext().decodeAudioData(arrayBuffer);
-      // @ts-ignore
-      djDecks[0].player.buffer = audioBuffer;
-
-      djDecks[0].sample = file.name;
-      updateDJDeck(djDecks[0]);
-    }
+    // console.log('file', file);
+    // if (djDecks.length || djDecks[0].player) {
+    //   const arrayBuffer = await file.arrayBuffer();
+    //   const audioBuffer = await Tone.getContext().decodeAudioData(arrayBuffer);
+    //   // @ts-ignore
+    //   djDecks[0].player.buffer = audioBuffer;
+    //   djDecks[0].sample = file.name;
+    //   updateDJDeck(djDecks[0]);
+    // }
   };
 
   const handleFolderSelect = async (folderHandle: FileSystemDirectoryHandle) => {
